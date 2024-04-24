@@ -3,7 +3,7 @@ package com.example.cultureconnect;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class HelloController {
+public class CultureConnectController {
     @FXML
     private Label welcomeText;
 
