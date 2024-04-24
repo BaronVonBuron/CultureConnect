@@ -28,7 +28,6 @@ class ProjektTest {
         assertEquals("New Project", p.getTitel());
     }
 
-
     @Test
     void getSetParticipants() {
         Person pers = null;
@@ -51,34 +50,23 @@ class ProjektTest {
     }
 
     @Test
-    void getDescription() {
+    void getSetDescription() {
     }
 
     @Test
-    void setDescription() {
+    void getSetProjectCreator() {
     }
 
     @Test
-    void getProjectCreator() {
+    void getSetLokation(){
+
     }
 
     @Test
-    void setProjectCreator() {
+    void getSetStartDate() {
     }
 
     @Test
-    void getStartDate() {
-    }
-
-    @Test
-    void setStartDate() {
-    }
-
-    @Test
-    void getEndDate() {
-    }
-
-    @Test
-    void setEndDate() {
+    void getSetEndDate() {
     }
 }
