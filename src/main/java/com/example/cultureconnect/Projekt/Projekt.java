@@ -1,5 +1,6 @@
 package com.example.cultureconnect.Projekt;
 
+import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ public class Projekt {
     private List<Person> participants;
     private String description;
     private Person projectCreator;
+    private Lokation lokation;
     private Date startDate;
     private Date endDate;
 
@@ -17,13 +19,15 @@ public class Projekt {
 
 
     public Projekt(String titel, List<Person> participants, String description,
-                   Person projectCreator, Date startDate, Date endDate) {
+                   Person projectCreator, Lokation lokation,
+                   Date startDate, Date endDate) {
         this.titel = titel;
         this.participants = participants;
         this.description = description;
         this.projectCreator = projectCreator;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.lokation = lokation;
     }//konstruktør for projekt
 
     public String getTitel() {
@@ -56,6 +60,14 @@ public class Projekt {
 
     public void setProjectCreator(Person projectCreator) {
         this.projectCreator = projectCreator;
+    }
+
+    public Lokation getLokation() {
+        return lokation;
+    }
+
+    public void setLokation(Lokation lokation) {
+        this.lokation = lokation;
     }
 
     public Date getStartDate() {
