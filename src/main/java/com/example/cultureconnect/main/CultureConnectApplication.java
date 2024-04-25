@@ -1,4 +1,4 @@
-package com.example.cultureconnect;
+package com.example.cultureconnect.main;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,8 +10,8 @@ import java.io.IOException;
 public class CultureConnectApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(CultureConnectApplication.class.getResource("CultureConnectMainWindow.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        FXMLLoader fxmlLoader = new FXMLLoader(CultureConnectApplication.class.getResource("/com/example/cultureconnect/CultureConnectMainWindow.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("CultureConnect");
         stage.setScene(scene);
         stage.show();
