@@ -35,6 +35,17 @@ class PersonTest {
     }
 
     @Test
+    @DisplayName("Invalid input til navn")
+    void invalidName(){
+        try {
+            gitte.setName(null);
+            fail("Personer skal have et navn");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Personer skal have et navn", e.getMessage());
+        }
+    }
+
+    @Test
     @DisplayName("Alm. input, projects get/set")
     void getSetMyProjects() {
         List<Projekt> myProj = new ArrayList<>();

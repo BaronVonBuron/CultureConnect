@@ -17,6 +17,7 @@ public class Person {
     private Image picture;
 
     //måske booleans for creator / co-creator
+    //cpr-nummer
 
 
     public Person(String name, List<Projekt> myProjects, String position, Lokation lokation,
