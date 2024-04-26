@@ -81,9 +81,6 @@ public class Projekt {
     }
 
     public void setStartDate(Date startDate) {
-        if (endDate != null && startDate.after(endDate)){
-            throw new IllegalArgumentException("Start dato for et projekt kan ikke være efter slut datoen");
-        }
         this.startDate = startDate;
     }
 
