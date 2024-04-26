@@ -29,6 +29,17 @@ class LokationTest {
     }
 
     @Test
+    @DisplayName("Invalid input til navn")
+    void invalidName(){
+        try {
+            bib.setName(null);
+            fail("Lokationer skal have navn");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Lokationer skal have navn", e.getMessage());
+        }
+    }
+
+    @Test
     @DisplayName("Alm. input, description get/set")
     void getSetDescription() {
         bib.setDescription("bog");
@@ -43,6 +54,17 @@ class LokationTest {
     }
 
     @Test
+    @DisplayName("Invalid farvekode")
+    void invalidColor(){
+        try {
+            bib.setFarveKode(null);
+            fail("Lokationer skal have en farve");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Lokationer skal have en farve", e.getMessage());
+        }
+    }
+
+    @Test
     @DisplayName("Alm. input, employees get/set")
     void getSetEmployees() {
         List<Person> folk = new ArrayList<>();
@@ -51,5 +73,18 @@ class LokationTest {
 
         bib.setEmployees(folk);
         assertEquals(folk, bib.getEmployees());
+    }
+
+    @Test
+    @DisplayName("Tom liste")
+    void invalidEmployees(){
+        List<Person> noEmployees = new ArrayList<>();
+
+        try {
+            bib.setEmployees(noEmployees);
+            fail("Der skal være medarbejdere på en lokation");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Der skal være medarbejdere på en lokation", e.getMessage());
+        }
     }
 }

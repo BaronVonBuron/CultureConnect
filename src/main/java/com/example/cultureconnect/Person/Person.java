@@ -17,6 +17,7 @@ public class Person {
     private Image picture;
 
     //måske booleans for creator / co-creator
+    //cpr-nummer
 
 
     public Person(String name, List<Projekt> myProjects, String position, Lokation lokation,
@@ -36,6 +37,9 @@ public class Person {
     }
 
     public void setName(String name) {
+        if(name == null){
+            throw new IllegalArgumentException("Personer skal have et navn");
+        }
         this.name = name;
     }
 

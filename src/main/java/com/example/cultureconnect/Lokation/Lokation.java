@@ -24,6 +24,9 @@ public class Lokation {
     }
 
     public void setName(String name) {
+        if(name == null){
+            throw new IllegalArgumentException("Lokationer skal have navn");
+        }
         this.name = name;
     }
 
@@ -40,6 +43,9 @@ public class Lokation {
     }
 
     public void setFarveKode(Color farveKode) {
+        if (farveKode == null){
+            throw new IllegalArgumentException("Lokationer skal have en farve");
+        }
         this.farveKode = farveKode;
     }
 
@@ -48,6 +54,9 @@ public class Lokation {
     }
 
     public void setEmployees(List<Person> employees) {
+        if (employees.isEmpty()){
+            throw new IllegalArgumentException("Der skal være medarbejdere på en lokation");
+        }
         this.employees = employees;
     } //getters og setters
 }

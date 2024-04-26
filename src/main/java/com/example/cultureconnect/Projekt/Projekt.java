@@ -35,6 +35,9 @@ public class Projekt {
     }
 
     public void setTitel(String titel) {
+        if(titel == null){
+            throw new IllegalArgumentException("Projekter skal have en titel");
+        }
         this.titel = titel;
     }
 
@@ -43,6 +46,9 @@ public class Projekt {
     }
 
     public void setParticipants(List<Person> participants) {
+        if (participants.isEmpty()){
+            throw new IllegalArgumentException("Der skal være deltagere i et projekt");
+        }
         this.participants = participants;
     }
 
@@ -83,6 +89,9 @@ public class Projekt {
     }
 
     public void setEndDate(Date endDate) {
+        if (startDate != null && endDate.before(startDate)){
+            throw new IllegalArgumentException("Slut dato for et projekt kan ikke være før start datoen");
+        }
         this.endDate = endDate;
     }
     //getters og setters

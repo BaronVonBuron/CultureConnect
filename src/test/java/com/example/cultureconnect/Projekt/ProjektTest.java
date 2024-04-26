@@ -33,6 +33,17 @@ class ProjektTest {
     }
 
     @Test
+    @DisplayName("Invalid input til titel")
+    void invalidTitle(){
+        try {
+            p.setTitel(null);
+            fail("Projekter skal have en titel");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Projekter skal have en titel", e.getMessage());
+        }
+    }
+
+    @Test
     @DisplayName("Alm. input, participantsList get/set")
     void getSetParticipants() {
         List<Person> lp = new ArrayList<>();
@@ -43,6 +54,19 @@ class ProjektTest {
 
         p.setParticipants(lp);
         assertEquals(lp,p.getParticipants());
+    }
+
+    @Test
+    @DisplayName("Tom liste")
+    void invalidParticipants(){
+        List<Person> noParticipants = new ArrayList<>();
+
+        try {
+            p.setParticipants(noParticipants);
+            fail("Der skal være deltagere i et projekt");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Der skal være deltagere i et projekt", e.getMessage());
+        }
     }
 
     @Test
@@ -87,5 +111,20 @@ class ProjektTest {
 
         p.setEndDate(weFinished);
         assertEquals(weFinished,p.getEndDate());
+    }
+
+    @Test
+    @DisplayName("Forkert start dato")
+    void lateStartDate(){
+        Date startDate = new Date();
+        Date endDate = new Date(startDate.getTime() - 10);
+
+        try {
+            p.setStartDate(startDate);
+            p.setEndDate(endDate);
+            fail("Slut dato for et projekt kan ikke være før start datoen");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Slut dato for et projekt kan ikke være før start datoen", e.getMessage());
+        }
     }
 }
