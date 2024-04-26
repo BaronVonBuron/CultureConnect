@@ -36,6 +36,9 @@ public class Person {
     }
 
     public void setName(String name) {
+        if(name == null){
+            throw new IllegalArgumentException("Personer skal have et navn");
+        }
         this.name = name;
     }
 
