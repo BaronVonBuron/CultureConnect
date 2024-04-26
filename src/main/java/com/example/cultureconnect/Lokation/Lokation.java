@@ -11,6 +11,7 @@ public class Lokation {
     private Color farveKode;
     private List<Person> employees;
 
+    //kontakt oplysninger som email og tlfnr skal muligvis tilføjes
     public Lokation(String name, String description, Color farveKode, List<Person> employees) {
         this.name = name;
         this.description = description;

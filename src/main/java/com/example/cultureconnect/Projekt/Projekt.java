@@ -16,8 +16,7 @@ public class Projekt {
     private Date endDate;
 
     //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
-    //mile dates og event dates
-
+    //mile dates og event dates - lister til dem
 
     public Projekt(String titel, List<Person> participants, String description,
                    Person projectCreator, Lokation lokation,

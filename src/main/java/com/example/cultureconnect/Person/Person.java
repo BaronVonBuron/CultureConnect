@@ -11,7 +11,7 @@ public class Person {
     private List<Projekt> myProjects;
     private String position;
     private Lokation lokation;
-    private String arbejdsområde; //måske ikke nødvendig
+    private String arbejdsområde; //måske ikke nødvendig?
     private String email;
     private int tlfNr;
     private Image picture;
