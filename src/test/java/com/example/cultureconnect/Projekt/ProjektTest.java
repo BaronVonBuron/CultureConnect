@@ -34,7 +34,7 @@ class ProjektTest {
 
     @Test
     @DisplayName("Invalid input til titel")
-    void invalidName(){
+    void invalidTitle(){
         try {
             p.setTitel(null);
             fail("Projekter skal have en titel");
