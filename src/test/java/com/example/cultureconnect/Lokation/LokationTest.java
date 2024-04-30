@@ -19,7 +19,7 @@ class LokationTest {
     private List<Person> medArb = null;
     private List<Projekt> stuff = null;
     private Person per = null;
-    private Lokation bib = new Lokation(name,description,blue,medArb);
+    private Lokation bib = new Lokation(name,description,blue);
 
     @Test
     @DisplayName("Alm.input, name get/set")

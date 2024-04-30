@@ -67,7 +67,7 @@ class PersonTest {
     @DisplayName("Alm. input, lokation get/set")
     void getSetLokation() {
         Lokation arbejdsplads = new Lokation("Kulturskolen","et sted for alle",
-                Color.ALICEBLUE,persList);
+                Color.ALICEBLUE);
 
         gitte.setLokation(arbejdsplads);
         assertEquals(arbejdsplads,gitte.getLokation());
