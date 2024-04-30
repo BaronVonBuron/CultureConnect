@@ -17,7 +17,6 @@ class ProjektTest {
     private String title = "Project1";
     private List<Person> parList = null;
     private String description = "This is a project";
-    private List<Projekt > projecList = null;
     private Person person = null;
     private Lokation lokation = null;
     private Image image = null;
@@ -47,9 +46,9 @@ class ProjektTest {
     @DisplayName("Alm. input, participantsList get/set")
     void getSetParticipants() {
         List<Person> lp = new ArrayList<>();
-        lp.add(new Person("Lena",projecList,"Bibliotekar",lokation,"bøger",
+        lp.add(new Person("Lena","Bibliotekar",lokation,"bøger",
                 "lenamail@gmail.dk",1111111,image));
-        lp.add(new Person("Hans", projecList, "Musiklæerer",lokation,"klaver",
+        lp.add(new Person("Hans", "Musiklæerer",lokation,"klaver",
                 "hansmail@gmail.dk",22222222,image));
 
         p.setParticipants(lp);
@@ -79,7 +78,7 @@ class ProjektTest {
     @Test
     @DisplayName("Alm. input, projectCreator get/set")
     void getSetProjectCreator() {
-        Person gert = new Person("Gert",projecList,"maler",lokation,"rennovation",
+        Person gert = new Person("Gert","maler",lokation,"rennovation",
                 "gertyberty@gamil.com", 33333333, image);
 
         p.setProjectCreator(gert);
@@ -89,7 +88,7 @@ class ProjektTest {
     @Test
     @DisplayName("Alm. input, lokation get/set")
     void getSetLokation(){
-        Lokation nyFirma = new Lokation("Kultur",description, Color.BEIGE,parList);
+        Lokation nyFirma = new Lokation("Kultur",description, Color.BEIGE);
 
         p.setLokation(nyFirma);
         assertEquals(nyFirma,p.getLokation());

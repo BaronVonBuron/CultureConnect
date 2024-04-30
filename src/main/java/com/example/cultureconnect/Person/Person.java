@@ -20,10 +20,9 @@ public class Person {
     //cpr-nummer
 
 
-    public Person(String name, List<Projekt> myProjects, String position, Lokation lokation,
+    public Person(String name, String position, Lokation lokation,
                   String arbejdsområde, String email, int tlfNr, Image picture) {
         this.name = name;
-        this.myProjects = myProjects;
         this.position = position;
         this.lokation = lokation;
         this.arbejdsområde = arbejdsområde;

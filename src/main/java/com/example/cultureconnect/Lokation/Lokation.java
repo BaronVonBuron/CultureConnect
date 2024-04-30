@@ -12,11 +12,10 @@ public class Lokation {
     private List<Person> employees;
 
     //kontakt oplysninger som email og tlfnr skal muligvis tilføjes
-    public Lokation(String name, String description, Color farveKode, List<Person> employees) {
+    public Lokation(String name, String description, Color farveKode) {
         this.name = name;
         this.description = description;
         this.farveKode = farveKode;
-        this.employees = employees;
     }//konstruktør for lokation
 
     public String getName() {
