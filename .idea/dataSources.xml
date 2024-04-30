@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="CultureConnectDB@10.176.111.34" uuid="40f96eff-7865-4105-beaa-c1f91ad3b612">
+    <data-source source="LOCAL" name="CultureConnectDB@10.176.111.34 [2]" uuid="5820c455-f4f8-48ce-96b0-8850c484114d">
       <driver-ref>sqlserver.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>

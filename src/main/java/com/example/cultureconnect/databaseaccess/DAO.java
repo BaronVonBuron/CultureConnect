@@ -11,4 +11,14 @@ public class DAO {
         }
         System.out.println("Forbundet til databasen... ");
     }
+
+
+    //TODO CRUD for Person
+
+
+    //TODO CRUD for Lokation
+
+
+
+    //TODO CRUD for Projekt
 }
