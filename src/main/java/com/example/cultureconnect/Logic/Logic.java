@@ -7,6 +7,7 @@ import com.example.cultureconnect.databaseaccess.DAO;
 import javafx.scene.image.Image;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class Logic {
@@ -34,4 +35,9 @@ public class Logic {
         dao.createProjekt(projekt);
     }
 
+    public List<Projekt> getProjects() {
+        List<Projekt> projects = dao.readAllProjects();
+
+        return projects;
+    }
 }

@@ -1,42 +1,25 @@
 package com.example.cultureconnect.calendar;
 
-import com.example.cultureconnect.Projekt.Projekt;
 import javafx.scene.control.TableCell;
 
-import java.util.Calendar;
-import java.util.Locale;
+public class CalendarCell extends TableCell<ProjectRow, String> {
 
-public class CalendarCell {
+    @Override
+    protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
 
-/*
-skal modtage et projekt
-skal kunne vise projektets titel
-skal sættes i tableview på baggrund af projektets start og slutdato
-skal vise cellen som en farvet blok
-skal kunne klikkes på, for at kunne vise projektets indhold
-skal kunne splittes op til flere celler, hvis projektet har en pause imellem start og slut
-skal kunne være tom hvis der ikke er et projekt
-start/slutdato bestemmer hvilken uge/kolonne cellen skal starte i.
-fylder projektet mere end 1 uge, skal den kunne optage flere celler i en række.
- */
-
-    private Projekt projekt;
-    public CalendarCell(Projekt p){
-        this.projekt = p;
-    }
-    //TODO setup cell factory
-
-
-    public void handleProjektInfo(){
-        TableCell tc = new TableCell<>();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(projekt.getStartDate());
-    }
-    public TableCell getCell(){
-
-        return null;
+        if (empty || item == null) {
+            setText(null);
+            setStyle("");
+        } else {
+            setText(item); // Set the text to the project's title
+            setStyle("-fx-background-color: " + getColorForProject(item)); // Set the background color based on the project
+        }
     }
 
-
+    private String getColorForProject(String item) {
+        // Return a color based on the project. This is just an example, you can return any color you want.
+        // You might need to adjust this method to fit your actual data structure and requirements.
+        return item.isEmpty() ? "#FFFFFF" : "#0000FF";
+    }
 }

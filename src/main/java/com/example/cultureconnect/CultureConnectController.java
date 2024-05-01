@@ -1,15 +1,21 @@
 package com.example.cultureconnect;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.calendar.CCCalendar;
+import com.example.cultureconnect.calendar.CalendarCell;
+import com.example.cultureconnect.calendar.ProjectRow;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
@@ -37,17 +43,6 @@ public class CultureConnectController {
     public void initialize() {
         populateTableView();
 
-        //add 100 rows as a test
-        ObservableList<ObservableList> data = FXCollections.observableArrayList();
-        for (int i = 0; i < 100; i++) {
-            ObservableList<String> row = FXCollections.observableArrayList();
-            for (int j = 0; j < timeFrame; j++) {
-                row.add("test");
-            }
-            data.add(row);
-        }
-        CalendarTableView.setItems(data);
-
 
         //TODO scroll til denne uge.
         CalendarTableView.scrollToColumnIndex(getCurrentWeekNumber());
@@ -65,12 +60,40 @@ public class CultureConnectController {
 
 
 
+
     public void populateTableView() {
+        List<ProjectRow> rows = generateRows();
         CCCalendar cccalendar = new CCCalendar(timeFrame);
-        CalendarTableView.getColumns().addAll(cccalendar.populateTableView());
+        List<TableColumn> columns = cccalendar.populateTableView();
+        for (int i = 0; i < columns.size(); i++) {
+            TableColumn<ProjectRow, String> column = columns.get(i);
+            final int weekIndex = i;
+            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCells().get(weekIndex)));
+            column.setCellFactory(param -> new CalendarCell());
+        }
+        CalendarTableView.getColumns().addAll(columns);
+        CalendarTableView.setItems(FXCollections.observableArrayList(rows));
+    }
 
-        //TODO populate the tableview with the data from the database
+    private List<ProjectRow> generateRows() {
+        List<ProjectRow> rows = new ArrayList<>();
+        List<Projekt> projects = logic.getProjects();
+        for (Projekt project : projects) {
+            ProjectRow row = new ProjectRow(project, timeFrame);
+            int startWeek = getWeekNumber(project.getStartDate());
+            int endWeek = getWeekNumber(project.getEndDate());
+            for (int i = startWeek; i <= endWeek; i++) {
+                row.setCell(i, project.getTitel());
+            }
+            rows.add(row);
+        }
+        return rows;
+    }
 
+    private int getWeekNumber(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.WEEK_OF_YEAR) - 1;
     }
 
     public void zoomInCalendarButtonPressed(ActionEvent event) {
