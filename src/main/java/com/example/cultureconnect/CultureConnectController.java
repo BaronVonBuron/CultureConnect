@@ -1,23 +1,15 @@
 package com.example.cultureconnect;
 
-import com.example.cultureconnect.Lokation.Lokation;
-import com.example.cultureconnect.Person.Person;
-import com.example.cultureconnect.Projekt.Projekt;
+import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.calendar.CCCalendar;
-import com.example.cultureconnect.calendar.CalendarCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
@@ -39,18 +31,7 @@ public class CultureConnectController {
     public SplitPane MainSplitPane;
 
     private int timeFrame = 52;
-
-    //testprojekt
-
-    Lokation lokation = new Lokation("Tønder Bibliotek", "Tønder Bibliotek", Color.RED);
-    Person person = new Person("Marianne", "Hansen", lokation, "Udlånsafdelingen", "tilfældig@email.dk", 12345678, null);
-    List<Person> personList = new ArrayList<>();
-
-
-    /*
-    Gør så der ikke kommer en grim dobbeltpil over divideren i splitpane
-
-     */
+    private Logic logic = new Logic();
 
 
     public void initialize() {
@@ -75,22 +56,6 @@ public class CultureConnectController {
         //TODO highlight the current week
         TableColumn column = (TableColumn) CalendarTableView.getColumns().get(getCurrentWeekNumber());
 
-
-
-        //testing
-        Date start = new Date();
-        Date slut = new Date();
-        personList.add(person);
-        Projekt projekt = new Projekt("test", personList, "test", person, lokation, start, new Date(start.getTime() + 10000000));
-
-        List<Projekt> projekter = new ArrayList<>();
-        projekter.add(projekt);
-
-        for (Projekt projekt1 : projekter) {
-            CalendarCell cc = new CalendarCell(projekt1);
-
-            CalendarTableView.getItems().add(cc.getCell());
-        }
     }
 
     public int getCurrentWeekNumber() {
