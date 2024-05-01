@@ -2,6 +2,8 @@ module com.example.cultureconnect {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires java.desktop;
+    requires javafx.swing;
 
 
     opens com.example.cultureconnect to javafx.fxml;

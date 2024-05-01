@@ -2,30 +2,33 @@ package com.example.cultureconnect.Person;
 
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Projekt.Projekt;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class Person {
     private String name;
     private List<Projekt> myProjects;
     private String position;
-    private Lokation lokation;
-    private String arbejdsområde; //måske ikke nødvendig?
+    private Lokation lokation;//måske liste
+    private String arbejdsområde;
     private String email;
     private int tlfNr;
     private Image picture;
+    private String CPR;
 
     //måske booleans for creator / co-creator
     //cpr-nummer
 
 
-    public Person(String name, String position, Lokation lokation,
-                  String arbejdsområde, String email, int tlfNr, Image picture) {
+    public Person(String name, String email, int tlfNr, Image picture, String CPR) {
         this.name = name;
-        this.position = position;
-        this.lokation = lokation;
-        this.arbejdsområde = arbejdsområde;
+        this.CPR = CPR;
         this.email = email;
         this.tlfNr = tlfNr;
         this.picture = picture;
@@ -33,6 +36,14 @@ public class Person {
 
     public String getName() {
         return name;
+    }
+
+    public String getCPR() {
+        return CPR;
+    }
+
+    public void setCPR(String CPR) {
+        this.CPR = CPR;
     }
 
     public void setName(String name) {
@@ -97,5 +108,16 @@ public class Person {
     public void setPicture(Image picture) {
         this.picture = picture;
     }
-    //getters og setters
+
+    public byte[] getPictureAsByteArray() {
+        try {
+            BufferedImage bImage = SwingFXUtils.fromFXImage(picture, null);
+            ByteArrayOutputStream s = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "png", s);
+            return s.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException("Can't convert image to byte array");
+        }
+    }
+
 }

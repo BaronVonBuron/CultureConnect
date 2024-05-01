@@ -1,18 +1,17 @@
 package com.example.cultureconnect.Lokation;
 
 import com.example.cultureconnect.Person.Person;
-import javafx.scene.paint.Color;
 
 import java.util.List;
 
 public class Lokation {
     private String name;
     private String description;
-    private Color farveKode;
+    private String farveKode;
     private List<Person> employees;
 
     //kontakt oplysninger som email og tlfnr skal muligvis tilføjes
-    public Lokation(String name, String description, Color farveKode) {
+    public Lokation(String name, String description, String farveKode) {
         this.name = name;
         this.description = description;
         this.farveKode = farveKode;
@@ -37,11 +36,11 @@ public class Lokation {
         this.description = description;
     }
 
-    public Color getFarveKode() {
+    public String getFarveKode() {
         return farveKode;
     }
 
-    public void setFarveKode(Color farveKode) {
+    public void setFarveKode(String farveKode) {
         if (farveKode == null){
             throw new IllegalArgumentException("Lokationer skal have en farve");
         }

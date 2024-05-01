@@ -5,8 +5,11 @@ import com.example.cultureconnect.Person.Person;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class Projekt {
+
+    private UUID id;
     private String titel;
     private List<Person> participants;
     private String description;
@@ -18,17 +21,16 @@ public class Projekt {
     //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
     //mile dates og event dates - lister til dem
 
-    public Projekt(String titel, List<Person> participants, String description,
-                   Person projectCreator, Lokation lokation,
-                   Date startDate, Date endDate) {
+    public Projekt(String titel, Date startDate, Date endDate, UUID id) {
+        this.id = id;
         this.titel = titel;
-        this.participants = participants;
-        this.description = description;
-        this.projectCreator = projectCreator;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.lokation = lokation;
     }//konstruktør for projekt
+
+    public String getId() {
+        return id.toString();
+    }
 
     public String getTitel() {
         return titel;
