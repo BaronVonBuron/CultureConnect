@@ -28,8 +28,6 @@
 
 }
 
-
-
 .split-pane-divider{
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -63,6 +61,7 @@
     -fx-background-color: #A7A1A1;
     -fx-text-fill: black;
     -fx-background-radius: 10 0 0 10 ;
+    -fx-cursor: hand;
 }
 
 .MedarbejderTogle:selected{
@@ -70,12 +69,14 @@
     -fx-text-fill: white;
     -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 10, 0, 5, 5 );
     -fx-background-radius: 10 0 0 10;
+    -fx-cursor: mouse;
 }
 
 .LocationTogle{
     -fx-background-color: #A7A1A1;
     -fx-text-fill: black;
     -fx-background-radius: 0 10 10 0 ;
+    -fx-cursor: hand;
 }
 
 .LocationTogle:selected{
@@ -83,16 +84,19 @@
     -fx-text-fill: white;
     -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 10, 0, 5, 5 );
     -fx-background-radius: 0 10 10 0;
+    -fx-cursor: mouse;
 }
 
 .tab-pane .tab:selected{
     -fx-background-color: #A7A1A1;
     -fx-background-radius: 20 20 0 0;
+    -fx-cursor: mouse;
 }
 
 .tab-pane .tab{
     -fx-background-color: #726F6F;
     -fx-background-radius: 20 20 0 0;
+    -fx-cursor: hand;
 }
 
 .tab-header-area .tab-header-background {
@@ -131,12 +135,12 @@
     -fx-border-color: transparent transparent transparent #E8E2E2;
 }
 
-.table-view .scroll-bar, .list-view .scroll-bar:horizontal, .list-view .scroll-bar:vertical{
+.table-view .scroll-bar, .list-view .scroll-bar{
     -fx-background-color:#E8E2E2;
     -fx-background-radius: 10;
 }
 
-.table-view .virtual-flow .scroll-bar .thumb, .list-view .virtual-flow .scroll-bar:horizontal .thumb, list-view .virtual-flow .scroll-bar:vertical .thumb{
+.table-view .virtual-flow .scroll-bar .thumb, .list-view .virtual-flow .scroll-bar .thumb{
     -fx-background-color:  #4E4A4A;
     -fx-cursor: hand;
     -fx-background-radius: 10;
