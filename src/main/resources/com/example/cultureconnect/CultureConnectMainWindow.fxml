@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -29,8 +30,11 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </VBox.margin>
                            <children>
-                              <ToggleButton fx:id="UserToggleButton" maxWidth="100.0" minWidth="105.0" mnemonicParsing="false" onAction="#userToggleButtonPressed" prefWidth="100.0" selected="true" text="Medarbejder" />
-                              <ToggleButton fx:id="LocationToggleButton" maxWidth="100.0" minWidth="105.0" mnemonicParsing="false" onAction="#locationToggleButtonPressed" prefWidth="100.0" text="Lokation" />
+                              <ToggleButton fx:id="UserToggleButton" maxWidth="100.0" minHeight="35.0" minWidth="105.0" mnemonicParsing="false" onAction="#userToggleButtonPressed" prefWidth="100.0" selected="true" styleClass="MedarbejderTogle" text="Medarbejder">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="group" />
+                                 </toggleGroup></ToggleButton>
+                              <ToggleButton fx:id="LocationToggleButton" maxWidth="100.0" minHeight="35.0" minWidth="105.0" mnemonicParsing="false" onAction="#locationToggleButtonPressed" prefWidth="100.0" styleClass="LocationTogle" text="Lokation" toggleGroup="$group" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -38,7 +42,7 @@
                         </HBox>
                         <HBox fx:id="ListviewSearchHBox" alignment="CENTER" spacing="5.0">
                            <VBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              <Insets bottom="30.0" left="5.0" right="5.0" top="5.0" />
                            </VBox.margin>
                            <children>
                               <TextField fx:id="ListviewSearchTextField" alignment="CENTER" minWidth="100.0" prefHeight="35.0" prefWidth="200.0" promptText="Søg..." styleClass="Searchbar" stylesheets="@../../../CultureConnectCSS.css" />
@@ -55,7 +59,10 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </HBox>
-                        <ListView fx:id="UserOrLocationListview" />
+                        <ListView fx:id="UserOrLocationListview">
+                           <VBox.margin>
+                              <Insets bottom="30.0" />
+                           </VBox.margin></ListView>
                         <HBox fx:id="AdminMenuHBox" alignment="CENTER">
                            <VBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -82,7 +89,7 @@
          <children>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                      <TabPane fx:id="CalendarTabPane" layoutX="213.0" layoutY="223.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                      <TabPane fx:id="CalendarTabPane" layoutX="213.0" layoutY="223.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" tabMinHeight="35.0" tabMinWidth="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <tabs>
                       <Tab fx:id="CalendarTab" text="Kalender">
                         <content>
@@ -92,20 +99,23 @@
                                        <children>
                                           <ButtonBar fx:id="ButtonBarForZoomAndNewProject" buttonOrder="" prefHeight="40.0" prefWidth="200.0">
                                             <buttons>
-                                                <Button fx:id="ZoomInCalendarButton" mnemonicParsing="false" onAction="#zoomInCalendarButtonPressed" text="Zoom Ind" />
-                                                <Button fx:id="ZoomOutCalendarButton" mnemonicParsing="false" onAction="#zoomOutCalendarButtonPressed" text="Zoom Ud" />
-                                              <Button fx:id="NewProjectCalendarButton" mnemonicParsing="false" onAction="#newProjectCalendarButtonPressed" text="Nyt Projekt" />
+                                                <Button fx:id="ZoomInCalendarButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#zoomInCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Zoom Ind" />
+                                                <Button fx:id="ZoomOutCalendarButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#zoomOutCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Zoom Ud" />
+                                              <Button fx:id="NewProjectCalendarButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#newProjectCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Nyt Projekt" />
                                             </buttons>
                                              <VBox.margin>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                <Insets bottom="10.0" left="5.0" right="50.0" top="10.0" />
                                              </VBox.margin>
                                              <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                              </padding>
                                           </ButtonBar>
-                                          <AnchorPane fx:id="AnchorPaneForCalendarTableView" prefHeight="497.0" prefWidth="659.0" VBox.vgrow="ALWAYS">
+                                          <AnchorPane fx:id="AnchorPaneForCalendarTableView" prefHeight="497.0" prefWidth="659.0" styleClass="CalendarPane" stylesheets="@../../../CultureConnectCSS.css" VBox.vgrow="ALWAYS">
                                                <children>
-                                                <TableView fx:id="CalendarTableView" layoutX="197.0" layoutY="156.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                <TableView fx:id="CalendarTableView" layoutX="197.0" layoutY="156.0" prefHeight="200.0" prefWidth="200.0" styleClass="Calendar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="100.0" left="50.0" right="50.0" />
+                                                   </padding></TableView>
                                              </children>
                                           </AnchorPane>
                                        </children>
