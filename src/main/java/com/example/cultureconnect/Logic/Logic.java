@@ -40,4 +40,10 @@ public class Logic {
 
         return projects;
     }
+
+    public List<Person> getPersons() {
+        List<Person> persons = dao.readAllPersons();
+
+        return persons;
+    }
 }

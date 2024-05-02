@@ -1,9 +1,12 @@
 package com.example.cultureconnect;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.calendar.CalendarCell;
 import com.example.cultureconnect.calendar.ProjektCell;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -47,6 +50,7 @@ public class CultureConnectController {
     public void initialize() {
         populateGridPane();
         fillCalendarWithProjects();
+        loadUsers();
 
         //TODO scroll til denne uge.
 
@@ -136,5 +140,15 @@ public class CultureConnectController {
 
     public void locationToggleButtonPressed(ActionEvent event) {
         //TODO when the location togglebutton is pressed, the listview should be filtered to only show locations.
+    }
+
+    public void loadUsers(){
+        ObservableList users = FXCollections.observableArrayList();
+        List<Person> persons = logic.getPersons();
+        for (Person person : persons) {
+            users.add(person);
+        }
+
+        UserOrLocationListview.setItems(users);
     }
 }
