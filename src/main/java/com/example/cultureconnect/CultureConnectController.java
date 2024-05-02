@@ -1,7 +1,9 @@
 package com.example.cultureconnect;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.calendar.CalendarCell;
+import com.example.cultureconnect.calendar.ProjektCell;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -10,6 +12,7 @@ import javafx.scene.layout.HBox;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
@@ -34,7 +37,7 @@ public class CultureConnectController {
     public ScrollPane CalendarScrollPane;
 
     private int calendarColumns = 52;
-    private int calendarRows = 10;//skal sættes af antallet af projekter.
+    private int calendarRows = 35;//skal sættes af antallet af projekter.
     private int columnWidth = 35;
     private int rowHeight = 35;
     private Logic logic = new Logic();
@@ -43,12 +46,32 @@ public class CultureConnectController {
 
     public void initialize() {
         populateGridPane();
-        CalendarGridPane.setGridLinesVisible(true);
+        fillCalendarWithProjects();
 
         //TODO scroll til denne uge.
 
 
         //TODO highlight the current week
+    }
+
+    public void fillCalendarWithProjects(){
+        List<Projekt> projects = logic.getProjects();
+        if (projects.isEmpty()){
+            //TODO make a label that says "No projects found" and show it in the middle of the gridpane, at the current week.
+        } else {
+            for (Projekt projekt : projects) {
+                int startWeek = getWeekNumber(projekt.getStartDate());
+                int endWeek = getWeekNumber(projekt.getEndDate());
+                int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
+                ProjektCell pcell = new ProjektCell(length, projekt.getColor());
+                pcell.setHeight(rowHeight);
+                pcell.setWidth(columnWidth * length); // Adjust the width of the cell
+                //make the cell red
+                pcell.setFill(javafx.scene.paint.Color.RED);
+                CalendarGridPane.add(pcell, startWeek, 1);
+                GridPane.setColumnSpan(pcell, length); // Make the cell span multiple weeks
+            }
+        }
     }
 
     public int getCurrentWeekNumber() {
@@ -60,16 +83,24 @@ public class CultureConnectController {
 
 
     public void populateGridPane() {
+        //fills the gridpane with empty cells and weeknumbers.
         for (int row = 0; row < calendarRows; row++) {
             for (int col = 0; col < calendarColumns; col++) {
+                if(row == 0){
+                    Label label = new Label(String.valueOf(col));
+                    label.setAlignment(javafx.geometry.Pos.CENTER);
+                    CalendarGridPane.setAlignment(javafx.geometry.Pos.CENTER);
+                    CalendarGridPane.add(label, col, row);
+                }
                 CalendarCell cell = new CalendarCell(); // Create a new Cell instance
                 cell.setWidth(columnWidth); // Set the width of the cell
                 cell.setHeight(rowHeight); // Set the height of the cell
-                // Set the fill of the cell to a random color
-                cell.setFill(javafx.scene.paint.Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)));
                 CalendarGridPane.add(cell, col, row); // Add the cell to the GridPane at the specified column and row
             }
         }
+        CalendarGridPane.setGridLinesVisible(true);
+        CalendarGridPane.setHgap(1);
+        CalendarGridPane.setVgap(1);
     }
 
 
