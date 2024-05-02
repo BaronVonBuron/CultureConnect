@@ -1,18 +1,4 @@
-.Buttons{
-    -fx-background-color: #5A5656;
-    -fx-text-fill: white;
-    -fx-border-radius: 10 10 10 10;
-    -fx-background-radius: 10 10 10 10;
-}
-
-.Buttons:hover{
-    -fx-scale-z: 0.9;
-    -fx-scale-y: 0.9;
-    -fx-scale-x: 0.9;
-    -fx-cursor: hand;
-    -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
-}
-
+/* Styling af menuen til venstre */
 .LeftMenu{
     -fx-background-color: white;
     -fx-border-radius: 0 30 30 0;
@@ -37,6 +23,21 @@
 
 .hbox{
     -fx-background-color: transparent;
+}
+
+.Buttons{
+    -fx-background-color: #5A5656;
+    -fx-text-fill: white;
+    -fx-border-radius: 10 10 10 10;
+    -fx-background-radius: 10 10 10 10;
+}
+
+.Buttons:hover{
+    -fx-scale-z: 0.9;
+    -fx-scale-y: 0.9;
+    -fx-scale-x: 0.9;
+    -fx-cursor: hand;
+    -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
 }
 
 .Searchbar{
@@ -87,6 +88,9 @@
     -fx-cursor: mouse;
 }
 
+
+/* Styling af tab-pane */
+
 .tab-pane .tab:selected{
     -fx-background-color: #A7A1A1;
     -fx-background-radius: 20 20 0 0;
@@ -103,10 +107,14 @@
     -fx-background-color: #4D4949;
 }
 
+
+/* Styling af main-pane */
 .MainPane{
     -fx-background-image: url('images/4873411.jpg');
 }
 
+
+/* Styling af kalenderen */
 .Calendar{
     -fx-background-color: transparent;
 }
@@ -159,5 +167,4 @@
 
 .table-view .scroll-bar .increment-arrow, .table-view .scroll-bar .decrement-arrow{
     -fx-shape : " ";
-
 }
