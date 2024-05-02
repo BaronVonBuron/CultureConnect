@@ -17,6 +17,7 @@ public class Projekt {
     private Lokation lokation;
     private Date startDate;
     private Date endDate;
+    private String color;
 
     //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
     //mile dates og event dates - lister til dem
@@ -27,6 +28,19 @@ public class Projekt {
         this.startDate = startDate;
         this.endDate = endDate;
     }//konstruktør for projekt
+
+    public String getColor() {
+        if (color == null || color.isEmpty()){
+            color = "ffffff";
+            return color;
+        } else {
+            return color;
+        }
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 
     public String getId() {
         return id.toString();
