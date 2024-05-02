@@ -1,26 +1,21 @@
 package com.example.cultureconnect;
 
 import com.example.cultureconnect.Logic.Logic;
-import com.example.cultureconnect.Projekt.Projekt;
-import com.example.cultureconnect.calendar.CCCalendar;
 import com.example.cultureconnect.calendar.CalendarCell;
-import com.example.cultureconnect.calendar.ProjectRow;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
+    public ToggleGroup group; //TODO make one button selected from the start, and make sure allways one button is selected.
     public HBox ListviewSearchHBox;
     public TextField ListviewSearchTextField;
     public Button ListviewSearchButton;
@@ -33,24 +28,27 @@ public class CultureConnectController {
     public Button ZoomInCalendarButton, ZoomOutCalendarButton;
     public Button NewProjectCalendarButton;
     public AnchorPane AnchorPaneForCalendarTableView;
-    public TableView CalendarTableView;//TODO make scrollable
     public SplitPane MainSplitPane;
+    public AnchorPane LeftsideAnchorPane;
+    public GridPane CalendarGridPane;
+    public ScrollPane CalendarScrollPane;
 
-    private int timeFrame = 52;
+    private int calendarColumns = 52;
+    private int calendarRows = 10;//skal sættes af antallet af projekter.
+    private int columnWidth = 35;
+    private int rowHeight = 35;
     private Logic logic = new Logic();
 
 
-    public void initialize() {
-        populateTableView();
 
+    public void initialize() {
+        populateGridPane();
+        CalendarGridPane.setGridLinesVisible(true);
 
         //TODO scroll til denne uge.
-        CalendarTableView.scrollToColumnIndex(getCurrentWeekNumber());
 
 
         //TODO highlight the current week
-        TableColumn column = (TableColumn) CalendarTableView.getColumns().get(getCurrentWeekNumber());
-
     }
 
     public int getCurrentWeekNumber() {
@@ -61,39 +59,24 @@ public class CultureConnectController {
 
 
 
-    public void populateTableView() {
-        List<ProjectRow> rows = generateRows();
-        CCCalendar cccalendar = new CCCalendar(timeFrame);
-        List<TableColumn> columns = cccalendar.populateTableView();
-        for (int i = 0; i < columns.size(); i++) {
-            TableColumn<ProjectRow, String> column = columns.get(i);
-            final int weekIndex = i;
-            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCells().get(weekIndex)));
-            column.setCellFactory(param -> new CalendarCell());
+    public void populateGridPane() {
+        for (int row = 0; row < calendarRows; row++) {
+            for (int col = 0; col < calendarColumns; col++) {
+                CalendarCell cell = new CalendarCell(); // Create a new Cell instance
+                cell.setWidth(columnWidth); // Set the width of the cell
+                cell.setHeight(rowHeight); // Set the height of the cell
+                // Set the fill of the cell to a random color
+                cell.setFill(javafx.scene.paint.Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)));
+                CalendarGridPane.add(cell, col, row); // Add the cell to the GridPane at the specified column and row
+            }
         }
-        CalendarTableView.getColumns().addAll(columns);
-        CalendarTableView.setItems(FXCollections.observableArrayList(rows));
     }
 
-    private List<ProjectRow> generateRows() {
-        List<ProjectRow> rows = new ArrayList<>();
-        List<Projekt> projects = logic.getProjects();
-        for (Projekt project : projects) {
-            ProjectRow row = new ProjectRow(project, timeFrame);
-            int startWeek = getWeekNumber(project.getStartDate());
-            int endWeek = getWeekNumber(project.getEndDate());
-            for (int i = startWeek; i <= endWeek; i++) {
-                row.setCell(i, project.getTitel());
-            }
-            rows.add(row);
-        }
-        return rows;
-    }
 
     private int getWeekNumber(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        return calendar.get(Calendar.WEEK_OF_YEAR) - 1;
+        return calendar.get(Calendar.WEEK_OF_YEAR) - 1; //Returnerer ugenummeret, ud fra den givne dato
     }
 
     public void zoomInCalendarButtonPressed(ActionEvent event) {
