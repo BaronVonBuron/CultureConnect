@@ -16,11 +16,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
 <SplitPane fx:id="MainSplitPane" dividerPositions="0.22429078014184398" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1130.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cultureconnect.CultureConnectController">
   <items>
     <AnchorPane fx:id="LeftsideAnchorPane" maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="160.0" prefWidth="250.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css">
          <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#4d4949" height="43.0" layoutX="-4.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="270.0" />
             <HBox alignment="CENTER" styleClass="LeftBackground" stylesheets="@../../../CultureConnectCSS.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <VBox alignment="CENTER" prefHeight="455.0" prefWidth="230.0" styleClass="LeftMenu">
@@ -99,9 +102,33 @@
                                        <children>
                                           <ButtonBar fx:id="ButtonBarForZoomAndNewProject" buttonOrder="" prefHeight="40.0" prefWidth="200.0">
                                             <buttons>
-                                                <Button fx:id="ZoomInCalendarButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#zoomInCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Zoom Ind" />
-                                                <Button fx:id="ZoomOutCalendarButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#zoomOutCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Zoom Ud" />
-                                              <Button fx:id="NewProjectCalendarButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#newProjectCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Nyt Projekt" />
+                                                <Button fx:id="ZoomInCalendarButton" contentDisplay="GRAPHIC_ONLY" maxHeight="35.0" maxWidth="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#zoomInCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Zoom Ind">
+                                                   <graphic>
+                                                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../../images/zoom-in.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic></Button>
+                                                <Button fx:id="ZoomOutCalendarButton" contentDisplay="GRAPHIC_ONLY" maxHeight="35.0" maxWidth="54.0" minHeight="35.0" minWidth="33.0" mnemonicParsing="false" onAction="#zoomOutCalendarButtonPressed" prefHeight="35.0" prefWidth="35.0" styleClass="Buttons" text="Zoom Ud">
+                                                   <graphic>
+                                                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../../images/zoom-out.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic></Button>
+                                              <Button fx:id="NewProjectCalendarButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#newProjectCalendarButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Nyt Projekt">
+                                                   <graphic>
+                                                      <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../../images/add.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                   <font>
+                                                      <Font name="System Bold" size="13.0" />
+                                                   </font></Button>
                                             </buttons>
                                              <VBox.margin>
                                                 <Insets bottom="10.0" left="5.0" right="50.0" top="10.0" />
