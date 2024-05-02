@@ -1,11 +1,16 @@
 package com.example.cultureconnect;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Lokation.Lokation;
+import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.calendar.CalendarCell;
 import com.example.cultureconnect.calendar.ProjektCell;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -13,6 +18,7 @@ import javafx.scene.layout.HBox;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
@@ -47,6 +53,7 @@ public class CultureConnectController {
     public void initialize() {
         populateGridPane();
         fillCalendarWithProjects();
+        loadUsers();
 
         //TODO scroll til denne uge.
 
@@ -127,14 +134,52 @@ public class CultureConnectController {
     }
 
     public void listviewSearchButtonPressed(ActionEvent event) {
-        //TODO when the button is pressed, the listview should be filtered to only show the search results.
-    }
+        if (ListviewSearchTextField != null && UserToggleButton.isSelected()){
+            String searchText = ListviewSearchTextField.getText().toLowerCase();
+
+            List<Person> searchResults = logic.getPersons().stream()
+                    .filter(person -> person.getName().toLowerCase().contains(searchText)
+                            || person.getEmail().toLowerCase().contains(searchText)
+                            || String.valueOf(person.getTlfNr()).contains(searchText))
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            UserOrLocationListview.setItems(FXCollections.observableList(searchResults));
+        } else if (ListviewSearchTextField != null && !UserToggleButton.isSelected()) {
+            String searchText = ListviewSearchTextField.getText().toLowerCase();
+
+            // Search for locations
+            List<Lokation> locationSearchResults = logic.getLocations().stream()
+                    .filter(location -> location.getName().toLowerCase().contains(searchText)
+                            || location.getDescription().toLowerCase().contains(searchText))
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            UserOrLocationListview.setItems(FXCollections.observableList(locationSearchResults));
+        }
+    } //skal man kunne søge også med at taste enter?
 
     public void userToggleButtonPressed(ActionEvent event) {
-        //TODO when the user togglebutton is pressed, the listview should be filtered to only show users.
+        loadUsers();
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
-        //TODO when the location togglebutton is pressed, the listview should be filtered to only show locations.
+        loadLokations();
+    }
+
+    public void loadUsers(){
+        ObservableList users = FXCollections.observableArrayList();
+        List<Person> persons = logic.getPersons();
+        users.addAll(persons);
+
+        UserOrLocationListview.setItems(users);
+    }
+
+    public void loadLokations(){
+        ObservableList places = FXCollections.observableArrayList();
+        List<Lokation> lokations = logic.getLocations();
+        places.addAll(lokations);
+
+        UserOrLocationListview.setItems(places);
     }
 }

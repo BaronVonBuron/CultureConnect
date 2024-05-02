@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,10 +23,11 @@ class PersonTest {
     private String mail = "gittebib@gamil.dk";
     private int tlf = 44444444;
     private Image image = null;
+    private UUID id;
     private List<Person> persList = null;
     Date start = null;
     Date end = null;
-    private Person gitte = new Person(name,mineProjekt,position,lokation,område,mail,tlf,image);
+    private Person gitte = new Person(name,mail,tlf,image,"cpr");
 
     @Test
     @DisplayName("Alm. input, name get/set")
@@ -49,8 +51,8 @@ class PersonTest {
     @DisplayName("Alm. input, projects get/set")
     void getSetMyProjects() {
         List<Projekt> myProj = new ArrayList<>();
-        myProj.add(new Projekt("Proj",persList,"Des",gitte,lokation,start,end));
-        myProj.add(new Projekt("Proj2",persList,"Des",gitte,lokation,start,end));
+        myProj.add(new Projekt("Proj",start,end,id));
+        myProj.add(new Projekt("Proj2",start,end,id));
 
         gitte.setMyProjects(myProj);
         assertEquals(myProj,gitte.getMyProjects());
@@ -67,7 +69,7 @@ class PersonTest {
     @DisplayName("Alm. input, lokation get/set")
     void getSetLokation() {
         Lokation arbejdsplads = new Lokation("Kulturskolen","et sted for alle",
-                Color.ALICEBLUE);
+                "green");
 
         gitte.setLokation(arbejdsplads);
         assertEquals(arbejdsplads,gitte.getLokation());

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,8 @@ class ProjektTest {
     private Image image = null;
     Date start = null;
     Date end = null;
-    private Projekt p = new Projekt(title,parList,description, person, lokation, start,end);
+    private UUID id;
+    private Projekt p = new Projekt(title,start,end,id);
 
     @Test
     @DisplayName("Alm. input, titel get/set")
@@ -46,10 +48,8 @@ class ProjektTest {
     @DisplayName("Alm. input, participantsList get/set")
     void getSetParticipants() {
         List<Person> lp = new ArrayList<>();
-        lp.add(new Person("Lena","Bibliotekar",lokation,"bøger",
-                "lenamail@gmail.dk",1111111,image));
-        lp.add(new Person("Hans", "Musiklæerer",lokation,"klaver",
-                "hansmail@gmail.dk",22222222,image));
+        lp.add(new Person("Lena","lenamail@gmail.dk",1111111,image,"cpr"));
+        lp.add(new Person("Hans", "hansmail@gmail.dk",11111111,image, "cpr"));
 
         p.setParticipants(lp);
         assertEquals(lp,p.getParticipants());
@@ -78,8 +78,7 @@ class ProjektTest {
     @Test
     @DisplayName("Alm. input, projectCreator get/set")
     void getSetProjectCreator() {
-        Person gert = new Person("Gert","maler",lokation,"rennovation",
-                "gertyberty@gamil.com", 33333333, image);
+        Person gert = new Person("Gert","gertyberty@gamil.com",11111111,image,"cpr");
 
         p.setProjectCreator(gert);
         assertEquals(gert,p.getProjectCreator());
@@ -88,7 +87,7 @@ class ProjektTest {
     @Test
     @DisplayName("Alm. input, lokation get/set")
     void getSetLokation(){
-        Lokation nyFirma = new Lokation("Kultur",description, Color.BEIGE);
+        Lokation nyFirma = new Lokation("Kultur",description, "yellow");
 
         p.setLokation(nyFirma);
         assertEquals(nyFirma,p.getLokation());

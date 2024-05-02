@@ -120,4 +120,9 @@ public class Person {
         }
     }
 
+    //make a to string showing the name only
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -6,7 +6,6 @@ import javafx.scene.paint.Color;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.awt.print.PrinterJob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ class LokationTest {
     private List<Person> medArb = null;
     private List<Projekt> stuff = null;
     private Person per = null;
-    private Lokation bib = new Lokation(name,description,blue);
+    private Lokation bib = new Lokation(name,description,"blue");
 
     @Test
     @DisplayName("Alm.input, name get/set")
@@ -49,8 +48,8 @@ class LokationTest {
     @Test
     @DisplayName("Alm. input, farveKode get/set")
     void getSetFarveKode() {
-        bib.setFarveKode(Color.RED);
-        assertEquals(Color.RED,bib.getFarveKode());
+        bib.setFarveKode("red");
+        assertEquals("red",bib.getFarveKode());
     }
 
     @Test

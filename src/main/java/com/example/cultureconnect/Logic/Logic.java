@@ -40,4 +40,17 @@ public class Logic {
 
         return projects;
     }
+
+    public List<Person> getPersons() {
+        List<Person> persons = dao.readAllPersons();
+
+        return persons;
+    }
+
+    //make method to get all locations
+    public List<Lokation> getLocations() {
+        List<Lokation> locations = dao.readAllLokations();
+
+        return locations;
+    }
 }
