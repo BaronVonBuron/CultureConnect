@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -16,6 +17,7 @@ import javafx.scene.layout.HBox;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
@@ -131,8 +133,19 @@ public class CultureConnectController {
     }
 
     public void listviewSearchButtonPressed(ActionEvent event) {
-        //TODO when the button is pressed, the listview should be filtered to only show the search results.
-    }
+        if (ListviewSearchTextField != null){
+            String searchText = ListviewSearchTextField.getText().toLowerCase();
+
+            List<Person> searchResults = logic.getPersons().stream()
+                    .filter(person -> person.getName().toLowerCase().contains(searchText)
+                            || person.getEmail().toLowerCase().contains(searchText)
+                            || String.valueOf(person.getTlfNr()).contains(searchText))
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            UserOrLocationListview.setItems(FXCollections.observableList(searchResults));
+        }
+    } //skal man kunne søge også med at taste enter?
 
     public void userToggleButtonPressed(ActionEvent event) {
         //TODO when the user togglebutton is pressed, the listview should be filtered to only show users.
@@ -145,9 +158,7 @@ public class CultureConnectController {
     public void loadUsers(){
         ObservableList users = FXCollections.observableArrayList();
         List<Person> persons = logic.getPersons();
-        for (Person person : persons) {
-            users.add(person);
-        }
+        users.addAll(persons);
 
         UserOrLocationListview.setItems(users);
     }
