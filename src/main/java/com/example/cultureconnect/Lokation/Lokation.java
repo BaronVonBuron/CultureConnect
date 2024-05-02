@@ -56,5 +56,11 @@ public class Lokation {
             throw new IllegalArgumentException("Der skal være medarbejdere på en lokation");
         }
         this.employees = employees;
-    } //getters og setters
+    }
+
+    //make a to string showing name
+    @Override
+    public String toString() {
+        return name;
+    }
 }

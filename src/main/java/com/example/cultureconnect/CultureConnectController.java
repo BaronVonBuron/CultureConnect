@@ -1,6 +1,7 @@
 package com.example.cultureconnect;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.calendar.CalendarCell;
@@ -133,7 +134,7 @@ public class CultureConnectController {
     }
 
     public void listviewSearchButtonPressed(ActionEvent event) {
-        if (ListviewSearchTextField != null){
+        if (ListviewSearchTextField != null && UserToggleButton.isSelected()){
             String searchText = ListviewSearchTextField.getText().toLowerCase();
 
             List<Person> searchResults = logic.getPersons().stream()
@@ -144,15 +145,26 @@ public class CultureConnectController {
                     .collect(Collectors.toList());
 
             UserOrLocationListview.setItems(FXCollections.observableList(searchResults));
+        } else if (ListviewSearchTextField != null && !UserToggleButton.isSelected()) {
+            String searchText = ListviewSearchTextField.getText().toLowerCase();
+
+            // Search for locations
+            List<Lokation> locationSearchResults = logic.getLocations().stream()
+                    .filter(location -> location.getName().toLowerCase().contains(searchText)
+                            || location.getDescription().toLowerCase().contains(searchText))
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            UserOrLocationListview.setItems(FXCollections.observableList(locationSearchResults));
         }
     } //skal man kunne søge også med at taste enter?
 
     public void userToggleButtonPressed(ActionEvent event) {
-        //TODO when the user togglebutton is pressed, the listview should be filtered to only show users.
+        loadUsers();
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
-        //TODO when the location togglebutton is pressed, the listview should be filtered to only show locations.
+        loadLokations();
     }
 
     public void loadUsers(){
@@ -161,5 +173,13 @@ public class CultureConnectController {
         users.addAll(persons);
 
         UserOrLocationListview.setItems(users);
+    }
+
+    public void loadLokations(){
+        ObservableList places = FXCollections.observableArrayList();
+        List<Lokation> lokations = logic.getLocations();
+        places.addAll(lokations);
+
+        UserOrLocationListview.setItems(places);
     }
 }

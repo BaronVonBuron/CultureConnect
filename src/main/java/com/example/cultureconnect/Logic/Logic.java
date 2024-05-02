@@ -46,4 +46,11 @@ public class Logic {
 
         return persons;
     }
+
+    //make method to get all locations
+    public List<Lokation> getLocations() {
+        List<Lokation> locations = dao.readAllLokations();
+
+        return locations;
+    }
 }
