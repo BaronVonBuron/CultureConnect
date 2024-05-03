@@ -22,9 +22,6 @@ public class Person {
     private Image picture;
     private String CPR;
 
-    //måske booleans for creator / co-creator
-    //cpr-nummer
-
 
     public Person(String name, String email, int tlfNr, Image picture, String CPR) {
         this.name = name;

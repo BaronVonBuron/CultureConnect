@@ -6,6 +6,8 @@ import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.calendar.CalendarCell;
 import com.example.cultureconnect.calendar.ProjektCell;
+import com.example.cultureconnect.customListview.LokationListCell;
+import com.example.cultureconnect.customListview.PersonListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,6 +19,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -183,7 +186,11 @@ public class CultureConnectController {
     public void loadUsers(){
         ObservableList users = FXCollections.observableArrayList();
         List<Person> persons = logic.getPersons();
-        users.addAll(persons);
+        List<PersonListCell> cells = new ArrayList<>();
+        for (Person person : persons) {
+            cells.add(new PersonListCell(person));
+        }
+        users.addAll(cells);
 
         UserOrLocationListview.setItems(users);
     }
@@ -191,8 +198,11 @@ public class CultureConnectController {
     public void loadLokations(){
         ObservableList places = FXCollections.observableArrayList();
         List<Lokation> lokations = logic.getLocations();
-        places.addAll(lokations);
-
+        List<LokationListCell> cells = new ArrayList<>();
+        for (Lokation lokation : lokations) {
+            cells.add(new LokationListCell(lokation));
+        }
+        places.addAll(cells);
         UserOrLocationListview.setItems(places);
     }
 
