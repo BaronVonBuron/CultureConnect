@@ -53,34 +53,44 @@ public class CultureConnectController {
     private int rowHeight = 35;
     Tooltip projektTooltip = new Tooltip();
     private Logic logic = new Logic();
+    ObservableList<PersonListCell> users = FXCollections.observableArrayList();
+    ObservableList<LokationListCell> places = FXCollections.observableArrayList();
+
 
 
 
     public void initialize() {
+        startSequence();
+
+
+
+
+        //TODO highlight the current week
+    }
+
+    public void startSequence(){
         logic.updateLists();
         populateGridPane();
         while (logic.getIsUpdating()) {
-            //wait 10 ms
+            //wait 100 ms
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         System.out.println("Lists are updated");
         fillCalendarWithProjects();
+        loadLokations();
         loadUsers();
 
         //TODO scroll til denne uge.
-
-
-        //TODO highlight the current week
     }
 
     public void fillCalendarWithProjects(){
         List<Projekt> projects = logic.getProjects();
         if (projects.isEmpty()){
-            //TODO make a label that says "No projects found" and show it in the middle of the gridpane, at the current week.
+            System.out.println("No projects to show");
         } else {
             for (Projekt projekt : projects) {
                 int startWeek = getWeekNumber(projekt.getStartDate());
@@ -152,11 +162,11 @@ public class CultureConnectController {
     public void listviewSearchButtonPressed() {
         if (ListviewSearchTextField != null && UserToggleButton.isSelected()){
             String searchText = ListviewSearchTextField.getText().toLowerCase();
-
-            List<Person> searchResults = logic.getPersons().stream()
-                    .filter(person -> person.getName().toLowerCase().contains(searchText)
-                            || person.getEmail().toLowerCase().contains(searchText)
-                            || String.valueOf(person.getTlfNr()).contains(searchText))
+            //search for persons
+            List<PersonListCell> searchResults = users.stream()
+                    .filter(personListCell -> personListCell.getName().toLowerCase().contains(searchText)
+                            || personListCell.getEmail().toLowerCase().contains(searchText)
+                            || String.valueOf(personListCell.getTlfNr()).contains(searchText))
                     .distinct()
                     .collect(Collectors.toList());
 
@@ -165,26 +175,25 @@ public class CultureConnectController {
             String searchText = ListviewSearchTextField.getText().toLowerCase();
 
             // Search for locations
-            List<Lokation> locationSearchResults = logic.getLocations().stream()
-                    .filter(location -> location.getName().toLowerCase().contains(searchText)
-                            || location.getDescription().toLowerCase().contains(searchText))
+            List<LokationListCell> locationSearchResults = places.stream()
+                    .filter(locationListCell -> locationListCell.getName().toLowerCase().contains(searchText)
+                            || locationListCell.getDescription().toLowerCase().contains(searchText))
                     .distinct()
                     .collect(Collectors.toList());
 
             UserOrLocationListview.setItems(FXCollections.observableList(locationSearchResults));
         }
-    } //skal man kunne søge også med at taste enter?
+    }
 
     public void userToggleButtonPressed(ActionEvent event) {
-        loadUsers();
+        UserOrLocationListview.setItems(users);
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
-        loadLokations();
+        UserOrLocationListview.setItems(places);
     }
 
     public void loadUsers(){
-        ObservableList users = FXCollections.observableArrayList();
         List<Person> persons = logic.getPersons();
         List<PersonListCell> cells = new ArrayList<>();
         for (Person person : persons) {
@@ -196,7 +205,6 @@ public class CultureConnectController {
     }
 
     public void loadLokations(){
-        ObservableList places = FXCollections.observableArrayList();
         List<Lokation> lokations = logic.getLocations();
         List<LokationListCell> cells = new ArrayList<>();
         for (Lokation lokation : lokations) {

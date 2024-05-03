@@ -35,4 +35,17 @@ public class PersonListCell extends ListCell {
     public Person getPerson() {
         return person;
     }
+
+    public String getName() {
+        return person.getName();
+    }
+
+    public String getEmail() {
+        return person.getEmail();
+    }
+
+    public char[] getTlfNr() {
+        int number = person.getTlfNr();
+        return Integer.toString(number).toCharArray();
+    }
 }
