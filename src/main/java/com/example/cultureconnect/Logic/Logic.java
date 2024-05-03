@@ -14,6 +14,7 @@ public class Logic {
     private List<Person> persons = new ArrayList<>();
     private List<Lokation> locations = new ArrayList<>();
     private List<Projekt> projects = new ArrayList<>();
+    private boolean isUpdating = false;
 
     public Logic(){
         this.dao = new DAO();
@@ -35,8 +36,17 @@ public class Logic {
     }
 
     public void updateLists() {
-        this.persons = dao.readAllPersons();
-        this.locations = dao.readAllLokations();
-        this.projects = dao.readAllProjects();
+        Thread t = new Thread(() -> {
+            this.isUpdating = true;
+            this.persons = dao.readAllPersons();
+            this.locations = dao.readAllLokations();
+            this.projects = dao.readAllProjects();
+            this.isUpdating = false;
+        });
+        t.start();
+    }
+
+    public boolean getIsUpdating() {
+        return this.isUpdating;
     }
 }

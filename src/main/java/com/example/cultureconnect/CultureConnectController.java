@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -50,9 +51,17 @@ public class CultureConnectController {
 
 
     public void initialize() {
-        //TODO startup method to update lists in logic, that will hold persons, locations and projects. this list will only update when there are new changes to the database.
         logic.updateLists();
         populateGridPane();
+        while (logic.getIsUpdating()) {
+            //wait 10 ms
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Lists are updated");
         fillCalendarWithProjects();
         loadUsers();
 
@@ -134,7 +143,7 @@ public class CultureConnectController {
         //TODO only when admin is logged in, should the button be visible, and when pressed, open a dialogwindow next to the listview, where the admin can create a new user.
     }
 
-    public void listviewSearchButtonPressed(ActionEvent event) {
+    public void listviewSearchButtonPressed() {
         if (ListviewSearchTextField != null && UserToggleButton.isSelected()){
             String searchText = ListviewSearchTextField.getText().toLowerCase();
 
@@ -182,5 +191,9 @@ public class CultureConnectController {
         places.addAll(lokations);
 
         UserOrLocationListview.setItems(places);
+    }
+
+    public void SearchFieldKeyPressed(KeyEvent keyEvent) {
+        listviewSearchButtonPressed();
     }
 }
