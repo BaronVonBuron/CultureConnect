@@ -37,4 +37,11 @@ public class LokationListCell extends ListCell {
     }
 
 
+    public String getName() {
+        return lokation.getName();
+    }
+
+    public String getDescription() {
+        return lokation.getDescription();
+    }
 }

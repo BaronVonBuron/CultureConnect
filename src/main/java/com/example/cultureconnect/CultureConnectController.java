@@ -46,6 +46,21 @@ public class CultureConnectController {
     public AnchorPane LeftsideAnchorPane;
     public GridPane CalendarGridPane;
     public ScrollPane CalendarScrollPane;
+    public Tab editProjectTab;
+    public Button EditProjektButton;
+    public Tab ProjektTab;
+    public Tab CreateNewProjektTab;
+    public Button CancelCreateProjektButton;
+    public Button CreateProjektButton;
+    public TextArea CreateNewProjectNotesTextArea;
+    public Button CreateNewProjectAddActivityButton;
+    public DatePicker CreateNewProjektEndDatePicker;
+    public TextArea CreateNewProjektDescriptionTextArea;
+    public TextField CreateNewProjectTitleTextField;
+    public ListView CreateNewProjektPersonListView;
+    public ListView CreateNewProjektCreatorListView;
+    public ListView CreateNewProjectLokationListView;
+    public Label ProjektTitelLabel;
 
     private int calendarColumns = 52;
     private int calendarRows = 35;//skal sættes af antallet af projekter.
@@ -53,34 +68,44 @@ public class CultureConnectController {
     private int rowHeight = 35;
     Tooltip projektTooltip = new Tooltip();
     private Logic logic = new Logic();
+    ObservableList<PersonListCell> users = FXCollections.observableArrayList();
+    ObservableList<LokationListCell> places = FXCollections.observableArrayList();
+
 
 
 
     public void initialize() {
+        startSequence();
+
+        //TODO highlight the current week
+    }
+
+    public void startSequence(){
+        CalendarTabPane.getTabs().remove(editProjectTab);
+        CalendarTabPane.getTabs().remove(ProjektTab);
+        CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         logic.updateLists();
         populateGridPane();
         while (logic.getIsUpdating()) {
-            //wait 10 ms
+            //wait 100 ms
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         System.out.println("Lists are updated");
         fillCalendarWithProjects();
+        loadLokations();
         loadUsers();
 
         //TODO scroll til denne uge.
-
-
-        //TODO highlight the current week
     }
 
     public void fillCalendarWithProjects(){
         List<Projekt> projects = logic.getProjects();
         if (projects.isEmpty()){
-            //TODO make a label that says "No projects found" and show it in the middle of the gridpane, at the current week.
+            System.out.println("No projects to show");
         } else {
             for (Projekt projekt : projects) {
                 int startWeek = getWeekNumber(projekt.getStartDate());
@@ -142,7 +167,12 @@ public class CultureConnectController {
     }
 
     public void newProjectCalendarButtonPressed(ActionEvent event) {
-        //TODO open a new tab in the calendar tabpane, where the user can create a new project
+        if (!CalendarTabPane.getTabs().contains(CreateNewProjektTab)){
+            CalendarTabPane.getTabs().add(CreateNewProjektTab);
+            CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
+        } else {
+            CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
+        }
     }
 
     public void adminMenuNewUserOrLocationButtonPressed(ActionEvent event) {
@@ -152,11 +182,11 @@ public class CultureConnectController {
     public void listviewSearchButtonPressed() {
         if (ListviewSearchTextField != null && UserToggleButton.isSelected()){
             String searchText = ListviewSearchTextField.getText().toLowerCase();
-
-            List<Person> searchResults = logic.getPersons().stream()
-                    .filter(person -> person.getName().toLowerCase().contains(searchText)
-                            || person.getEmail().toLowerCase().contains(searchText)
-                            || String.valueOf(person.getTlfNr()).contains(searchText))
+            //search for persons
+            List<PersonListCell> searchResults = users.stream()
+                    .filter(personListCell -> personListCell.getName().toLowerCase().contains(searchText)
+                            || personListCell.getEmail().toLowerCase().contains(searchText)
+                            || String.valueOf(personListCell.getTlfNr()).contains(searchText))
                     .distinct()
                     .collect(Collectors.toList());
 
@@ -165,26 +195,25 @@ public class CultureConnectController {
             String searchText = ListviewSearchTextField.getText().toLowerCase();
 
             // Search for locations
-            List<Lokation> locationSearchResults = logic.getLocations().stream()
-                    .filter(location -> location.getName().toLowerCase().contains(searchText)
-                            || location.getDescription().toLowerCase().contains(searchText))
+            List<LokationListCell> locationSearchResults = places.stream()
+                    .filter(locationListCell -> locationListCell.getName().toLowerCase().contains(searchText)
+                            || locationListCell.getDescription().toLowerCase().contains(searchText))
                     .distinct()
                     .collect(Collectors.toList());
 
             UserOrLocationListview.setItems(FXCollections.observableList(locationSearchResults));
         }
-    } //skal man kunne søge også med at taste enter?
+    }
 
     public void userToggleButtonPressed(ActionEvent event) {
-        loadUsers();
+        UserOrLocationListview.setItems(users);
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
-        loadLokations();
+        UserOrLocationListview.setItems(places);
     }
 
     public void loadUsers(){
-        ObservableList users = FXCollections.observableArrayList();
         List<Person> persons = logic.getPersons();
         List<PersonListCell> cells = new ArrayList<>();
         for (Person person : persons) {
@@ -196,7 +225,6 @@ public class CultureConnectController {
     }
 
     public void loadLokations(){
-        ObservableList places = FXCollections.observableArrayList();
         List<Lokation> lokations = logic.getLocations();
         List<LokationListCell> cells = new ArrayList<>();
         for (Lokation lokation : lokations) {
@@ -237,11 +265,59 @@ public class CultureConnectController {
 
         projektTooltip.show(CalendarGridPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         moreInfoButton.setOnAction(event -> {
-            //TODO open a new tab in the calendar tabpane, with the projekt details.
-            System.out.println("More info button pressed");
+            openProjektTab(projekt);
             projektTooltip.hide();
         });
     }
 
+    public void openProjektTab(Projekt projekt){
+        //check if the projekt tab is already open with the projekt based on the title. If it is, select the tab, if not, create a new tab.
+        if(CalendarTabPane.getTabs().contains(ProjektTab)){
+            if (ProjektTitelLabel.equals(projekt.getTitel())){
+                CalendarTabPane.getSelectionModel().select(ProjektTab);
+            }
+        } else {
+            CalendarTabPane.getTabs().remove(ProjektTab);
+            ProjektTab = new Tab(projekt.getTitel());
+            CalendarTabPane.getTabs().add(ProjektTab);
+            CalendarTabPane.getSelectionModel().select(ProjektTab);
+        }
+        //TODO open the projekt tab, and show the projekt information.
+    }
 
+
+    public void editProjektButtonPressed(ActionEvent actionEvent) {
+
+    }
+
+    public void cancelCreateProjektButtonPressed(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Annuller oprettelse af  projekt");
+        alert.setHeaderText("Er du sikker på at du vil annullere oprettelsen af projektet?");
+        alert.setContentText("Alle indtastede informationer vil gå tabt.");
+        alert.getButtonTypes().clear();
+        ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().addAll(buttonType, buttonType1);
+        alert.showAndWait();
+        if (alert.getResult() == buttonType){
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(CreateNewProjektTab);
+        }
+    }
+
+    public void createProjektButtonPressed(ActionEvent actionEvent) {
+        //TODO create a new projekt, and add it to the database.
+        //TODO check if the projekt is valid, and if not, show an error message.
+        //TODO if the projekt is valid, add it to the database, and update the calendar.
+        //TODO update the calendar with the new projekt.
+    }
+
+    public void createNewProjectAddActivityButtonPressed(ActionEvent actionEvent) {
+
+    }
+
+    public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
+
+    }
 }
