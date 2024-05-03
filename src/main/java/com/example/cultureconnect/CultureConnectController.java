@@ -52,6 +52,15 @@ public class CultureConnectController {
     public Tab CreateNewProjektTab;
     public Button CancelCreateProjektButton;
     public Button CreateProjektButton;
+    public TextArea CreateNewProjectNotesTextArea;
+    public Button CreateNewProjectAddActivityButton;
+    public DatePicker CreateNewProjektEndDatePicker;
+    public TextArea CreateNewProjektDescriptionTextArea;
+    public TextField CreateNewProjectTitleTextField;
+    public ListView CreateNewProjektPersonListView;
+    public ListView CreateNewProjektCreatorListView;
+    public ListView CreateNewProjectLokationListView;
+    public Label ProjektTitelLabel;
 
     private int calendarColumns = 52;
     private int calendarRows = 35;//skal sættes af antallet af projekter.
@@ -66,13 +75,7 @@ public class CultureConnectController {
 
 
     public void initialize() {
-
-
-
         startSequence();
-
-
-
 
         //TODO highlight the current week
     }
@@ -262,10 +265,24 @@ public class CultureConnectController {
 
         projektTooltip.show(CalendarGridPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         moreInfoButton.setOnAction(event -> {
-            //TODO open a new tab in the calendar tabpane, with the projekt details.
-            System.out.println("More info button pressed");
+            openProjektTab(projekt);
             projektTooltip.hide();
         });
+    }
+
+    public void openProjektTab(Projekt projekt){
+        //check if the projekt tab is already open with the projekt based on the title. If it is, select the tab, if not, create a new tab.
+        if(CalendarTabPane.getTabs().contains(ProjektTab)){
+            if (ProjektTitelLabel.equals(projekt.getTitel())){
+                CalendarTabPane.getSelectionModel().select(ProjektTab);
+            }
+        } else {
+            CalendarTabPane.getTabs().remove(ProjektTab);
+            ProjektTab = new Tab(projekt.getTitel());
+            CalendarTabPane.getTabs().add(ProjektTab);
+            CalendarTabPane.getSelectionModel().select(ProjektTab);
+        }
+        //TODO open the projekt tab, and show the projekt information.
     }
 
 
@@ -294,5 +311,13 @@ public class CultureConnectController {
         //TODO check if the projekt is valid, and if not, show an error message.
         //TODO if the projekt is valid, add it to the database, and update the calendar.
         //TODO update the calendar with the new projekt.
+    }
+
+    public void createNewProjectAddActivityButtonPressed(ActionEvent actionEvent) {
+
+    }
+
+    public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
+
     }
 }

@@ -206,7 +206,7 @@
                                                          <children>
                                                             <VBox AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                                                <children>
-                                                                  <Label maxWidth="515.0" text="Titel" wrapText="true">
+                                                                  <Label fx:id="ProjektTitelLabel" maxWidth="515.0" text="Titel" wrapText="true">
                                                                      <font>
                                                                         <Font name="System Bold" size="24.0" />
                                                                      </font>
@@ -473,7 +473,7 @@
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <ListView prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                <ListView fx:id="CreateNewProjectLokationListView" prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
                                                    <VBox.margin>
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
@@ -486,7 +486,7 @@
                                                       <Insets left="30.0" top="21.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <ListView prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                <ListView fx:id="CreateNewProjektCreatorListView" prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
                                                    <VBox.margin>
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
@@ -499,7 +499,7 @@
                                                       <Insets left="30.0" top="21.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <ListView prefHeight="280.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                <ListView fx:id="CreateNewProjektPersonListView" prefHeight="280.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
                                                    <VBox.margin>
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
@@ -514,7 +514,7 @@
                                                          <children>
                                                             <VBox AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                                                <children>
-                                                                  <TextField promptText="Titel">
+                                                                  <TextField fx:id="CreateNewProjectTitleTextField" promptText="Titel">
                                                                      <font>
                                                                         <Font size="24.0" />
                                                                      </font>
@@ -530,7 +530,7 @@
                                                                         <Insets />
                                                                      </VBox.margin>
                                                                   </Label>
-                                                                  <TextArea minHeight="75.0" minWidth="0.0" prefWidth="200.0" wrapText="true">
+                                                                  <TextArea fx:id="CreateNewProjektDescriptionTextArea" minHeight="75.0" minWidth="0.0" prefWidth="200.0" wrapText="true">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
@@ -543,7 +543,7 @@
                                                                         <Font size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <DatePicker>
+                                                                  <DatePicker fx:id="CreateNewProjektEndDatePicker" onAction="#createNewProjektEndDatePickerPressed">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
@@ -574,7 +574,7 @@
                                                                         </TextField>
                                                                      </children>
                                                                   </HBox>
-                                                                  <Button maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" prefHeight="35.0" styleClass="Buttons" text="Ny aktivitet">
+                                                                  <Button fx:id="CreateNewProjectAddActivityButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#createNewProjectAddActivityButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Ny aktivitet">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" top="5.0" />
                                                                      </VBox.margin>
@@ -584,7 +584,7 @@
                                                                         <Font size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <TextArea minHeight="200.0" prefWidth="500.0" wrapText="true" VBox.vgrow="ALWAYS">
+                                                                  <TextArea fx:id="CreateNewProjectNotesTextArea" minHeight="200.0" prefWidth="500.0" wrapText="true" VBox.vgrow="ALWAYS">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
