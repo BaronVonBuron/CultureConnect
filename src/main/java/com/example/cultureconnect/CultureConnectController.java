@@ -46,6 +46,12 @@ public class CultureConnectController {
     public AnchorPane LeftsideAnchorPane;
     public GridPane CalendarGridPane;
     public ScrollPane CalendarScrollPane;
+    public Tab editProjectTab;
+    public Button EditProjektButton;
+    public Tab ProjektTab;
+    public Tab CreateNewProjektTab;
+    public Button CancelCreateProjektButton;
+    public Button CreateProjektButton;
 
     private int calendarColumns = 52;
     private int calendarRows = 35;//skal sættes af antallet af projekter.
@@ -60,6 +66,9 @@ public class CultureConnectController {
 
 
     public void initialize() {
+
+
+
         startSequence();
 
 
@@ -69,6 +78,9 @@ public class CultureConnectController {
     }
 
     public void startSequence(){
+        CalendarTabPane.getTabs().remove(editProjectTab);
+        CalendarTabPane.getTabs().remove(ProjektTab);
+        CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         logic.updateLists();
         populateGridPane();
         while (logic.getIsUpdating()) {
@@ -152,7 +164,12 @@ public class CultureConnectController {
     }
 
     public void newProjectCalendarButtonPressed(ActionEvent event) {
-        //TODO open a new tab in the calendar tabpane, where the user can create a new project
+        if (!CalendarTabPane.getTabs().contains(CreateNewProjektTab)){
+            CalendarTabPane.getTabs().add(CreateNewProjektTab);
+            CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
+        } else {
+            CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
+        }
     }
 
     public void adminMenuNewUserOrLocationButtonPressed(ActionEvent event) {
@@ -252,4 +269,30 @@ public class CultureConnectController {
     }
 
 
+    public void editProjektButtonPressed(ActionEvent actionEvent) {
+
+    }
+
+    public void cancelCreateProjektButtonPressed(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Annuller oprettelse af  projekt");
+        alert.setHeaderText("Er du sikker på at du vil annullere oprettelsen af projektet?");
+        alert.setContentText("Alle indtastede informationer vil gå tabt.");
+        alert.getButtonTypes().clear();
+        ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().addAll(buttonType, buttonType1);
+        alert.showAndWait();
+        if (alert.getResult() == buttonType){
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(CreateNewProjektTab);
+        }
+    }
+
+    public void createProjektButtonPressed(ActionEvent actionEvent) {
+        //TODO create a new projekt, and add it to the database.
+        //TODO check if the projekt is valid, and if not, show an error message.
+        //TODO if the projekt is valid, add it to the database, and update the calendar.
+        //TODO update the calendar with the new projekt.
+    }
 }
