@@ -129,7 +129,7 @@
                                              <children>
                                                 <ScrollPane fx:id="CalendarScrollPane" layoutX="-0.5" layoutY="-0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <content>
-                                                      <GridPane fx:id="CalendarGridPane" alignment="CENTER" gridLinesVisible="true">
+                                                      <GridPane fx:id="CalendarGridPane" alignment="CENTER" gridLinesVisible="true" onMouseClicked="#GridPaneClicked">
 
                                                       </GridPane>
                                                    </content>

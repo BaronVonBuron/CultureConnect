@@ -11,9 +11,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -46,6 +48,7 @@ public class CultureConnectController {
     private int calendarRows = 35;//skal sættes af antallet af projekter.
     private int columnWidth = 35;
     private int rowHeight = 35;
+    Tooltip projektTooltip = new Tooltip();
     private Logic logic = new Logic();
 
 
@@ -80,7 +83,7 @@ public class CultureConnectController {
                 int startWeek = getWeekNumber(projekt.getStartDate());
                 int endWeek = getWeekNumber(projekt.getEndDate());
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
-                ProjektCell pcell = new ProjektCell(length, projekt.getColor());
+                ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
                 pcell.setHeight(rowHeight);
                 pcell.setWidth(columnWidth * length); // Adjust the width of the cell
                 //make the cell red
@@ -196,4 +199,39 @@ public class CultureConnectController {
     public void SearchFieldKeyPressed(KeyEvent keyEvent) {
         listviewSearchButtonPressed();
     }
+
+    public void GridPaneClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getTarget() instanceof ProjektCell && !this.projektTooltip.isShowing()) {
+            ProjektCell cell = (ProjektCell) mouseEvent.getTarget();
+            openSmallProjektDialogWindow(cell.getProjekt(), mouseEvent);
+        } else {
+            this.projektTooltip.hide();
+        }
+    }
+
+    public void openSmallProjektDialogWindow(Projekt projekt, MouseEvent mouseEvent){
+        VBox dialogVBox = new VBox();
+        Label titleLabel = new Label(projekt.getTitel());
+        Label descriptionLabel = new Label(projekt.getDescription());
+        Label startDateLabel = new Label(projekt.getStartDate().toString());
+        Label endDateLabel = new Label(projekt.getEndDate().toString());
+        Button moreInfoButton = new Button("More info");
+        dialogVBox.getChildren().add(titleLabel);
+        dialogVBox.getChildren().add(descriptionLabel);
+        dialogVBox.getChildren().add(startDateLabel);
+        dialogVBox.getChildren().add(endDateLabel);
+        dialogVBox.getChildren().add(moreInfoButton);
+        dialogVBox.setPrefHeight(100);
+        dialogVBox.setPrefWidth(200);
+        projektTooltip.setGraphic(dialogVBox);
+
+        projektTooltip.show(CalendarGridPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        moreInfoButton.setOnAction(event -> {
+            //TODO open a new tab in the calendar tabpane, with the projekt details.
+            System.out.println("More info button pressed");
+            projektTooltip.hide();
+        });
+    }
+
+
 }
