@@ -10,7 +10,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -51,6 +50,8 @@ public class CultureConnectController {
 
 
     public void initialize() {
+        //TODO startup method to update lists in logic, that will hold persons, locations and projects. this list will only update when there are new changes to the database.
+        logic.updateLists();
         populateGridPane();
         fillCalendarWithProjects();
         loadUsers();
