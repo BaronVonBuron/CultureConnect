@@ -1,5 +1,7 @@
 package com.example.cultureconnect.calendar;
 
+import com.example.cultureconnect.Projekt.Projekt;
+
 public class ProjektCell extends CalendarCell {
     //todo Make cells that will represent a Projekt as a rectangle, and place it according to the startdate and enddate in the gridpane.
     //todo Make the cells clickable, so that the user can see the details of the Projekt.
@@ -11,11 +13,17 @@ public class ProjektCell extends CalendarCell {
 
     private int length;
     private String color;
+    private Projekt projekt;
 
-    public ProjektCell(int length, String color){
+    public ProjektCell(int length, String color, Projekt projekt){
         super(); // Call the constructor of the superclass
         this.length = length;
         this.color = color;
+        this.projekt = projekt;
+    }
+
+    public Projekt getProjekt() {
+        return projekt;
     }
 
     public int getLength() {

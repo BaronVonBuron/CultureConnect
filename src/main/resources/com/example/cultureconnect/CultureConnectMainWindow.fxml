@@ -24,8 +24,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<SplitPane fx:id="MainSplitPane" dividerPositions="0.22429078014184398" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1130.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cultureconnect.CultureConnectController">
+<SplitPane fx:id="MainSplitPane" dividerPositions="0.22429078014184398" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1130.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cultureconnect.CultureConnectController">
   <items>
     <AnchorPane fx:id="LeftsideAnchorPane" maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="160.0" prefWidth="250.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css">
          <children>
@@ -54,7 +60,7 @@
                               <Insets bottom="30.0" left="5.0" right="5.0" top="5.0" />
                            </VBox.margin>
                            <children>
-                              <TextField fx:id="ListviewSearchTextField" alignment="CENTER" minWidth="100.0" prefHeight="35.0" prefWidth="200.0" promptText="Søg..." styleClass="Searchbar" stylesheets="@../../../CultureConnectCSS.css" />
+                              <TextField fx:id="ListviewSearchTextField" alignment="CENTER" minWidth="100.0" onKeyTyped="#SearchFieldKeyPressed" prefHeight="35.0" prefWidth="200.0" promptText="Søg..." styleClass="Searchbar" stylesheets="@../../../CultureConnectCSS.css" />
                             <Button fx:id="ListviewSearchButton" contentDisplay="GRAPHIC_ONLY" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#listviewSearchButtonPressed" prefHeight="30.0" prefWidth="30.0" styleClass="SearchButton" stylesheets="@../../../CultureConnectCSS.css" text="Søg" textAlignment="CENTER">
                                  <graphic>
                                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
@@ -147,7 +153,7 @@
                                              <children>
                                                 <ScrollPane fx:id="CalendarScrollPane" layoutX="-0.5" layoutY="-0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <content>
-                                                      <GridPane fx:id="CalendarGridPane" alignment="CENTER" gridLinesVisible="true">
+                                                      <GridPane fx:id="CalendarGridPane" alignment="CENTER" gridLinesVisible="true" onMouseClicked="#GridPaneClicked">
 
                                                       </GridPane>
                                                    </content>
