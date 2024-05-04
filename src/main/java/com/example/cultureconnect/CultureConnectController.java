@@ -320,4 +320,13 @@ public class CultureConnectController {
     public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
 
     }
+
+    public void redigerNyAktivitetKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void sletProjektKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
+    }
 }

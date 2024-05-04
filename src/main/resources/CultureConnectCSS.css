@@ -40,11 +40,23 @@
     -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
 }
 
-.Searchbar{
-    -fx-background-color: #E8E2E2;
+.Searchbar, .TextField{
+    -fx-background-color: #FFFFFF;
     -fx-border-radius: 10 10 10 10;
     -fx-background-radius: 10 10 10 10;
     -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
+}
+
+.date-picker > .text-field, .TitelTextField{
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 5 5 5 5;
+    -fx-background-radius:5 5 5 5;
+    -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 )
+}
+
+.date-picker{
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
 }
 
 .SearchButton{
