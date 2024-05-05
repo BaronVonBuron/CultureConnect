@@ -32,7 +32,7 @@
     -fx-background-radius: 10 10 10 10;
 }
 
-.Buttons:hover{
+.Buttons:hover, .date-picker .arrow-button:hover{
     -fx-scale-z: 0.9;
     -fx-scale-y: 0.9;
     -fx-scale-x: 0.9;
@@ -57,6 +57,32 @@
 .date-picker{
     -fx-border-width: 0;
     -fx-border-color: transparent;
+    -fx-border-radius: 5 5 5 5;
+}
+
+.list-cell:hover, .list-cell:selected{
+    -fx-background-color: #E8E2E2;
+    -fx-text-fill: black;
+    -fx-background-radius: 30 30 30 30;
+    -fx-cursor: hand;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #5A5656;
+    -fx-text-fill: white;
+    -fx-border-radius: 5 5 5 5;
+    -fx-background-radius: 5 5 5 5;
+}
+
+.date-picker:editable > .arrow-button > * {
+    -fx-background-color: white; /* Set the node in the button to be visible */
+}
+
+.MenuListe{
+    -fx-border-color: transparent;
+    -fx-background-color: #EDEDED;
+    -fx-background-radius: 30 30 30 30;
+    -fx-effect: dropshadow( gaussian, rgba( 0, 0, 0, 0.3 ), 10, 0, 5, 5 );
 }
 
 .SearchButton{

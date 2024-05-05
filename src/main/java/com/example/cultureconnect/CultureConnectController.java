@@ -18,7 +18,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,9 +75,9 @@ public class CultureConnectController {
 
     public void initialize() {
         startSequence();
-
         //TODO highlight the current week
     }
+
 
     public void startSequence(){
         CalendarTabPane.getTabs().remove(editProjectTab);
