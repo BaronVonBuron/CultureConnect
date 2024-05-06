@@ -97,8 +97,8 @@ public class CultureConnectController {
         fillCalendarWithProjects();
         loadLokations();
         loadUsers();
-
         //TODO scroll til denne uge.
+        CalendarScrollPane.setHvalue(getCurrentWeekNumber() / 52.0);
     }
 
     public void fillCalendarWithProjects(){
@@ -106,7 +106,9 @@ public class CultureConnectController {
         if (projects.isEmpty()){
             System.out.println("No projects to show");
         } else {
+            int noOfProjects = 0;
             for (Projekt projekt : projects) {
+                noOfProjects += 2;
                 int startWeek = getWeekNumber(projekt.getStartDate());
                 int endWeek = getWeekNumber(projekt.getEndDate());
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
@@ -115,7 +117,7 @@ public class CultureConnectController {
                 pcell.setWidth(columnWidth * length); // Adjust the width of the cell
                 //make the cell red
                 pcell.setFill(javafx.scene.paint.Color.RED);
-                CalendarGridPane.add(pcell, startWeek, 1);
+                CalendarGridPane.add(pcell, startWeek, noOfProjects);
                 GridPane.setColumnSpan(pcell, length); // Make the cell span multiple weeks
             }
         }
