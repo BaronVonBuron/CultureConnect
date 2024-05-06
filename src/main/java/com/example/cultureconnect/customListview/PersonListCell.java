@@ -35,6 +35,7 @@ public class PersonListCell extends ListCell {
         hbox.setSpacing(5);
         setGraphic(hbox);
         setPrefSize(200, 50);
+        setStyle("-fx-background-color: transparent");
         setOnMouseClicked(event -> {
             if (isExpanded) {
                 vbox.getChildren().removeAll(emailLabel, phoneLabel);

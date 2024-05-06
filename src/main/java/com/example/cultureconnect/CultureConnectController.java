@@ -270,10 +270,11 @@ public class CultureConnectController {
     public void openSmallProjektDialogWindow(Projekt projekt, MouseEvent mouseEvent){
         VBox dialogVBox = new VBox();
         Label titleLabel = new Label(projekt.getTitel());
+        titleLabel.getStyleClass().add("ProjectTooltipTitle");
         Label descriptionLabel = new Label(projekt.getDescription());
-        Label startDateLabel = new Label(projekt.getStartDate().toString());
-        Label endDateLabel = new Label(projekt.getEndDate().toString());
-        Button moreInfoButton = new Button("More info");
+        Label startDateLabel = new Label("Startdato: " + projekt.getStartDate().toString());
+        Label endDateLabel = new Label("Slutdato: " + projekt.getEndDate().toString());
+        Button moreInfoButton = new Button("Se mere");
         dialogVBox.getChildren().add(titleLabel);
         dialogVBox.getChildren().add(descriptionLabel);
         dialogVBox.getChildren().add(startDateLabel);
@@ -281,7 +282,12 @@ public class CultureConnectController {
         dialogVBox.getChildren().add(moreInfoButton);
         dialogVBox.setPrefHeight(100);
         dialogVBox.setPrefWidth(200);
+        dialogVBox.setSpacing(10);
         projektTooltip.setGraphic(dialogVBox);
+        projektTooltip.setStyle(getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        projektTooltip.getStyleClass().add("ProjectTooltip");
+
+
 
         projektTooltip.show(CalendarGridPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         moreInfoButton.setOnAction(event -> {
