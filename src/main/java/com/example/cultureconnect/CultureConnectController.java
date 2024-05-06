@@ -11,6 +11,8 @@ import com.example.cultureconnect.customListview.PersonListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +20,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -209,6 +213,38 @@ public class CultureConnectController {
 
     public void adminMenuNewUserOrLocationButtonPressed(ActionEvent event) {
         //TODO only when admin is logged in, should the button be visible, and when pressed, open a dialogwindow next to the listview, where the admin can create a new user.
+        if (UserToggleButton.isSelected()) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("NewUserDialog.fxml"));
+                Stage addUser = new Stage();
+                addUser.setTitle("Opret Ny Bruger");
+                AnchorPane editLayout = loader.load();
+                Scene scene = new Scene(editLayout);
+                addUser.setScene(scene);
+                addUser.setResizable(false);
+
+                addUser.show();
+
+            } catch (IOException e){
+                System.out.println("Can't open new user window");
+            }
+
+        } else if (LocationToggleButton.isSelected()) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("NewLocationDialog.fxml"));
+                Stage addLocation = new Stage();
+                addLocation.setTitle("Opret Ny Lokation");
+                AnchorPane editLayout = loader.load();
+                Scene scene = new Scene(editLayout);
+                addLocation.setScene(scene);
+                addLocation.setResizable(false);
+
+                addLocation.show();
+
+            } catch (IOException e){
+                System.out.println("Can't open new location window");
+            }
+        }
     }
 
     public void listviewSearchButtonPressed() {
@@ -239,10 +275,12 @@ public class CultureConnectController {
 
     public void userToggleButtonPressed(ActionEvent event) {
         UserOrLocationListview.setItems(users);
+        AdminMenuNewUserOrLocationButton.setText("Ny Bruger");
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
         UserOrLocationListview.setItems(places);
+        AdminMenuNewUserOrLocationButton.setText("Ny Lokation");
     }
 
     public void loadUsers(){
