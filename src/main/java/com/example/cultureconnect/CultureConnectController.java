@@ -47,6 +47,8 @@ public class CultureConnectController {
     public Tab editProjectTab;
     public Button EditProjektButton;
     public Tab ProjektTab;
+
+    //Create new projekt tab////////////////////////////////////////////////
     public Tab CreateNewProjektTab;
     public Button CancelCreateProjektButton;
     public Button CreateProjektButton;
@@ -59,6 +61,10 @@ public class CultureConnectController {
     public ListView CreateNewProjektCreatorListView;
     public ListView CreateNewProjectLokationListView;
     public Label ProjektTitelLabel;
+    public DatePicker plannedActivityStartDatePicker;
+    public DatePicker plannedActivityEndDatePicker;
+    public TextField plannedActivityTitleTextField;
+    //Create new projekt tab slut////////////////////////////////////////////
 
     private int calendarColumns = 52;
     private int calendarRows = 35;//skal sættes af antallet af projekter.
@@ -354,6 +360,7 @@ public class CultureConnectController {
     }
 
     public void redigerNyAktivitetKnapPressed(ActionEvent actionEvent) {
+
     }
 
     public void sletProjektKnapPressed(ActionEvent actionEvent) {
