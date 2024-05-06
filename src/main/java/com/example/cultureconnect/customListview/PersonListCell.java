@@ -26,6 +26,7 @@ public class PersonListCell extends ListCell {
         setGraphic(frame);
         setGraphic(imageView);
         setPrefSize(200, 50);
+        setStyle("-fx-background-color: transparent");
         setOnMouseClicked(event -> {
             //TODO make the cell expand when clicked, to show the details of the Person.
 
