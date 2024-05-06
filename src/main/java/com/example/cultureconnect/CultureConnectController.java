@@ -18,10 +18,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class CultureConnectController {
@@ -69,6 +68,7 @@ public class CultureConnectController {
     private Logic logic = new Logic();
     ObservableList<PersonListCell> users = FXCollections.observableArrayList();
     ObservableList<LokationListCell> places = FXCollections.observableArrayList();
+    List<Projekt> projects = new ArrayList<>();
 
 
 
@@ -94,6 +94,7 @@ public class CultureConnectController {
             }
         }
         System.out.println("Lists are updated");
+        projects = logic.getProjects();
         fillCalendarWithProjects();
         loadLokations();
         loadUsers();
@@ -101,14 +102,23 @@ public class CultureConnectController {
         CalendarScrollPane.setHvalue(getCurrentWeekNumber() / 52.0);
     }
 
+
     public void fillCalendarWithProjects(){
-        List<Projekt> projects = logic.getProjects();
         if (projects.isEmpty()){
             System.out.println("No projects to show");
         } else {
-            int noOfProjects = 0;
+            int noOfProjects = 1;
+            AtomicInteger reuseableRow = new AtomicInteger();
+            HashMap<Integer, Projekt> projektGrid = new HashMap<>();
             for (Projekt projekt : projects) {
-                noOfProjects += 2;
+                if (noOfProjects > 15){
+                    //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
+                    projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
+                        if (value.getEndDate().before(Date.from(projekt.getEndDate().toInstant().plusSeconds(60*60*24*7*4)))){
+                            reuseableRow.set(key);
+                        }
+                    });
+                }
                 int startWeek = getWeekNumber(projekt.getStartDate());
                 int endWeek = getWeekNumber(projekt.getEndDate());
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
@@ -117,8 +127,17 @@ public class CultureConnectController {
                 pcell.setWidth(columnWidth * length); // Adjust the width of the cell
                 //make the cell red
                 pcell.setFill(javafx.scene.paint.Color.RED);
-                CalendarGridPane.add(pcell, startWeek, noOfProjects);
-                GridPane.setColumnSpan(pcell, length); // Make the cell span multiple weeks
+                if (reuseableRow.get() > 0){
+                    CalendarGridPane.add(pcell, startWeek, reuseableRow.get());
+                    GridPane.setColumnSpan(pcell, length); // Make the cell span multiple weeks
+                    projektGrid.put(reuseableRow.get(), projekt);
+                    reuseableRow.set(0);
+                } else {
+                    CalendarGridPane.add(pcell, startWeek, noOfProjects);
+                    GridPane.setColumnSpan(pcell, length); // Make the cell span multiple weeks
+                    projektGrid.put(noOfProjects, projekt);
+                }
+                noOfProjects++;
             }
         }
     }
