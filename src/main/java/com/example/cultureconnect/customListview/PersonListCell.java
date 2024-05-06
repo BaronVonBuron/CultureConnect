@@ -1,35 +1,54 @@
 package com.example.cultureconnect.customListview;
 
 import com.example.cultureconnect.Person.Person;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 
 public class PersonListCell extends ListCell {
 
     private Person person;
+    private boolean isExpanded = false;
+    private Label emailLabel = new Label();
+    private Label phoneLabel = new Label();
+    private Label nameLabel = new Label();
+    private VBox vbox = new VBox();
+    private HBox hbox = new HBox();
 
     public PersonListCell(Person person){
         super(); // Call the constructor of the superclass
         this.person = person;
         Circle frame = new Circle(30);
-        //ImageView imageView = new ImageView(person.getPicture());
         Image image = new Image("https://www.w3schools.com/w3images/avatar2.png"); //placeholder if they have to picture
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(30);
-        imageView.setFitWidth(30);
-        //frame.setStroke(Color.valueOf(person.getLokation().getFarveKode())); //kan først bruges når de har en lokation
+        imageView.setFitHeight(45);
+        imageView.setFitWidth(45);
         frame.setStroke(javafx.scene.paint.Color.BLACK); //placeholder hvis der ikke er en lokation
         frame.setStrokeWidth(5);
-        setText(person.getName());
-        setGraphic(frame);
-        setGraphic(imageView);
+        nameLabel.setText(person.getName());
+        hbox.getChildren().addAll(imageView, nameLabel);
+        hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        hbox.setSpacing(5);
+        setGraphic(hbox);
         setPrefSize(200, 50);
         setOnMouseClicked(event -> {
-            //TODO make the cell expand when clicked, to show the details of the Person.
-
+            if (isExpanded) {
+                vbox.getChildren().removeAll(emailLabel, phoneLabel);
+                setPrefSize(200, 50);
+            } else {
+                emailLabel.setText("Email: " + getEmail());
+                phoneLabel.setText("Telefon: " + new String(getTlfNr()));
+                vbox.getChildren().addAll(emailLabel, phoneLabel);
+                setPrefSize(200, 100);
+            }
+            isExpanded = !isExpanded;
         });
+        vbox.getChildren().add(hbox);
+        setGraphic(vbox);
     }
 
     public Person getPerson() {
