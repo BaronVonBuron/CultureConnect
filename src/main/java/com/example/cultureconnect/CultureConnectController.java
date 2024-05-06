@@ -114,7 +114,12 @@ public class CultureConnectController {
                 if (noOfProjects > 15){
                     //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
                     projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
-                        if (value.getEndDate().before(Date.from(projekt.getEndDate().toInstant().plusSeconds(60*60*24*7*4)))){
+                        Date endDate = value.getEndDate();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(endDate);
+                        calendar.add(Calendar.WEEK_OF_YEAR, 4);
+                        Date endDatePlus4Weeks = calendar.getTime();
+                        if (endDatePlus4Weeks.before(projekt.getStartDate())) {
                             reuseableRow.set(key);
                         }
                     });
@@ -141,6 +146,7 @@ public class CultureConnectController {
             }
         }
     }
+
 
     public int getCurrentWeekNumber() {
         Calendar calendar = Calendar.getInstance();
