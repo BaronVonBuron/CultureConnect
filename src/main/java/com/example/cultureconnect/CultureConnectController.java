@@ -14,8 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -87,6 +86,7 @@ public class CultureConnectController {
         this.logic = new Logic();
         startSequence();
         loginSequence();
+
         //TODO highlight the current week
     }
 
@@ -232,7 +232,17 @@ public class CultureConnectController {
         } else {
             CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
         }
+        for (PersonListCell user : users) {
+            if (user.getPerson().getEmail().equals(logic.getCurrentUser().getEmail())){
+                PersonListCell pcell = new PersonListCell(logic.getCurrentUser());
+                CreateNewProjektCreatorListView.getItems().add(pcell);
+                users.remove(user);
+                UserOrLocationListview.setItems(users);
+                break;
+            }
+        }
     }
+
 
     public void adminMenuNewUserOrLocationButtonPressed(ActionEvent event) {
         //TODO only when admin is logged in, should the button be visible, and when pressed, open a dialogwindow next to the listview, where the admin can create a new user.
@@ -436,4 +446,129 @@ public class CultureConnectController {
     public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
     }
 
+    public void createProjektLokationDragDropped(DragEvent dragEvent) {
+        // Get the Dragboard
+        Dragboard db = dragEvent.getDragboard();
+
+        // Check if the Dragboard has a String. This should be the name of the Lokation
+        if (db.hasString()) {
+            // Get the name of the Lokation from the Dragboard
+            String lokationName = db.getString();
+
+            // Find the Lokation with this name in your list of Lokations
+            LokationListCell droppedLokation = places.stream()
+                    .filter(lokation -> lokation.getName().equals(lokationName))
+                    .findFirst()
+                    .orElse(null);
+
+            // If the Lokation was found, add it to the ListView
+            if (droppedLokation != null) {
+                CreateNewProjectLokationListView.getItems().add(droppedLokation);
+                places.remove(droppedLokation);
+                UserOrLocationListview.setItems(places);
+            }
+
+            // Indicate that the drag data was successfully transferred and used
+            dragEvent.setDropCompleted(true);
+        } else {
+            // Indicate that no valid data was in the Dragboard
+            dragEvent.setDropCompleted(false);
+        }
+
+        // Consume the event to indicate it has been handled
+        dragEvent.consume();
+    }
+
+    public void createProjektLokationDraggedOver(DragEvent dragEvent) {
+        // Accept the drag operation if the dragboard has a String
+        if (dragEvent.getDragboard().hasString()) {
+            dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            System.out.println("Dragged over to participant listview");
+        }
+        dragEvent.consume();
+    }
+
+    public void createProjektCreatorPersonDragDropped(DragEvent dragEvent) {
+        // Get the Dragboard
+        Dragboard db = dragEvent.getDragboard();
+        // Check if the Dragboard has a String. This should be the name of the Person
+        if (db.hasString()) {
+            // Get the name of the Person from the Dragboard
+            String personName = db.getString();
+            // Find the Person with this name in your list of Persons
+            PersonListCell droppedPerson = users.stream()
+                    .filter(person -> person.getName().equals(personName))
+                    .findFirst()
+                    .orElse(null);
+            // If the Person was found, add it to the ListView
+            if (droppedPerson != null) {
+                CreateNewProjektCreatorListView.getItems().add(droppedPerson);
+                users.remove(droppedPerson);
+                UserOrLocationListview.setItems(users);
+            }
+            // Indicate that the drag data was successfully transferred and used
+            dragEvent.setDropCompleted(true);
+        } else {
+            // Indicate that no valid data was in the Dragboard
+            dragEvent.setDropCompleted(false);
+        }
+        // Consume the event to indicate it has been handled
+        dragEvent.consume();
+    }
+
+    public void createProjektCreatorPersonDraggedOver(DragEvent dragEvent) {
+        // Accept the drag operation if the dragboard has a String
+        if (dragEvent.getDragboard().hasString()) {
+            dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            System.out.println("Dragged over to participant listview");
+        }
+        dragEvent.consume();
+    }
+
+    public void createProjektParticipantPersonDragDropped(DragEvent dragEvent) {
+        // Get the Dragboard
+        Dragboard db = dragEvent.getDragboard();
+        // Check if the Dragboard has a String. This should be the name of the Person
+        if (db.hasString()) {
+            // Get the name of the Person from the Dragboard
+            String personName = db.getString();
+            // Find the Person with this name in your list of Persons
+            PersonListCell droppedPerson = users.stream()
+                    .filter(person -> person.getName().equals(personName))
+                    .findFirst()
+                    .orElse(null);
+            // If the Person was found, add it to the ListView
+            if (droppedPerson != null) {
+                CreateNewProjektPersonListView.getItems().add(droppedPerson);
+                users.remove(droppedPerson);
+                UserOrLocationListview.setItems(users);
+            }
+            // Indicate that the drag data was successfully transferred and used
+            dragEvent.setDropCompleted(true);
+        } else {
+            // Indicate that no valid data was in the Dragboard
+            dragEvent.setDropCompleted(false);
+        }
+        // Consume the event to indicate it has been handled
+        dragEvent.consume();
+    }
+
+    public void createProjektParticipantDraggedOver(DragEvent dragEvent) {
+        // Accept the drag operation if the dragboard has a String
+        if (dragEvent.getDragboard().hasString()) {
+            dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            System.out.println("Dragged over to participant listview");
+        }
+        dragEvent.consume();
+    }
+
+
+
+    public void userLokationListViewDragDetected(MouseEvent mouseEvent) {
+
+    }
+
+    public void userLokationListViewDragDone(DragEvent dragEvent) {
+
+    }
 }
