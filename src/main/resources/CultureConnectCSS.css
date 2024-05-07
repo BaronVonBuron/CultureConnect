@@ -158,7 +158,6 @@
 }
 
 
-/* Styling af kalenderen */
 .Calendar{
     -fx-background-color: transparent;
 }
@@ -253,4 +252,22 @@
     -fx-text-fill: black;
     -fx-font-weight: bold;
     -fx-font-size: 16;
+}
+
+.choice-box .label, .context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 10 10 10 10;
+    -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
+}
+.choice-box  {
+    -fx-background-color: #E8E2E2;
+    -fx-background-radius: 10 10 10 10;
+}
+
+.choice-box .arrow {
+    -fx-background-color: #5A5656;
+}
+
+.choice-box-menu-item:hover {
+    -fx-background-color: lightgrey;
 }
