@@ -19,7 +19,7 @@
                   <Font name="System Bold" size="24.0" />
                </font>
                <VBox.margin>
-                  <Insets bottom="20.0" top="30.0" />
+                  <Insets bottom="5.0" top="10.0" />
                </VBox.margin>
             </Label>
             <TextField fx:id="navnNyBrugerFelt" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" promptText="Navn" styleClass="TextField" stylesheets="@../../../CultureConnectCSS.css">
@@ -27,7 +27,12 @@
                   <Insets left="30.0" right="30.0" />
                </VBox.margin>
             </TextField>
-            <ChoiceBox fx:id="arbejdspladsVælger" maxHeight="40.0" maxWidth="371.0" minHeight="40.0" minWidth="371.0" prefHeight="40.0" prefWidth="371.0">
+            <TextField fx:id="cprNyBrugerFelt" layoutX="40.0" layoutY="109.0" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" promptText="CPR" styleClass="TextField" stylesheets="@../../../CultureConnectCSS.css">
+               <VBox.margin>
+                  <Insets left="30.0" right="30.0" />
+               </VBox.margin>
+            </TextField>
+            <ChoiceBox fx:id="arbejdspladsVælger" maxHeight="40.0" maxWidth="371.0" minHeight="40.0" minWidth="371.0" prefHeight="40.0" prefWidth="371.0" stylesheets="@../../../CultureConnectCSS.css">
                <VBox.margin>
                   <Insets left="30.0" right="30.0" />
                </VBox.margin>
@@ -43,6 +48,11 @@
                </VBox.margin>
             </TextField>
             <TextField fx:id="emailNyBrugerFelt" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" promptText="Email" styleClass="TextField" stylesheets="@../../../CultureConnectCSS.css">
+               <VBox.margin>
+                  <Insets left="30.0" right="30.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="kodeordNyBrugerFelt" layoutX="40.0" layoutY="384.0" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" promptText="Kodeord" styleClass="TextField" stylesheets="@../../../CultureConnectCSS.css">
                <VBox.margin>
                   <Insets left="30.0" right="30.0" />
                </VBox.margin>

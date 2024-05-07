@@ -21,6 +21,9 @@ public class NewUserDialogController {
     private TextField navnNyBrugerFelt;
 
     @FXML
+    private TextField cprNyBrugerFelt;
+
+    @FXML
     private Button opretNyBrugerKnap;
 
     @FXML
@@ -28,6 +31,9 @@ public class NewUserDialogController {
 
     @FXML
     private TextField telefonnummerNyBrugerFelt;
+
+    @FXML
+    private TextField kodeordNyBrugerFelt;
 
     @FXML
     private Button vælgFilKnap;
