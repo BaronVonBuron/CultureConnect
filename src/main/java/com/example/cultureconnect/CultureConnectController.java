@@ -397,8 +397,14 @@ public class CultureConnectController {
         alert.getButtonTypes().clear();
         ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
         alert.getButtonTypes().addAll(buttonType, buttonType1);
         alert.showAndWait();
+
+
         if (alert.getResult() == buttonType){
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(CreateNewProjektTab);

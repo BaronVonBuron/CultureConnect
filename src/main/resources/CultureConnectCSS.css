@@ -25,14 +25,14 @@
     -fx-background-color: transparent;
 }
 
-.Buttons{
+.Buttons, .Alerts .button{
     -fx-background-color: #5A5656;
     -fx-text-fill: white;
     -fx-border-radius: 10 10 10 10;
     -fx-background-radius: 10 10 10 10;
 }
 
-.Buttons:hover, .date-picker .arrow-button:hover{
+.Buttons:hover, .date-picker .arrow-button:hover, .Alerts .button:hover{
     -fx-scale-z: 0.9;
     -fx-scale-y: 0.9;
     -fx-scale-x: 0.9;
@@ -133,6 +133,12 @@
     -fx-background-color: #A7A1A1;
     -fx-background-radius: 20 20 0 0;
     -fx-cursor: mouse;
+
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
 }
 
 .tab-pane .tab{
@@ -229,4 +235,22 @@
     -fx-scale-x: 0.9;
     -fx-cursor: hand;
     -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
+}
+
+.Alerts, .Alerts > *.button-bar > *.container{
+    -fx-background-color: white;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+.Alerts > *.label.content{
+    -fx-font-size: 14;
+}
+
+.Alerts *.header-panel{
+    -fx-background-color: white;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
 }
