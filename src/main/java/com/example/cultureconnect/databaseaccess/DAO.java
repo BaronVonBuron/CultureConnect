@@ -229,4 +229,21 @@ public class DAO {
             System.err.println("Can't delete project: " + e.getErrorCode() + e.getMessage());
         }
     }
+
+    public boolean checkLoginReturnUser(String brugernavn, String kodeord) {
+        //create preparedstatement to check if the user exists and the password is correct
+        //if the user exists, return true, else return false
+        //check in the LoginInfo table, columns Email - String, Kode - String
+        String sql = "SELECT * FROM LoginInfo WHERE Mail = ? AND Kode = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, brugernavn);
+            preparedStatement.setString(2, kodeord);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            System.err.println("Can't check login: " + e.getErrorCode() + e.getMessage());
+        }
+        return false;
+    }
 }
