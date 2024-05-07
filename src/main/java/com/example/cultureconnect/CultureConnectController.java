@@ -90,6 +90,7 @@ public class CultureConnectController {
 
 
     public void startSequence(){
+        CalendarTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         CalendarTabPane.getTabs().remove(editProjectTab);
         CalendarTabPane.getTabs().remove(ProjektTab);
         CalendarTabPane.getTabs().remove(CreateNewProjektTab);
