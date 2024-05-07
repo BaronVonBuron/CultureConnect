@@ -75,7 +75,7 @@ public class CultureConnectController {
     private int columnWidth = 35;
     private int rowHeight = 35;
     Tooltip projektTooltip = new Tooltip();
-    private Logic logic = new Logic();
+    private Logic logic;
     ObservableList<PersonListCell> users = FXCollections.observableArrayList();
     ObservableList<LokationListCell> places = FXCollections.observableArrayList();
     List<Projekt> projects = new ArrayList<>();
@@ -84,7 +84,9 @@ public class CultureConnectController {
 
 
     public void initialize() {
+        this.logic = new Logic();
         startSequence();
+        loginSequence();
         //TODO highlight the current week
     }
 
@@ -110,6 +112,25 @@ public class CultureConnectController {
         loadUsers();
         //TODO scroll til denne uge.
         CalendarScrollPane.setHvalue(getCurrentWeekNumber() / 52.0);
+    }
+
+    public void loginSequence(){
+        FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/CultureConnectLogin.fxml"));
+        Stage loginStage = new Stage();
+        loginStage.setTitle("CultureConnect Login");
+        try {
+            Scene loginScene = new Scene(loginLoader.load());
+            CultureConnectLoginController loginController = loginLoader.getController();
+            loginController.setLogic(this.logic);
+            loginStage.setScene(loginScene);
+            loginStage.setAlwaysOnTop(true);
+            loginStage.setOnCloseRequest(event -> {
+                System.exit(0);
+            });
+            loginStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -406,4 +427,5 @@ public class CultureConnectController {
 
     public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
     }
+
 }

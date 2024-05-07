@@ -15,6 +15,7 @@ public class Logic {
     private List<Lokation> locations = new ArrayList<>();
     private List<Projekt> projects = new ArrayList<>();
     private boolean isUpdating = false;
+    private Person currentUser;
 
     public Logic(){
         this.dao = new DAO();
@@ -48,5 +49,25 @@ public class Logic {
 
     public boolean getIsUpdating() {
         return this.isUpdating;
+    }
+
+    public boolean login(String brugernavn, String kodeord) {
+
+        //make dao call to check if user exists and password is correct
+        if (dao.checkLoginReturnUser(brugernavn, kodeord)){
+            for (Person person : persons) {
+                if (person.getEmail().equals(brugernavn)) {
+                    currentUser = person;
+                    break;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Person getCurrentUser() {
+        return currentUser;
     }
 }
