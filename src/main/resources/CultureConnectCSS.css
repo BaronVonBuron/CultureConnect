@@ -133,6 +133,12 @@
     -fx-background-color: #A7A1A1;
     -fx-background-radius: 20 20 0 0;
     -fx-cursor: mouse;
+
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
 }
 
 .tab-pane .tab{
@@ -230,14 +236,6 @@
     -fx-cursor: hand;
     -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
 }
-
-.choice-box .context-menu { -fx-background-color: black; }
-
-.choice-box .menu-item:focused { -fx-background-color: orange; }
-
-.choice-box .menu-item > .label { -fx-text-fill: white; }
-
-.choice-box .menu-item:focused > .label { -fx-text-fill: black; }
 
 .Alerts, .Alerts > *.button-bar > *.container{
     -fx-background-color: white;
