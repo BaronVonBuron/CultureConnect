@@ -3,6 +3,9 @@ package com.example.cultureconnect.customListview;
 import com.example.cultureconnect.Lokation.Lokation;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -41,6 +44,25 @@ public class LokationListCell extends ListCell {
         });
         vbox.getChildren().add(hbox);
         setGraphic(vbox);
+
+
+        this.setOnDragDetected(event -> {
+            System.out.println("drag detected lokation listcell");
+            Dragboard db = this.startDragAndDrop(TransferMode.ANY);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(lokation.getName());
+            db.setContent(content);
+            event.consume();
+        });
+        this.setOnDragDone(event -> {
+            // Check if the drag operation was successful
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                // Remove the item from the ListView's items
+                System.out.println("drag done lokation listcell");
+            }
+
+            event.consume();
+        });
     }
 
     public Lokation getLokation() {
