@@ -47,6 +47,11 @@
     -fx-effect: innershadow( gaussian, rgba( 0, 0, 0, 0.4 ), 15, 0, 5, 5 );
 }
 
+.TextField .scroll-bar:vertical {
+    -fx-pref-width: 1;
+    -fx-opacity: 0;
+}
+
 .date-picker > .text-field, .TitelTextField{
     -fx-background-color: #FFFFFF;
     -fx-border-radius: 5 5 5 5;
