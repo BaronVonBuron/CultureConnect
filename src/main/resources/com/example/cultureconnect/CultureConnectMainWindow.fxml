@@ -551,7 +551,7 @@
                                                                         <Insets />
                                                                      </VBox.margin>
                                                                   </Label>
-                                                                  <TextArea fx:id="CreateNewProjektDescriptionTextArea" minHeight="75.0" minWidth="0.0" prefWidth="200.0" styleClass="TextField" wrapText="true">
+                                                                  <TextArea fx:id="CreateNewProjektDescriptionTextArea" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0" styleClass="TextField" wrapText="true">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
@@ -574,7 +574,7 @@
                                                                         <Font name="System Bold" size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <TextArea fx:id="redigerPlanlagteMøderFelt1" editable="false" minHeight="75.0" minWidth="0.0" prefWidth="200.0" styleClass="TextField" wrapText="true">
+                                                                  <TextArea fx:id="nytProjektPlanlagteMøderFelt" editable="false" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0" styleClass="TextField" wrapText="true">
                                                                      <font>
                                                                         <Font size="16.0" />
                                                                      </font>
@@ -616,7 +616,7 @@
                                                                         <Font name="System Bold" size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <TextArea fx:id="CreateNewProjectNotesTextArea" minHeight="200.0" prefWidth="500.0" styleClass="TextField" wrapText="true" VBox.vgrow="ALWAYS">
+                                                                  <TextArea fx:id="CreateNewProjectNotesTextArea" minHeight="200.0" prefHeight="200.0" prefWidth="500.0" styleClass="TextField" wrapText="true" VBox.vgrow="ALWAYS">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>

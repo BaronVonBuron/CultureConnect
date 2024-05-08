@@ -8,9 +8,12 @@ import com.example.cultureconnect.calendar.CalendarCell;
 import com.example.cultureconnect.calendar.ProjektCell;
 import com.example.cultureconnect.customListview.LokationListCell;
 import com.example.cultureconnect.customListview.PersonListCell;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -67,7 +70,20 @@ public class CultureConnectController {
     public DatePicker plannedActivityStartDatePicker;
     public DatePicker plannedActivityEndDatePicker;
     public TextField plannedActivityTitleTextField;
+    @FXML
+    private TextArea nytProjektPlanlagteMøderFelt;
     //Create new projekt tab slut////////////////////////////////////////////
+
+    //Edit projekt tab start////////////////////////////////////////////
+    @FXML
+    private TextArea redigerBeskrivelseFelt;
+
+    @FXML
+    private TextArea redigerNoterFelt;
+
+    @FXML
+    private TextArea redigerPlanlagteMøderFelt;
+    //Edit projekt tab slut////////////////////////////////////////////
 
     private int calendarColumns = 52;
     private int calendarRows = 35;//skal sættes af antallet af projekter.
@@ -78,6 +94,8 @@ public class CultureConnectController {
     ObservableList<PersonListCell> users = FXCollections.observableArrayList();
     ObservableList<LokationListCell> places = FXCollections.observableArrayList();
     List<Projekt> projects = new ArrayList<>();
+    //SimpleIntegerProperty count = new SimpleIntegerProperty();
+    int rowHeightTextareas = 10;
 
 
 
@@ -87,7 +105,31 @@ public class CultureConnectController {
         startSequence();
         loginSequence();
 
+        autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea, nytProjektPlanlagteMøderFelt,
+                redigerBeskrivelseFelt, redigerNoterFelt, redigerPlanlagteMøderFelt
+        );
+
         //TODO highlight the current week
+    }
+
+    public void autoExpandingTextareas(TextArea... textAreas) {
+        for (TextArea textArea : textAreas) {
+            textArea.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+
+            // Initialize count with the initial height of the text area
+            SimpleIntegerProperty count = new SimpleIntegerProperty((int) textArea.getPrefHeight());
+
+            // Bind height properties
+            textArea.prefHeightProperty().bindBidirectional(count);
+            textArea.minHeightProperty().bindBidirectional(count);
+
+            // Listen for scroll events
+            textArea.scrollTopProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
+                if(newVal.intValue() > rowHeightTextareas){
+                    count.set(count.get() + newVal.intValue());
+                }
+            });
+        }
     }
 
 
