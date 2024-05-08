@@ -1,4 +1,4 @@
-package com.example.cultureconnect;
+package com.example.cultureconnect.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
