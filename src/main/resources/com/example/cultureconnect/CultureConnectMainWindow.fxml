@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<SplitPane fx:id="MainSplitPane" dividerPositions="0.22429078014184398" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1130.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cultureconnect.CultureConnectController">
+<SplitPane fx:id="MainSplitPane" dividerPositions="0.22429078014184398" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1130.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cultureconnect.controllers.CultureConnectController">
   <items>
     <AnchorPane fx:id="LeftsideAnchorPane" maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="160.0" prefWidth="250.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css">
          <children>

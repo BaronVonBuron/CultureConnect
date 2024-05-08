@@ -1,4 +1,4 @@
-package com.example.cultureconnect;
+package com.example.cultureconnect.controllers;
 
 import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
