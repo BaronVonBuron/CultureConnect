@@ -206,8 +206,6 @@ public class CultureConnectController {
             }
         }
         CalendarGridPane.setGridLinesVisible(true);
-        CalendarGridPane.setHgap(1);
-        CalendarGridPane.setVgap(1);
     }
 
 

@@ -20,6 +20,8 @@ public class CultureConnectLoginController {
 
 
     public void initialize() {
+        brugernavnFelt.setText("1234");
+        kodeordFelt.setText("1234");
         //add eventlistener to kodeordfelt, so that when enter is pressed, login is called
         kodeordFelt.setOnKeyPressed(event -> {
             if (event.getCode().toString().equals("ENTER")) {
