@@ -83,7 +83,7 @@ public class CultureConnectController {
 
 
     public void initialize() {
-        this.logic = new Logic();
+        this.logic = Logic.getInstance();
         startSequence();
         loginSequence();
 
@@ -248,7 +248,7 @@ public class CultureConnectController {
         //TODO only when admin is logged in, should the button be visible, and when pressed, open a dialogwindow next to the listview, where the admin can create a new user.
         if (UserToggleButton.isSelected()) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("NewUserDialog.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/NewUserDialog.fxml"));
                 Stage addUser = new Stage();
                 addUser.setTitle("Opret Ny Bruger");
                 AnchorPane editLayout = loader.load();
@@ -264,7 +264,7 @@ public class CultureConnectController {
 
         } else if (LocationToggleButton.isSelected()) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("NewLocationDialog.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/NewLocationDialog.fxml"));
                 Stage addLocation = new Stage();
                 addLocation.setTitle("Opret Ny Lokation");
                 AnchorPane editLayout = loader.load();
