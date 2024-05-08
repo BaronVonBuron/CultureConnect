@@ -1,15 +1,22 @@
 package com.example.cultureconnect.controllers;
 
+import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Lokation.Lokation;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
+import java.util.List;
+
 public class NewUserDialogController {
 
     @FXML
-    private ChoiceBox<?> arbejdspladsVælger;
+    private ChoiceBox<String> arbejdspladsVælger;
 
     @FXML
     private TextField billedeNyBrugerFelt;
@@ -37,6 +44,22 @@ public class NewUserDialogController {
 
     @FXML
     private Button vælgFilKnap;
+
+    private Logic logic;
+
+    public void initialize(){
+        this.logic = Logic.getInstance();
+        choiceBoxOptions();
+    }
+
+    public void choiceBoxOptions(){
+        List<Lokation> locations = logic.getLocations();
+        ObservableList<String> locationMuligheder = FXCollections.observableArrayList();
+        for (Lokation location : locations) {
+            locationMuligheder.add(location.getName());
+        }
+        arbejdspladsVælger.setItems(locationMuligheder);
+    }
 
     @FXML
     void opretNyBrugerKnapPressed(ActionEvent event) {

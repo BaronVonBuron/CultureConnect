@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Logic {
 
+    private static Logic instance = null;
+
     private DAO dao;
     private List<Person> persons = new ArrayList<>();
     private List<Lokation> locations = new ArrayList<>();
@@ -17,10 +19,16 @@ public class Logic {
     private boolean isUpdating = false;
     private Person currentUser;
 
-    public Logic(){
+    private Logic(){
         this.dao = new DAO();
     }
 
+    public static Logic getInstance(){
+        if (instance == null){
+            instance = new Logic();
+        }
+        return instance;
+    }
 
 
     public List<Projekt> getProjects() {
