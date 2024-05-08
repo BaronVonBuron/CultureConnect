@@ -108,6 +108,7 @@ public class CultureConnectController {
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea, nytProjektPlanlagteMøderFelt,
                 redigerBeskrivelseFelt, redigerNoterFelt, redigerPlanlagteMøderFelt
         );
+
         //TODO highlight the current week
     }
 
