@@ -59,6 +59,7 @@ public class NewUserDialogController {
             locationMuligheder.add(location.getName());
         }
         arbejdspladsVælger.setItems(locationMuligheder);
+        arbejdspladsVælger.setValue("Vælg arbejdsplads");
     }
 
     @FXML
