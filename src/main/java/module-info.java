@@ -6,8 +6,8 @@ module com.example.cultureconnect {
     requires javafx.swing;
 
 
-    opens com.example.cultureconnect to javafx.fxml;
-    exports com.example.cultureconnect;
     exports com.example.cultureconnect.main;
     opens com.example.cultureconnect.main to javafx.fxml;
+    exports com.example.cultureconnect.controllers;
+    opens com.example.cultureconnect.controllers to javafx.fxml;
 }

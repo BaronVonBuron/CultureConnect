@@ -5,6 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
@@ -50,6 +53,24 @@ public class PersonListCell extends ListCell {
         });
         vbox.getChildren().add(hbox);
         setGraphic(vbox);
+
+        this.setOnDragDetected(event -> {
+            System.out.println("drag detected person list cell");
+            Dragboard db = this.startDragAndDrop(javafx.scene.input.TransferMode.ANY);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(person.getName());
+            db.setContent(content);
+            event.consume();
+        });
+        this.setOnDragDone(event -> {
+            // Check if the drag operation was successful
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                // Remove the item from the ListView's items
+                System.out.println("drag done person list cell");
+            }
+
+            event.consume();
+        });
     }
 
     public Person getPerson() {
