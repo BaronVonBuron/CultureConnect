@@ -63,9 +63,9 @@ public class CultureConnectController {
     public DatePicker CreateNewProjektEndDatePicker;
     public TextArea CreateNewProjektDescriptionTextArea;
     public TextField CreateNewProjectTitleTextField;
-    public ListView CreateNewProjektPersonListView;
-    public ListView CreateNewProjektCreatorListView;
-    public ListView CreateNewProjectLokationListView;
+    public ListView<PersonListCell> CreateNewProjektPersonListView;
+    public ListView<PersonListCell> CreateNewProjektCreatorListView;
+    public ListView<LokationListCell> CreateNewProjectLokationListView;
     public Label ProjektTitelLabel;
     public DatePicker plannedActivityStartDatePicker;
     public DatePicker plannedActivityEndDatePicker;
@@ -463,13 +463,57 @@ public class CultureConnectController {
     }
 
     public void createProjektButtonPressed(ActionEvent actionEvent) {
-        //TODO create a new projekt, and add it to the database.
         //TODO check if the projekt is valid, and if not, show an error message.
-        //TODO if the projekt is valid, add it to the database, and update the calendar.
-        //TODO update the calendar with the new projekt.
+        if (CreateNewProjectTitleTextField.getText().isEmpty() || CreateNewProjektEndDatePicker.getValue() == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Fejl i oprettelse af projekt");
+            alert.setHeaderText("Projektet kunne ikke oprettes");
+            alert.setContentText("Projektet skal have en titel og en slutdato.");
+            alert.showAndWait();
+        } else {
+            Date startDate = new Date();
+            if (nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
+                startDate = new Date();
+            } else {
+                startDate = new Date(nytProjektPlanlagteMøderFelt.getText());//find på noget til at finde den første dato.
+            }
+            Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, new Date(String.valueOf(CreateNewProjektEndDatePicker.getValue())), UUID.randomUUID());
+
+            if(!CreateNewProjektDescriptionTextArea.getText().isEmpty()){
+                nytProjekt.setDescription(CreateNewProjektDescriptionTextArea.getText());
+            }
+            if(!CreateNewProjectNotesTextArea.getText().isEmpty()){
+                nytProjekt.setNotes(CreateNewProjectNotesTextArea.getText());
+            }
+            if(!CreateNewProjektCreatorListView.getItems().isEmpty()){
+                List<Person> creators = new ArrayList<>();
+                for (PersonListCell creator : CreateNewProjektCreatorListView.getItems()) {
+                    creators.add(creator.getPerson());
+                }
+                nytProjekt.setProjectCreator(creators.get(0));
+            }
+            if (!CreateNewProjektPersonListView.getItems().isEmpty()){
+                List<Person> participants = new ArrayList<>();
+                for (PersonListCell participant : CreateNewProjektPersonListView.getItems()) {
+                    participants.add(participant.getPerson());
+                }
+                nytProjekt.setParticipants(participants);
+            }
+            if (!CreateNewProjectLokationListView.getItems().isEmpty()){
+                nytProjekt.setLokation(CreateNewProjectLokationListView.getItems().getFirst().getLokation());
+            }
+            if (!nytProjektPlanlagteMøderFelt.getText().isEmpty()){
+                nytProjekt.setAktiviteter(nytProjektPlanlagteMøderFelt.getText());
+            }
+            logic.createProject(nytProjekt);
+        }
     }
 
     public void createNewProjectAddActivityButtonPressed(ActionEvent actionEvent) {
+        plannedActivityEndDatePicker.getValue();
+        plannedActivityStartDatePicker.getValue();
+        plannedActivityTitleTextField.getText();
+        //add to the nytprojektPlanlagteMøderFelt
 
     }
 

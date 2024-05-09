@@ -18,6 +18,8 @@ public class Projekt {
     private Date startDate;
     private Date endDate;
     private String color;
+    private String notes;
+    private String aktiviteter;
 
     //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
     //mile dates og event dates - lister til dem
@@ -28,6 +30,14 @@ public class Projekt {
         this.startDate = startDate;
         this.endDate = endDate;
     }//konstruktør for projekt
+
+    public String getAktiviteter() {
+        return aktiviteter;
+    }
+
+    public void setAktiviteter(String aktiviteter) {
+        this.aktiviteter = aktiviteter;
+    }
 
     public String getColor() {
         if (color == null || color.isEmpty()){
@@ -109,6 +119,10 @@ public class Projekt {
             throw new IllegalArgumentException("Slut dato for et projekt kan ikke være før start datoen");
         }
         this.endDate = endDate;
+    }
+
+    public void setNotes(String text) {
+        this.notes = text;
     }
     //getters og setters
 }

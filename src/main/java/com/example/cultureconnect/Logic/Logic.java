@@ -78,4 +78,8 @@ public class Logic {
     public Person getCurrentUser() {
         return currentUser;
     }
+
+    public void createProject(Projekt nytProjekt) {
+        dao.createProjekt(nytProjekt);
+    }
 }
