@@ -95,6 +95,10 @@ public class NewLocationDialogController {
         alert.setTitle("Fejl");
         alert.setHeaderText("Lokationen skal have et navn");
         alert.showAndWait();
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
     }
 
     public void locationExistsAlready() {
@@ -103,6 +107,10 @@ public class NewLocationDialogController {
         alert.setHeaderText("Lokationen findes allerede");
         alert.setContentText("Du kan redigere lokationen i stedet for at oprette en ny");
         alert.showAndWait();
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
     }
 
     public void setMainController(CultureConnectController cultureConnectController) {
