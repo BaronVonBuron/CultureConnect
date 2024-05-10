@@ -64,8 +64,11 @@ public class CultureConnectController {
     public TextArea CreateNewProjektDescriptionTextArea;
     public TextField CreateNewProjectTitleTextField;
     public ListView<PersonListCell> CreateNewProjektPersonListView;
+    private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
+    private ObservableList<PersonListCell> createNewProjektCreatorList;
     public ListView<LokationListCell> CreateNewProjectLokationListView;
+    private ObservableList<LokationListCell> createNewProjektLokationList;
     public Label ProjektTitelLabel;
     public DatePicker plannedActivityStartDatePicker;
     public DatePicker plannedActivityEndDatePicker;
@@ -92,7 +95,9 @@ public class CultureConnectController {
     Tooltip projektTooltip = new Tooltip();
     private Logic logic;
     ObservableList<PersonListCell> users = FXCollections.observableArrayList();
+    ObservableList<PersonListCell> usersForNewProjekt;// = FXCollections.observableArrayList();
     ObservableList<LokationListCell> places = FXCollections.observableArrayList();
+    ObservableList<LokationListCell> placesForNewProjekt;// = FXCollections.observableArrayList();
     List<Projekt> projects = new ArrayList<>();
     //SimpleIntegerProperty count = new SimpleIntegerProperty();
     int rowHeightTextareas = 10;
@@ -108,6 +113,27 @@ public class CultureConnectController {
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea, nytProjektPlanlagteMøderFelt,
                 redigerBeskrivelseFelt, redigerNoterFelt, redigerPlanlagteMøderFelt
         );
+
+        //eventlistener, to see which tab is selected
+        CalendarTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals(CreateNewProjektTab)){
+                if (UserToggleButton.isSelected()){
+                    UserOrLocationListview.setItems(placesForNewProjekt);
+                    UserOrLocationListview.setItems(usersForNewProjekt);
+                } else {
+                    UserOrLocationListview.setItems(usersForNewProjekt);
+                    UserOrLocationListview.setItems(placesForNewProjekt);
+                }
+            } else if (newValue.equals(CalendarTab)){
+
+                if (UserToggleButton.isSelected()){
+                    UserOrLocationListview.setItems(users);
+                } else {
+                    UserOrLocationListview.setItems(places);
+                }
+
+            }
+        });
 
         //TODO highlight the current week
     }
@@ -270,18 +296,34 @@ public class CultureConnectController {
         if (!CalendarTabPane.getTabs().contains(CreateNewProjektTab)){
             CalendarTabPane.getTabs().add(CreateNewProjektTab);
             CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
+            createNewProjektCreatorList = FXCollections.observableArrayList();
+            createNewProjektPersonList = FXCollections.observableArrayList();
+            createNewProjektLokationList = FXCollections.observableArrayList();
+            usersForNewProjekt = FXCollections.observableArrayList();
+            placesForNewProjekt = FXCollections.observableArrayList();
+            usersForNewProjekt.addAll(users);
+            placesForNewProjekt.addAll(places);
+            for (PersonListCell user : usersForNewProjekt) {
+                if (user.getPerson().getEmail().equals(logic.getCurrentUser().getEmail())){
+                    PersonListCell pcell = new PersonListCell(logic.getCurrentUser());
+                    createNewProjektCreatorList.add(pcell);
+                    CreateNewProjektCreatorListView.setItems(createNewProjektCreatorList);
+                    usersForNewProjekt.remove(user);
+                    UserOrLocationListview.setItems(usersForNewProjekt);
+                    break;
+                }
+            }
         } else {
             CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
-        }
-        for (PersonListCell user : users) {
-            if (user.getPerson().getEmail().equals(logic.getCurrentUser().getEmail())){
-                PersonListCell pcell = new PersonListCell(logic.getCurrentUser());
-                CreateNewProjektCreatorListView.getItems().add(pcell);
-                users.remove(user);
-                UserOrLocationListview.setItems(users);
-                break;
+            if (UserToggleButton.isSelected()){
+                UserOrLocationListview.setItems(placesForNewProjekt);
+                UserOrLocationListview.setItems(usersForNewProjekt);
+            } else {
+                UserOrLocationListview.setItems(usersForNewProjekt);
+                UserOrLocationListview.setItems(placesForNewProjekt);
             }
         }
+
     }
 
 
@@ -321,7 +363,7 @@ public class CultureConnectController {
         }
     }
 
-    public void listviewSearchButtonPressed() {
+    public void listviewSearchButtonPressed() { //TODO null pointer safety
         if (ListviewSearchTextField != null && UserToggleButton.isSelected()){
             String searchText = ListviewSearchTextField.getText().toLowerCase();
             //search for persons
@@ -348,12 +390,20 @@ public class CultureConnectController {
     }
 
     public void userToggleButtonPressed(ActionEvent event) {
-        UserOrLocationListview.setItems(users);
+        if (CreateNewProjektTab.isSelected()){
+            UserOrLocationListview.setItems(usersForNewProjekt);
+        } else {
+            UserOrLocationListview.setItems(users);
+        }
         AdminMenuNewUserOrLocationButton.setText("Ny Bruger");
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
-        UserOrLocationListview.setItems(places);
+        if (CreateNewProjektTab.isSelected()){
+            UserOrLocationListview.setItems(placesForNewProjekt);
+        } else {
+            UserOrLocationListview.setItems(places);
+        }
         AdminMenuNewUserOrLocationButton.setText("Ny Lokation");
     }
 
@@ -471,7 +521,7 @@ public class CultureConnectController {
             alert.setContentText("Projektet skal have en titel og en slutdato.");
             alert.showAndWait();
         } else {
-            Date startDate = new Date();
+            Date startDate;
             if (nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
                 startDate = new Date();
             } else {
@@ -541,16 +591,17 @@ public class CultureConnectController {
             String lokationName = db.getString();
 
             // Find the Lokation with this name in your list of Lokations
-            LokationListCell droppedLokation = places.stream()
+            LokationListCell droppedLokation = placesForNewProjekt.stream()
                     .filter(lokation -> lokation.getName().equals(lokationName))
                     .findFirst()
                     .orElse(null);
 
             // If the Lokation was found, add it to the ListView
             if (droppedLokation != null) {
-                CreateNewProjectLokationListView.getItems().add(droppedLokation);
-                places.remove(droppedLokation);
-                UserOrLocationListview.setItems(places);
+                createNewProjektLokationList.add(droppedLokation);
+                CreateNewProjectLokationListView.setItems(createNewProjektLokationList);
+                placesForNewProjekt.remove(droppedLokation);
+                UserOrLocationListview.setItems(placesForNewProjekt);
             }
 
             // Indicate that the drag data was successfully transferred and used
@@ -581,15 +632,16 @@ public class CultureConnectController {
             // Get the name of the Person from the Dragboard
             String personName = db.getString();
             // Find the Person with this name in your list of Persons
-            PersonListCell droppedPerson = users.stream()
+            PersonListCell droppedPerson = usersForNewProjekt.stream()
                     .filter(person -> person.getName().equals(personName))
                     .findFirst()
                     .orElse(null);
             // If the Person was found, add it to the ListView
             if (droppedPerson != null) {
-                CreateNewProjektCreatorListView.getItems().add(droppedPerson);
-                users.remove(droppedPerson);
-                UserOrLocationListview.setItems(users);
+                createNewProjektCreatorList.add(droppedPerson);
+                CreateNewProjektCreatorListView.setItems(createNewProjektCreatorList);
+                usersForNewProjekt.remove(droppedPerson);
+                UserOrLocationListview.setItems(usersForNewProjekt);
             }
             // Indicate that the drag data was successfully transferred and used
             dragEvent.setDropCompleted(true);
@@ -618,15 +670,16 @@ public class CultureConnectController {
             // Get the name of the Person from the Dragboard
             String personName = db.getString();
             // Find the Person with this name in your list of Persons
-            PersonListCell droppedPerson = users.stream()
+            PersonListCell droppedPerson = usersForNewProjekt.stream()
                     .filter(person -> person.getName().equals(personName))
                     .findFirst()
                     .orElse(null);
             // If the Person was found, add it to the ListView
             if (droppedPerson != null) {
-                CreateNewProjektPersonListView.getItems().add(droppedPerson);
-                users.remove(droppedPerson);
-                UserOrLocationListview.setItems(users);
+                createNewProjektPersonList.add(droppedPerson);
+                CreateNewProjektPersonListView.setItems(createNewProjektPersonList);
+                usersForNewProjekt.remove(droppedPerson);
+                UserOrLocationListview.setItems(usersForNewProjekt);
             }
             // Indicate that the drag data was successfully transferred and used
             dragEvent.setDropCompleted(true);
