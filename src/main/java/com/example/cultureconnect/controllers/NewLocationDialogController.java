@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -63,7 +64,11 @@ public class NewLocationDialogController {
         String name = navnNyLokationFelt.getText();
         String email = emailNyLokationFelt.getText();
         String telefonnummer = telefonnummerNyLokationFelt.getText();
-        String farveKode = "000000"; //skal laves om til at tage imod farve fra colorpicker
+        Color color = lokationColorchooser.getValue();
+        String farveKode = String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255) );
 
         if (name == null || name.trim().isEmpty()) {
             locationMustHaveName();
