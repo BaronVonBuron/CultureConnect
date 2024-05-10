@@ -78,4 +78,8 @@ public class Logic {
     public Person getCurrentUser() {
         return currentUser;
     }
+
+    public void createLocation(Lokation lokation){
+        dao.createLokation(lokation);
+    }
 }
