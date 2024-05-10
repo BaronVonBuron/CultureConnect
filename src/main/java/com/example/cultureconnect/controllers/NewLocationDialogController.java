@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -63,7 +64,11 @@ public class NewLocationDialogController {
         String name = navnNyLokationFelt.getText();
         String email = emailNyLokationFelt.getText();
         String telefonnummer = telefonnummerNyLokationFelt.getText();
-        String farveKode = "000000"; //skal laves om til at tage imod farve fra colorpicker
+        Color color = lokationColorchooser.getValue();
+        String farveKode = String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255) );
 
         if (name == null || name.trim().isEmpty()) {
             locationMustHaveName();
@@ -90,6 +95,10 @@ public class NewLocationDialogController {
         alert.setTitle("Fejl");
         alert.setHeaderText("Lokationen skal have et navn");
         alert.showAndWait();
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
     }
 
     public void locationExistsAlready() {
@@ -98,6 +107,10 @@ public class NewLocationDialogController {
         alert.setHeaderText("Lokationen findes allerede");
         alert.setContentText("Du kan redigere lokationen i stedet for at oprette en ny");
         alert.showAndWait();
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
     }
 
     public void setMainController(CultureConnectController cultureConnectController) {
