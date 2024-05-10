@@ -8,7 +8,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+
 import javafx.stage.Stage;
+
 
 import java.util.List;
 
@@ -34,6 +36,9 @@ public class NewLocationDialogController {
 
     @FXML
     private TextField telefonnummerNyLokationFelt;
+
+    @FXML
+    private ColorPicker lokationColorchooser;
 
     private Logic logic;
     private CultureConnectController cultureConnectController;
