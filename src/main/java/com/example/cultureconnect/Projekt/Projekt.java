@@ -13,7 +13,7 @@ public class Projekt {
     private String titel;
     private List<Person> participants;
     private String description;
-    private Person projectCreator;
+    private List<Person> projectCreator;
     private Lokation lokation;
     private Date startDate;
     private Date endDate;
@@ -86,11 +86,11 @@ public class Projekt {
         this.description = description;
     }
 
-    public Person getProjectCreator() {
+    public List<Person> getProjectCreator() {
         return projectCreator;
     }
 
-    public void setProjectCreator(Person projectCreator) {
+    public void setProjectCreator(List<Person> projectCreator) {
         this.projectCreator = projectCreator;
     }
 

@@ -25,6 +25,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -514,33 +519,55 @@ public class CultureConnectController {
 
     public void createProjektButtonPressed(ActionEvent actionEvent) {
         //TODO check if the projekt is valid, and if not, show an error message.
-        if (CreateNewProjectTitleTextField.getText().isEmpty() || CreateNewProjektEndDatePicker.getValue() == null){
+        if (CreateNewProjectTitleTextField.getText().isEmpty() || CreateNewProjektEndDatePicker.getValue() == null || CreateNewProjektCreatorListView.getItems().isEmpty()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i oprettelse af projekt");
             alert.setHeaderText("Projektet kunne ikke oprettes");
-            alert.setContentText("Projektet skal have en titel og en slutdato.");
+            alert.setContentText("Projektet skal have en projektejer, titel og en slutdato.");
             alert.showAndWait();
         } else {
             Date startDate;
+            Date endDate;
             if (nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
                 startDate = new Date();
             } else {
-                startDate = new Date(nytProjektPlanlagteMøderFelt.getText());//find på noget til at finde den første dato.
+                startDate = findEarliestDate(nytProjektPlanlagteMøderFelt.getText());
             }
-            Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, new Date(String.valueOf(CreateNewProjektEndDatePicker.getValue())), UUID.randomUUID());
+            if (!nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
+                Date latestDate = findLatestDate(nytProjektPlanlagteMøderFelt.getText());
+                LocalDate endDateLocalDate = CreateNewProjektEndDatePicker.getValue();
+                Instant instant = endDateLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                endDate = Date.from(instant);
+
+                if (latestDate.after(endDate)) {
+                    endDate = latestDate;
+                }
+            } else {
+                // If there are no planned activities, simply use the selected end date
+                LocalDate endDateLocalDate = CreateNewProjektEndDatePicker.getValue();
+                Instant instant = endDateLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                endDate = Date.from(instant);
+            }
+            Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, endDate, UUID.randomUUID());
 
             if(!CreateNewProjektDescriptionTextArea.getText().isEmpty()){
                 nytProjekt.setDescription(CreateNewProjektDescriptionTextArea.getText());
+            } else {
+                nytProjekt.setDescription("Ingen beskrivelse");
             }
+
             if(!CreateNewProjectNotesTextArea.getText().isEmpty()){
                 nytProjekt.setNotes(CreateNewProjectNotesTextArea.getText());
+            } else {
+                nytProjekt.setNotes("Ingen noter");
             }
+
             if(!CreateNewProjektCreatorListView.getItems().isEmpty()){
                 List<Person> creators = new ArrayList<>();
                 for (PersonListCell creator : CreateNewProjektCreatorListView.getItems()) {
                     creators.add(creator.getPerson());
                 }
-                nytProjekt.setProjectCreator(creators.get(0));
+                nytProjekt.setProjectCreator(creators);
             }
             if (!CreateNewProjektPersonListView.getItems().isEmpty()){
                 List<Person> participants = new ArrayList<>();
@@ -560,12 +587,63 @@ public class CultureConnectController {
     }
 
     public void createNewProjectAddActivityButtonPressed(ActionEvent actionEvent) {
-        plannedActivityEndDatePicker.getValue();
-        plannedActivityStartDatePicker.getValue();
-        plannedActivityTitleTextField.getText();
+        if (plannedActivityStartDatePicker.getValue() == null || plannedActivityEndDatePicker.getValue() == null || plannedActivityTitleTextField.getText().isEmpty() ||
+                plannedActivityEndDatePicker.getValue().isBefore(plannedActivityStartDatePicker.getValue())){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Fejl i oprettelse af aktivitet");
+            alert.setHeaderText("Aktiviteten kunne ikke oprettes");
+            alert.setContentText("Aktiviteten skal have en titel og en start- og slutdato.");
+            alert.showAndWait();
+        } else {
+            String activity = plannedActivityStartDatePicker.getValue().toString() + " - " + plannedActivityEndDatePicker.getValue().toString() + " | " + plannedActivityTitleTextField.getText();
+            nytProjektPlanlagteMøderFelt.setText(nytProjektPlanlagteMøderFelt.getText() + "\n" + activity);
+            plannedActivityEndDatePicker.setValue(null);
+            plannedActivityStartDatePicker.setValue(null);
+            plannedActivityTitleTextField.clear();
+        }
         //add to the nytprojektPlanlagteMøderFelt
-
     }
+
+    public Date findEarliestDate(String datesText) {
+        List<Date> dates = getDatesInActivities(datesText);
+        Date earliestDate = new Date(Long.MAX_VALUE);
+        for (Date date : dates) {
+            if (date.before(earliestDate)) {
+                earliestDate = date;
+            }
+        }
+        return earliestDate;
+    }
+
+    public Date findLatestDate(String datesText) {
+        List<Date> dates = getDatesInActivities(datesText);
+        Date latestDate = new Date(Long.MIN_VALUE);
+        for (Date date : dates) {
+            if (date.after(latestDate)) {
+                latestDate = date;
+            }
+        }
+        return latestDate;
+    }
+
+    public List<Date> getDatesInActivities(String activities){
+        List<Date> dates = new ArrayList<>();
+        String[] dateStrings = activities.split("\\|");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (String dateString : dateStrings) {
+            try {
+                Date date = dateFormat.parse(dateString.trim());
+                dates.add(date);
+            } catch (ParseException e) {
+                // Skip over invalid date strings and continue processing
+                System.err.println("Skipping invalid date string: " + dateString);
+            }
+        }
+        return dates;
+    }
+
+
+
 
     public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
 
