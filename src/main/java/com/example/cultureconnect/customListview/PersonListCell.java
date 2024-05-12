@@ -65,7 +65,7 @@ public class PersonListCell extends ListCell {
         this.setOnDragDone(event -> {
             // Check if the drag operation was successful
             if (event.getTransferMode() == TransferMode.MOVE) {
-                // Remove the item from the ListView's items
+
                 System.out.println("drag done person list cell");
             }
 

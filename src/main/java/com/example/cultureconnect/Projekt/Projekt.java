@@ -3,6 +3,7 @@ package com.example.cultureconnect.Projekt;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -13,11 +14,13 @@ public class Projekt {
     private String titel;
     private List<Person> participants;
     private String description;
-    private Person projectCreator;
+    private List<Person> projectCreator;
     private Lokation lokation;
     private Date startDate;
     private Date endDate;
     private String color;
+    private String notes;
+    private String aktiviteter;
 
     //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
     //mile dates og event dates - lister til dem
@@ -27,7 +30,18 @@ public class Projekt {
         this.titel = titel;
         this.startDate = startDate;
         this.endDate = endDate;
+        //initialize lists
+        this.participants = new ArrayList<>();
+        this.projectCreator = new ArrayList<>();
     }//konstruktør for projekt
+
+    public String getAktiviteter() {
+        return aktiviteter;
+    }
+
+    public void setAktiviteter(String aktiviteter) {
+        this.aktiviteter = aktiviteter;
+    }
 
     public String getColor() {
         if (color == null || color.isEmpty()){
@@ -76,11 +90,11 @@ public class Projekt {
         this.description = description;
     }
 
-    public Person getProjectCreator() {
+    public List<Person> getProjectCreator() {
         return projectCreator;
     }
 
-    public void setProjectCreator(Person projectCreator) {
+    public void setProjectCreator(List<Person> projectCreator) {
         this.projectCreator = projectCreator;
     }
 
@@ -110,5 +124,14 @@ public class Projekt {
         }
         this.endDate = endDate;
     }
+
+    public void setNotes(String text) {
+        this.notes = text;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
     //getters og setters
 }
