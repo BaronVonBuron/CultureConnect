@@ -363,7 +363,11 @@ public class CultureConnectController {
                 addLocation.setScene(scene);
                 addLocation.setResizable(false);
 
+                NewLocationDialogController controller = loader.getController();
+                controller.setMainController(this);
+
                 addLocation.show();
+                addLocation.setOnHidden(e -> loadLokations());
 
             } catch (IOException e){
                 System.out.println("Can't open new location window");
@@ -432,6 +436,7 @@ public class CultureConnectController {
         for (Lokation lokation : lokations) {
             cells.add(new LokationListCell(lokation));
         }
+        places.clear();
         places.addAll(cells);
         UserOrLocationListview.setItems(places);
     }

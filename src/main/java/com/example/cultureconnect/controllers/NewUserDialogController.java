@@ -10,7 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.List;
 
 public class NewUserDialogController {
@@ -69,7 +71,14 @@ public class NewUserDialogController {
 
     @FXML
     void vælgFilKnapPressed(ActionEvent event) {
-
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Vælg billed");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(
+                "Image Files", "*png")); //TODO evt. tilføje flere filtyper
+        File selectedFile = fileChooser.showOpenDialog(vælgFilKnap.getScene().getWindow());
+        if (selectedFile != null){
+            billedeNyBrugerFelt.setText(selectedFile.getAbsolutePath());
+        }
     }
 
 }

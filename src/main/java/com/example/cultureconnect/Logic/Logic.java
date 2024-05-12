@@ -79,8 +79,14 @@ public class Logic {
         return currentUser;
     }
 
+
     public void createProject(Projekt nytProjekt) {
         this.projects.add(nytProjekt);
         dao.createProjekt(nytProjekt);
+
+  
+    public void createLocation(Lokation lokation){
+        dao.createLokation(lokation);
+
     }
 }
