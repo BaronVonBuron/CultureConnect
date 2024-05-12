@@ -211,6 +211,9 @@ public class CultureConnectController {
 
 
     public void fillCalendarWithProjects(){
+        //clear the gridpane of projects
+        CalendarGridPane.getChildren().removeIf(node -> node instanceof ProjektCell);
+
         if (projects.isEmpty()){
             System.out.println("No projects to show");
         } else {
@@ -231,8 +234,8 @@ public class CultureConnectController {
                         }
                     });
                 }
-                int startWeek = getWeekNumber(projekt.getStartDate());
-                int endWeek = getWeekNumber(projekt.getEndDate());
+                int startWeek = getWeekNumber(projekt.getStartDate()) + 1;
+                int endWeek = getWeekNumber(projekt.getEndDate()) + 1;
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
                 ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
                 pcell.setHeight(rowHeight);
@@ -257,7 +260,7 @@ public class CultureConnectController {
 
     public int getCurrentWeekNumber() {
         Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.WEEK_OF_YEAR) - 1;
+        return calendar.get(Calendar.WEEK_OF_YEAR);
     }
 
 
@@ -583,6 +586,10 @@ public class CultureConnectController {
                 nytProjekt.setAktiviteter(nytProjektPlanlagteMøderFelt.getText());
             }
             logic.createProject(nytProjekt);
+            projects.add(nytProjekt);
+            fillCalendarWithProjects();
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         }
     }
 
@@ -595,7 +602,7 @@ public class CultureConnectController {
             alert.setContentText("Aktiviteten skal have en titel og en start- og slutdato.");
             alert.showAndWait();
         } else {
-            String activity = plannedActivityStartDatePicker.getValue().toString() + " - " + plannedActivityEndDatePicker.getValue().toString() + " | " + plannedActivityTitleTextField.getText();
+            String activity = plannedActivityStartDatePicker.getValue().toString() + " | " + plannedActivityEndDatePicker.getValue().toString() + " | " + plannedActivityTitleTextField.getText();
             nytProjektPlanlagteMøderFelt.setText(nytProjektPlanlagteMøderFelt.getText() + "\n" + activity);
             plannedActivityEndDatePicker.setValue(null);
             plannedActivityStartDatePicker.setValue(null);
@@ -619,9 +626,11 @@ public class CultureConnectController {
         List<Date> dates = getDatesInActivities(datesText);
         Date latestDate = new Date(Long.MIN_VALUE);
         for (Date date : dates) {
+            System.out.println(date + " date");
             if (date.after(latestDate)) {
                 latestDate = date;
             }
+            System.out.println(latestDate + " latest date");
         }
         return latestDate;
     }
@@ -634,6 +643,7 @@ public class CultureConnectController {
             try {
                 Date date = dateFormat.parse(dateString.trim());
                 dates.add(date);
+                System.out.println(date + " date in activity");
             } catch (ParseException e) {
                 // Skip over invalid date strings and continue processing
                 System.err.println("Skipping invalid date string: " + dateString);

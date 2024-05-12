@@ -3,6 +3,7 @@ package com.example.cultureconnect.Projekt;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +30,9 @@ public class Projekt {
         this.titel = titel;
         this.startDate = startDate;
         this.endDate = endDate;
+        //initialize lists
+        this.participants = new ArrayList<>();
+        this.projectCreator = new ArrayList<>();
     }//konstruktør for projekt
 
     public String getAktiviteter() {
@@ -124,5 +128,10 @@ public class Projekt {
     public void setNotes(String text) {
         this.notes = text;
     }
+
+    public String getNotes() {
+        return notes;
+    }
+
     //getters og setters
 }

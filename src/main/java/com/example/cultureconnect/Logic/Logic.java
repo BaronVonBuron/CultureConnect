@@ -80,6 +80,7 @@ public class Logic {
     }
 
     public void createProject(Projekt nytProjekt) {
+        this.projects.add(nytProjekt);
         dao.createProjekt(nytProjekt);
     }
 }

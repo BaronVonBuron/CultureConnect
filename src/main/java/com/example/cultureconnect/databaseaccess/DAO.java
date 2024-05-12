@@ -169,8 +169,12 @@ public class DAO {
 
     //TODO CRUD for Projekt
     //PreparedStatement for creating a project in the Projekt table, ProjektID is autoincremented, columns: Navn - String, StartDato - Date, SlutDato - Date
+    //another prepared statement to insert the details of the project into the ProjektInfo table. Columns: Projekt_ID - String, Beskrivelse - String, Møder - String, Noter - String, where the Projekt_ID is a foreign key to the Projekt table.
+
+
     public void createProjekt(Projekt projekt) {
         String sql = "INSERT INTO Projekt (ProjektID, Navn, StartDato, SlutDato) VALUES (?, ?, ?, ?)";
+
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setString(1, projekt.getId());
@@ -181,6 +185,34 @@ public class DAO {
         } catch (SQLException e) {
             System.err.println("Can't create project: " + e.getErrorCode() + e.getMessage());
         }
+        String sql1 = "INSERT INTO ProjektInfo (Projekt_ID, Beskrivelse, Møder, Noter) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql1);
+            preparedStatement.setString(1, projekt.getId());
+            preparedStatement.setString(2, projekt.getDescription());
+            preparedStatement.setString(3, projekt.getAktiviteter());
+            preparedStatement.setString(4, projekt.getNotes());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't create project info: " + e.getErrorCode() + e.getMessage());
+        }
+        //TODO: insert the participants into the ProjektDeltagere table where Projekt_ID is a foreign key to the Projekt table and Person_CPR is a foreign key to the Person table
+        //Insert into these columns: Projekt_ID - String, Person_CPR - String, Ejer - bit. if person is on the creator list, Ejer is true
+
+
+        String sql2 = "INSERT INTO ProjektDeltager (Projekt_ID, Person_CPR, Ejer) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql2);
+            for (Person person : projekt.getParticipants()) {
+                preparedStatement.setString(1, projekt.getId());
+                preparedStatement.setString(2, person.getCPR());
+                preparedStatement.setBoolean(3, projekt.getProjectCreator().contains(person));
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't create project participants: " + e.getErrorCode() + e.getMessage());
+        }
+
     }
 
     //PreparedStatement for reading all the projects from the Projekt table, and returning a list of them all
@@ -199,6 +231,44 @@ public class DAO {
             }
         } catch (SQLException e) {
             System.err.println("Can't read all projects: " + e.getErrorCode() + e.getMessage());
+        }
+        //for each project in the list, get the details from the ProjektInfo table and set them on the project object
+        for (Projekt projekt : projects) {
+            String sql1 = "SELECT * FROM ProjektInfo WHERE Projekt_ID = ?";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(sql1);
+                preparedStatement.setString(1, projekt.getId());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()){
+                    projekt.setDescription(resultSet.getString("Beskrivelse"));
+                    projekt.setAktiviteter(resultSet.getString("Møder"));
+                    projekt.setNotes(resultSet.getString("Noter"));
+                }
+            } catch (SQLException e) {
+                System.err.println("Can't read project info: " + e.getErrorCode() + e.getMessage());
+            }
+            //make a statement to get the participants from the ProjektDeltager table and set them on the project object. if they are the creator, add them to the creator list, and not the participants list.
+            String sql2 = "SELECT * FROM ProjektDeltager WHERE Projekt_ID = ?";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(sql2);
+                preparedStatement.setString(1, projekt.getId());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()){
+                    String CPR = resultSet.getString("Person_CPR");
+                    boolean isCreator = resultSet.getBoolean("Ejer");
+                    for (Person person : readAllPersons()) {
+                        if (person.getCPR().equals(CPR)){
+                            if (isCreator){
+                                projekt.getProjectCreator().add(person);
+                            } else {
+                                projekt.getParticipants().add(person);
+                            }
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("Can't read project participants: " + e.getErrorCode() + e.getMessage());
+            }
         }
         return projects;
     }
