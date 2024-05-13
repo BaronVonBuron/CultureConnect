@@ -69,6 +69,13 @@ public class CultureConnectController {
     public TextArea CreateNewProjektDescriptionTextArea;
     public TextField CreateNewProjectTitleTextField;
     public ListView<PersonListCell> CreateNewProjektPersonListView;
+    public ListView<LokationListCell> projektLokationerListview;////////
+    public ListView<PersonListCell> projektProjektejereListview;
+    public ListView<PersonListCell> projektProjektdeltagereListview;
+    public Label projektBeskrivelse;
+    public Label projektDato;
+    public Label projektMøder;
+    public Label projektNoter;////////
     private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
     private ObservableList<PersonListCell> createNewProjektCreatorList;
@@ -269,7 +276,7 @@ public class CultureConnectController {
     public void populateGridPane() {
         //fills the gridpane with empty cells and weeknumbers.
         for (int row = 0; row < calendarRows; row++) {
-            for (int col = 0; col < calendarColumns; col++) {
+            for (int col = 1; col <= calendarColumns; col++) {
                 if(row == 0){
                     Label label = new Label(String.valueOf(col));
                     label.setAlignment(javafx.geometry.Pos.CENTER);
@@ -474,8 +481,6 @@ public class CultureConnectController {
         projektTooltip.setStyle(getClass().getResource("/CultureConnectCSS.css").toExternalForm());
         projektTooltip.getStyleClass().add("ProjectTooltip");
 
-
-
         projektTooltip.show(CalendarGridPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         moreInfoButton.setOnAction(event -> {
             openProjektTab(projekt);
@@ -486,16 +491,28 @@ public class CultureConnectController {
     public void openProjektTab(Projekt projekt){
         //check if the projekt tab is already open with the projekt based on the title. If it is, select the tab, if not, create a new tab.
         if(CalendarTabPane.getTabs().contains(ProjektTab)){
-            if (ProjektTitelLabel.equals(projekt.getTitel())){
+            if (ProjektTitelLabel.getText().equals(projekt.getTitel())){
+                setProjektInformation(projekt);
                 CalendarTabPane.getSelectionModel().select(ProjektTab);
             }
         } else {
             CalendarTabPane.getTabs().remove(ProjektTab);
-            ProjektTab = new Tab(projekt.getTitel());
             CalendarTabPane.getTabs().add(ProjektTab);
+            setProjektInformation(projekt);
             CalendarTabPane.getSelectionModel().select(ProjektTab);
         }
-        //TODO open the projekt tab, and show the projekt information.
+    }
+
+    public void setProjektInformation(Projekt projekt){
+        ProjektTab.setText(projekt.getTitel());
+        projektLokationerListview.setItems(places.filtered(lokationListCell -> lokationListCell.getLokation().equals(projekt.getLokation())));
+        projektProjektejereListview.setItems(users.filtered(personListCell -> projekt.getProjectCreator().contains(personListCell.getPerson())));
+        projektProjektdeltagereListview.setItems(users.filtered(personListCell -> projekt.getParticipants().contains(personListCell.getPerson())));
+        ProjektTitelLabel.setText(projekt.getTitel());
+        projektBeskrivelse.setText(projekt.getDescription());
+        projektDato.setText("Startdato: " + projekt.getStartDate().toString() + " Slutdato: " + projekt.getEndDate().toString());
+        projektMøder.setText(projekt.getAktiviteter());
+        projektNoter.setText(projekt.getNotes());
     }
 
 
@@ -527,7 +544,9 @@ public class CultureConnectController {
 
     public void createProjektButtonPressed(ActionEvent actionEvent) {
         //TODO check if the projekt is valid, and if not, show an error message.
-        if (CreateNewProjectTitleTextField.getText().isEmpty() || CreateNewProjektEndDatePicker.getValue() == null || CreateNewProjektCreatorListView.getItems().isEmpty()){
+        if (CreateNewProjectTitleTextField.getText().isEmpty() ||
+                CreateNewProjektEndDatePicker.getValue() == null ||
+                CreateNewProjektCreatorListView.getItems().isEmpty()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i oprettelse af projekt");
             alert.setHeaderText("Projektet kunne ikke oprettes");

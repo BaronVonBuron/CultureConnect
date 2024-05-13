@@ -201,9 +201,11 @@ public class DAO {
 
 
         String sql2 = "INSERT INTO ProjektDeltager (Projekt_ID, Person_CPR, Ejer) VALUES (?, ?, ?)";
+        List<Person> participants = projekt.getParticipants();
+        participants.addAll(projekt.getProjectCreator());
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql2);
-            for (Person person : projekt.getParticipants()) {
+            for (Person person : participants) {
                 preparedStatement.setString(1, projekt.getId());
                 preparedStatement.setString(2, person.getCPR());
                 preparedStatement.setBoolean(3, projekt.getProjectCreator().contains(person));
