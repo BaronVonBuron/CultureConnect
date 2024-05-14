@@ -88,6 +88,13 @@ public class Logic {
   
     public void createLocation(Lokation lokation){
         dao.createLokation(lokation);
+    }
 
+    public void setAnsvarligForLocation(Lokation lok, Person ansvarlig){
+        String lokation = lok.getName();
+        String cpr = ansvarlig.getCPR();
+        String stilling = ansvarlig.getPosition();
+
+        dao.createMedarbejderInfo(lokation, cpr, stilling, true);
     }
 }

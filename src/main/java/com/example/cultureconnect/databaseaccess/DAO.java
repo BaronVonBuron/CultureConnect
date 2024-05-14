@@ -318,4 +318,19 @@ public class DAO {
         }
         return false;
     }
+
+    //prepared statement to insert into MedarbejderInfo table
+    public void createMedarbejderInfo(String lokation, String cpr, String stilling, boolean ansvarlig) {
+        String sql = "INSERT INTO MedarbejderInfo (Lokation_Navn, Person_CPR, Stilling, Ansvarlig) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, lokation);
+            preparedStatement.setString(2, cpr);
+            preparedStatement.setString(3, stilling);
+            preparedStatement.setBoolean(4, ansvarlig);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't create medarbejder info: " + e.getErrorCode() + e.getMessage());
+        }
+    }
 }
