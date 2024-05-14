@@ -170,7 +170,6 @@ public class CultureConnectController {
         }
     }
 
-
     public void startSequence(){
         CalendarTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         CalendarTab.setOnCloseRequest(event -> event.consume());

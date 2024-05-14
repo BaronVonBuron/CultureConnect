@@ -1,8 +1,11 @@
 package com.example.cultureconnect.customListview;
 
+import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Person.Person;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import com.example.cultureconnect.controllers.CultureConnectController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
@@ -11,6 +14,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PersonListCell extends ListCell {
 
@@ -21,6 +27,11 @@ public class PersonListCell extends ListCell {
     private Label nameLabel = new Label();
     private VBox vbox = new VBox();
     private HBox hbox = new HBox();
+    private HBox hboxButtons = new HBox();
+    private Button editButton = new Button("Rediger");
+    private Button deleteButton = new Button("Slet");
+    private Logic logic;
+
 
     public PersonListCell(Person person){
         super(); // Call the constructor of the superclass
@@ -36,23 +47,49 @@ public class PersonListCell extends ListCell {
         hbox.getChildren().addAll(imageView, nameLabel);
         hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         hbox.setSpacing(5);
+        hboxButtons.getChildren().addAll(editButton, deleteButton);
+        hboxButtons.setSpacing(5);
+        hboxButtons.getStylesheets().add(getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        deleteButton.setPrefWidth(75);
+        deleteButton.setPrefHeight(35);
+        editButton.setPrefWidth(75);
+        editButton.setPrefHeight(35);
+        deleteButton.getStyleClass().add("Buttons");
+        editButton.getStyleClass().add("Buttons");
         setGraphic(hbox);
         setPrefSize(200, 50);
         setStyle("-fx-background-color: transparent");
         setOnMouseClicked(event -> {
             if (isExpanded) {
-                vbox.getChildren().removeAll(emailLabel, phoneLabel);
+                vbox.getChildren().removeAll(emailLabel, phoneLabel, hboxButtons);
                 setPrefSize(200, 50);
             } else {
                 emailLabel.setText("Email: " + getEmail());
                 phoneLabel.setText("Telefon: " + new String(getTlfNr()));
-                vbox.getChildren().addAll(emailLabel, phoneLabel);
+                vbox.getChildren().addAll(emailLabel, phoneLabel, hboxButtons);
                 setPrefSize(200, 100);
             }
             isExpanded = !isExpanded;
         });
         vbox.getChildren().add(hbox);
         setGraphic(vbox);
+
+        deleteButton.setOnMouseClicked(event -> {
+            Person personClicked = this.getPerson();
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"", ButtonType.YES, ButtonType.NO);
+            alert.setHeaderText("Er du sikker på at du vil slette " + personClicked.getName() + "?");
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(
+                    getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+            dialogPane.getStyleClass().add("Alerts");
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.YES) {
+                this.logic = Logic.getInstance();
+                logic.deletePerson(personClicked);
+            }
+        });
 
         this.setOnDragDetected(event -> {
             System.out.println("drag detected person list cell");

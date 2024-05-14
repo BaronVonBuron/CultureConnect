@@ -99,6 +99,7 @@ public class NewLocationDialogController {
                 getClass().getResource("/CultureConnectCSS.css").toExternalForm());
         dialogPane.getStyleClass().add("Alerts");
         alert.showAndWait();
+
     }
 
     public void locationExistsAlready() {
