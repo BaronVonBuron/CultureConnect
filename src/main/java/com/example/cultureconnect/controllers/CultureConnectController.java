@@ -18,10 +18,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -249,14 +246,21 @@ public class CultureConnectController {
                 pcell.setWidth(columnWidth * length); // Adjust the width of the cell
                 //make the cell red
                 pcell.setFill(javafx.scene.paint.Color.RED);
+
+                //set title on the project cells
+                Label title = new Label(projekt.getTitel());
+                title.setStyle("-fx-text-fill: white; -fx-font-weight: bold");
+                StackPane sp = new StackPane();
+                sp.getChildren().addAll(pcell, title);
+
                 if (reuseableRow.get() > 0){
-                    CalendarGridPane.add(pcell, startWeek, reuseableRow.get());
-                    GridPane.setColumnSpan(pcell, length); // Make the cell span multiple weeks
+                    CalendarGridPane.add(sp, startWeek, reuseableRow.get());
+                    GridPane.setColumnSpan(sp, length); // Make the cell span multiple weeks
                     projektGrid.put(reuseableRow.get(), projekt);
                     reuseableRow.set(0);
                 } else {
-                    CalendarGridPane.add(pcell, startWeek, noOfProjects);
-                    GridPane.setColumnSpan(pcell, length); // Make the cell span multiple weeks
+                    CalendarGridPane.add(sp, startWeek, noOfProjects);
+                    GridPane.setColumnSpan(sp, length); // Make the cell span multiple weeks
                     projektGrid.put(noOfProjects, projekt);
                 }
                 noOfProjects++;
@@ -415,6 +419,8 @@ public class CultureConnectController {
             UserOrLocationListview.setItems(users);
         }
         AdminMenuNewUserOrLocationButton.setText("Ny Bruger");
+
+        UserToggleButton.setSelected(true);
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
@@ -424,6 +430,8 @@ public class CultureConnectController {
             UserOrLocationListview.setItems(places);
         }
         AdminMenuNewUserOrLocationButton.setText("Ny Lokation");
+
+        LocationToggleButton.setSelected(true);
     }
 
     public void loadUsers(){
