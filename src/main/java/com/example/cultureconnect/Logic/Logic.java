@@ -97,4 +97,12 @@ public class Logic {
 
         dao.createMedarbejderInfo(lokation, cpr, stilling, true);
     }
+
+    public void deletePerson(Person person){
+        dao.deletePerson(person);
+    }
+
+    public void deleteLokation(Lokation lokation){
+        dao.deleteLokation(lokation);
+    }
 }

@@ -1,8 +1,10 @@
 package com.example.cultureconnect.customListview;
 
+import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import com.example.cultureconnect.Person.Person;
+import com.example.cultureconnect.controllers.CultureConnectController;
+import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -19,6 +21,10 @@ public class LokationListCell extends ListCell {
     private Label descriptionLabel = new Label();
     private VBox vbox = new VBox();
     private HBox hbox = new HBox();
+    private HBox hboxButtons = new HBox();
+    private Button editButton = new Button("Rediger");
+    private Button deleteButton = new Button("Slet");
+    private Logic logic;
 
     public LokationListCell(Lokation lokation){
         super(); // Call the constructor of the superclass
@@ -29,21 +35,48 @@ public class LokationListCell extends ListCell {
         hbox.getChildren().addAll(circle, nameLabel);
         hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         hbox.setSpacing(5);
+        hboxButtons.getChildren().addAll(editButton, deleteButton);
+        hboxButtons.setSpacing(5);
+        hboxButtons.getStylesheets().add(getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        deleteButton.setPrefWidth(75);
+        deleteButton.setPrefHeight(35);
+        editButton.setPrefWidth(75);
+        editButton.setPrefHeight(35);
+        deleteButton.getStyleClass().add("Buttons");
+        editButton.getStyleClass().add("Buttons");
         setGraphic(hbox);
         setPrefSize(200, 50);
+        setStyle("-fx-background-color: transparent");
         setOnMouseClicked(event -> {
             if (isExpanded) {
-                vbox.getChildren().remove(descriptionLabel);
+                vbox.getChildren().removeAll(descriptionLabel,hboxButtons);
                 setPrefSize(200, 50);
             } else {
                 descriptionLabel.setText(getDescription());
-                vbox.getChildren().addAll(descriptionLabel);
+                vbox.getChildren().addAll(descriptionLabel,hboxButtons);
                 setPrefSize(200, 100);
             }
             isExpanded = !isExpanded;
         });
         vbox.getChildren().add(hbox);
         setGraphic(vbox);
+
+        deleteButton.setOnMouseClicked(event -> {
+            Lokation lokationClicked = this.getLokation();
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"", ButtonType.YES, ButtonType.NO);
+            alert.setHeaderText("Er du sikker på at du vil slette " + lokationClicked.getName() + "?");
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(
+                    getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+            dialogPane.getStyleClass().add("Alerts");
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.YES) {
+                this.logic = Logic.getInstance();
+                logic.deleteLokation(lokationClicked);
+            }
+        });
 
 
         this.setOnDragDetected(event -> {
