@@ -47,6 +47,7 @@ public class NewLocationDialogController {
     public void initialize(){
         this.logic = Logic.getInstance();
         choiceBoxOptions();
+        autoFillInfo();
     }
 
     public void choiceBoxOptions(){
@@ -69,6 +70,14 @@ public class NewLocationDialogController {
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255) );
+        String selectedAnsvarlig = ansvarligVælger.getValue();
+        Person ansvarlig = logic.getPersons().stream().
+                filter(person -> person.getName().equals(selectedAnsvarlig)).
+                findFirst().orElse(null);
+
+        if (ansvarlig == null) {
+            return;
+        }
 
         if (name == null || name.trim().isEmpty()) {
             locationMustHaveName();
@@ -85,6 +94,7 @@ public class NewLocationDialogController {
 
         Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
         logic.createLocation(lok);
+        logic.setAnsvarligForLocation(lok, ansvarlig);
 
         Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
         stage.close();
@@ -115,5 +125,18 @@ public class NewLocationDialogController {
 
     public void setMainController(CultureConnectController cultureConnectController) {
         this.cultureConnectController = cultureConnectController;
+    }
+
+    public void autoFillInfo(){
+        ansvarligVælger.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            Person ansvarlig = logic.getPersons().stream().
+                    filter(person -> person.getName().equals(newValue)).
+                    findFirst().orElse(null);
+
+            if (ansvarlig != null) {
+                ansvarligEmailNyLokationFelt.setText(ansvarlig.getEmail());
+                teansvarligTefonnummerNyLokationFelt.setText(String.valueOf(ansvarlig.getTlfNr()));
+            }
+        });
     }
 }
