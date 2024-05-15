@@ -140,6 +140,8 @@ public class CultureConnectController {
                 } else {
                     UserOrLocationListview.setItems(places);
                 }
+            } else if (newValue.equals(ProjektTab)){
+                //something
             }
         });
         //TODO highlight the current week
@@ -512,9 +514,16 @@ public class CultureConnectController {
 
     public void setProjektInformation(Projekt projekt){
         ProjektTab.setText(projekt.getTitel());
-        projektLokationerListview.setItems(places.filtered(lokationListCell -> lokationListCell.getLokation().getName().equals(projekt.getLokation().getName())));
-        projektProjektejereListview.setItems(users.filtered(personListCell -> projekt.getProjectCreator().contains(personListCell.getPerson())));
-        projektProjektdeltagereListview.setItems(users.filtered(personListCell -> projekt.getParticipants().contains(personListCell.getPerson())));
+        ObservableList<PersonListCell> tempUsers = FXCollections.observableArrayList();
+        ObservableList<PersonListCell> tempCreators = FXCollections.observableArrayList();
+        ObservableList<LokationListCell> tempPlaces = FXCollections.observableArrayList();
+
+        projekt.getProjectCreator().forEach(person -> tempCreators.add(new PersonListCell(person)));
+        projekt.getParticipants().forEach(person -> tempUsers.add(new PersonListCell(person)));
+        tempPlaces.add(new LokationListCell(projekt.getLokation()));
+        projektLokationerListview.setItems(tempPlaces);
+        projektProjektejereListview.setItems(tempCreators);
+        projektProjektdeltagereListview.setItems(tempUsers);
         ProjektTitelLabel.setText(projekt.getTitel());
         projektBeskrivelse.setText(projekt.getDescription());
         projektDato.setText("Startdato: " + projekt.getStartDate().toString() + " Slutdato: " + projekt.getEndDate().toString());
@@ -717,7 +726,8 @@ public class CultureConnectController {
 
             // If the Lokation was found, add it to the ListView
             if (droppedLokation != null) {
-                createNewProjektLokationList.add(droppedLokation);
+                LokationListCell lCell = new LokationListCell(droppedLokation.getLokation());
+                createNewProjektLokationList.add(lCell);
                 CreateNewProjectLokationListView.setItems(createNewProjektLokationList);
                 placesForNewProjekt.remove(droppedLokation);
                 UserOrLocationListview.setItems(placesForNewProjekt);
@@ -757,7 +767,8 @@ public class CultureConnectController {
                     .orElse(null);
             // If the Person was found, add it to the ListView
             if (droppedPerson != null) {
-                createNewProjektCreatorList.add(droppedPerson);
+                PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
+                createNewProjektCreatorList.add(pcell);
                 CreateNewProjektCreatorListView.setItems(createNewProjektCreatorList);
                 usersForNewProjekt.remove(droppedPerson);
                 UserOrLocationListview.setItems(usersForNewProjekt);
@@ -795,7 +806,8 @@ public class CultureConnectController {
                     .orElse(null);
             // If the Person was found, add it to the ListView
             if (droppedPerson != null) {
-                createNewProjektPersonList.add(droppedPerson);
+                PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
+                createNewProjektPersonList.add(pcell);
                 CreateNewProjektPersonListView.setItems(createNewProjektPersonList);
                 usersForNewProjekt.remove(droppedPerson);
                 UserOrLocationListview.setItems(usersForNewProjekt);
