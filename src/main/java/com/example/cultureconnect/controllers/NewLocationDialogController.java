@@ -196,6 +196,7 @@ public class NewLocationDialogController {
         telefonnummerNyLokationFelt.setText(lokation.getDescription());
         lokationColorchooser.setValue(Color.valueOf(lokation.getFarveKode()));
         navnNyLokationFelt.setText(lokation.getName());
+        navnNyLokationFelt.setEditable(false);
 
         if (ansvarligPerson == null) {
             ansvarligVælger.setValue("Vælg ansvarlig");
