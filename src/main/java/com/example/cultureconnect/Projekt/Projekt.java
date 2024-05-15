@@ -21,6 +21,7 @@ public class Projekt {
     private String color;
     private String notes;
     private String aktiviteter;
+    private List<ProjektAktivitet> projektAktiviteter;
 
     //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
     //mile dates og event dates - lister til dem
@@ -33,7 +34,19 @@ public class Projekt {
         //initialize lists
         this.participants = new ArrayList<>();
         this.projectCreator = new ArrayList<>();
+        this.projektAktiviteter = new ArrayList<>();
     }//konstruktør for projekt
+
+    public void addAktivitet(ProjektAktivitet aktivitet){
+        projektAktiviteter.add(aktivitet);
+    }
+    public List<ProjektAktivitet> getProjektAktiviteter() {
+        return projektAktiviteter;
+    }
+
+    public void setProjektAktiviteter(List<ProjektAktivitet> projektAktiviteter) {
+        this.projektAktiviteter = projektAktiviteter;
+    }
 
     public String getAktiviteter() {
         return aktiviteter;
@@ -107,7 +120,7 @@ public class Projekt {
     }
 
     public Date getStartDate() {
-        return startDate;
+        return this.startDate;
     }
 
     public void setStartDate(Date startDate) {

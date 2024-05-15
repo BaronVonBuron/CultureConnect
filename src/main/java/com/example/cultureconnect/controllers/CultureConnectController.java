@@ -87,6 +87,17 @@ public class CultureConnectController {
     //Create new projekt tab slut////////////////////////////////////////////
 
     //Edit projekt tab start////////////////////////////////////////////
+    public Button gemÆndringerKnap;
+    public Button sletProjektKnap;
+    public TextField RedigerTitelPåAktivitetFelt;
+    public Button redigerNyAktivitetKnap;
+    public DatePicker redigerSlutdatoDatepicker;
+    public DatePicker RedigerStartdatoDatepicker;
+    public DatePicker redigerArrangementDatoDatepicker;
+    public TextField redigerTitelFelt;
+    public ListView<PersonListCell> redigerProjektdeltagereListview; //TODO lav drag ting
+    public ListView<PersonListCell> redigerProjektejereListview;//TODO lav drag ting
+    public ListView<LokationListCell> redigerLokationerListview;//TODO lav drag ting
     @FXML
     private TextArea redigerBeskrivelseFelt;
 
@@ -101,6 +112,7 @@ public class CultureConnectController {
     private int calendarRows = 35;//skal sættes af antallet af projekter.
     private int columnWidth = 35;
     private int rowHeight = 35;
+    private Projekt currentlySelectedProjekt;
     Tooltip projektTooltip = new Tooltip();
     private Logic logic;
     ObservableList<PersonListCell> users = FXCollections.observableArrayList();
@@ -496,6 +508,7 @@ public class CultureConnectController {
     }
 
     public void openProjektTab(Projekt projekt){
+        this.currentlySelectedProjekt = projekt;
         //check if the projekt tab is already open with the projekt based on the title. If it is, select the tab, if not, create a new tab.
         if(CalendarTabPane.getTabs().contains(ProjektTab)){
             if (ProjektTitelLabel.getText().equals(projekt.getTitel())){
@@ -532,9 +545,7 @@ public class CultureConnectController {
     }
 
 
-    public void editProjektButtonPressed(ActionEvent actionEvent) {
 
-    }
 
     public void cancelCreateProjektButtonPressed(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -693,7 +704,52 @@ public class CultureConnectController {
     }
 
 
+    public void editProjektButtonPressed(ActionEvent actionEvent) {
+        if (CalendarTabPane.getTabs().contains(editProjectTab)){
+            CalendarTabPane.getSelectionModel().select(editProjectTab);
+        } else {
+            CalendarTabPane.getTabs().add(editProjectTab);
+            CalendarTabPane.getSelectionModel().select(editProjectTab);
+        }
+        setProjektForEditing(currentlySelectedProjekt);
+    }
 
+    public void setProjektForEditing(Projekt projekt){
+        redigerBeskrivelseFelt.setText(projekt.getDescription());
+        redigerNoterFelt.setText(projekt.getNotes());
+        redigerPlanlagteMøderFelt.setText(projekt.getAktiviteter());
+        redigerTitelFelt.setText(projekt.getTitel());
+        Instant instant1 = Instant.ofEpochMilli(projekt.getStartDate().getTime());
+        Instant instant2 = Instant.ofEpochMilli(projekt.getEndDate().getTime());
+        LocalDate startDate = instant1.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endDate = instant2.atZone(ZoneId.systemDefault()).toLocalDate();
+        redigerArrangementDatoDatepicker.setValue(startDate);
+        redigerSlutdatoDatepicker.setValue(endDate);
+        redigerProjektejereListview.setItems(FXCollections.observableArrayList(projekt.getProjectCreator().stream().map(PersonListCell::new).collect(Collectors.toList())));
+        redigerProjektdeltagereListview.setItems(FXCollections.observableArrayList(projekt.getParticipants().stream().map(PersonListCell::new).collect(Collectors.toList())));
+        redigerLokationerListview.setItems(FXCollections.observableArrayList(new LokationListCell(projekt.getLokation())));
+        /*
+        public Button gemÆndringerKnap;
+    public Button sletProjektKnap;
+    public TextField RedigerTitelPåAktivitetFelt;
+    public Button redigerNyAktivitetKnap;
+    public DatePicker redigerSlutdatoDatepicker;
+    public DatePicker RedigerStartdatoDatepicker;
+    public DatePicker redigerArrangementDatoDatepicker;
+    public TextField redigerTitelFelt;
+    public ListView redigerProjektdeltagereListview;
+    public ListView redigerProjektejereListview;
+    public ListView redigerLokationerListview;
+    @FXML
+    private TextArea redigerBeskrivelseFelt;
+
+    @FXML
+    private TextArea redigerNoterFelt;
+
+    @FXML
+    private TextArea redigerPlanlagteMøderFelt;
+         */
+    }
 
     public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
 
@@ -826,7 +882,7 @@ public class CultureConnectController {
         // Accept the drag operation if the dragboard has a String
         if (dragEvent.getDragboard().hasString()) {
             dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            System.out.println("Dragged over to participant listview");
+            //System.out.println("Dragged over to participant listview");
         }
         dragEvent.consume();
     }
