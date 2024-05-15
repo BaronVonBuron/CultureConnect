@@ -214,11 +214,22 @@ public class DAO {
         } catch (SQLException e) {
             System.err.println("Can't create project participants: " + e.getErrorCode() + e.getMessage());
         }
+        //Insert the projekt's lokation into the ProjektLokation table, where Projekt_ID is a foreign key to the Projekt table and Lokation_Navn is a foreign key to the Lokation table.
+        //Insert into these columns: Projekt_ID - String, Lokation_Navn - String
+        String sql3 = "INSERT INTO ProjektLokation (Projekt_ID, Lokation_Navn) VALUES (?, ?)";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql3);
+            preparedStatement.setString(1, projekt.getId());
+            preparedStatement.setString(2, projekt.getLokation().getName());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't create project location: " + e.getErrorCode() + e.getMessage());
+        }
 
     }
 
     //PreparedStatement for reading all the projects from the Projekt table, and returning a list of them all
-    public List<Projekt> readAllProjects(){
+    public List<Projekt> readAllProjects(List<Person> persons, List<Lokation> lokations){
         List<Projekt> projects = new ArrayList<>();
         String sql = "SELECT * FROM Projekt";
         try {
@@ -258,7 +269,7 @@ public class DAO {
                 while (resultSet.next()){
                     String CPR = resultSet.getString("Person_CPR");
                     boolean isCreator = resultSet.getBoolean("Ejer");
-                    for (Person person : readAllPersons()) {
+                    for (Person person : persons) {
                         if (person.getCPR().equals(CPR)){
                             if (isCreator){
                                 projekt.getProjectCreator().add(person);
@@ -270,6 +281,23 @@ public class DAO {
                 }
             } catch (SQLException e) {
                 System.err.println("Can't read project participants: " + e.getErrorCode() + e.getMessage());
+            }
+            //make a statement to get the location from the ProjektLokation table and set it on the project object
+            String sql3 = "SELECT * FROM ProjektLokation WHERE Projekt_ID = ?";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(sql3);
+                preparedStatement.setString(1, projekt.getId());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()){
+                    String name = resultSet.getString("Lokation_Navn");
+                    for (Lokation lokation : lokations) {
+                        if (lokation.getName().equals(name)){
+                            projekt.setLokation(lokation);
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("Can't read project location: " + e.getErrorCode() + e.getMessage());
             }
         }
         return projects;

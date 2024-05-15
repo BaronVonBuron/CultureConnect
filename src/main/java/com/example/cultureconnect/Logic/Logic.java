@@ -49,7 +49,7 @@ public class Logic {
             this.isUpdating = true;
             this.persons = dao.readAllPersons();
             this.locations = dao.readAllLokations();
-            this.projects = dao.readAllProjects();
+            this.projects = dao.readAllProjects(persons, locations);
             this.isUpdating = false;
         });
         t.start();
