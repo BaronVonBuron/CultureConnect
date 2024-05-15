@@ -140,10 +140,8 @@ public class CultureConnectController {
                 } else {
                     UserOrLocationListview.setItems(places);
                 }
-
             }
         });
-
         //TODO highlight the current week
     }
 
@@ -508,11 +506,13 @@ public class CultureConnectController {
             setProjektInformation(projekt);
             CalendarTabPane.getSelectionModel().select(ProjektTab);
         }
+        System.out.println(projekt.getProjectCreator());
+        System.out.println(projekt.getParticipants());
     }
 
     public void setProjektInformation(Projekt projekt){
         ProjektTab.setText(projekt.getTitel());
-        projektLokationerListview.setItems(places.filtered(lokationListCell -> lokationListCell.getLokation().equals(projekt.getLokation())));
+        projektLokationerListview.setItems(places.filtered(lokationListCell -> lokationListCell.getLokation().getName().equals(projekt.getLokation().getName())));
         projektProjektejereListview.setItems(users.filtered(personListCell -> projekt.getProjectCreator().contains(personListCell.getPerson())));
         projektProjektdeltagereListview.setItems(users.filtered(personListCell -> projekt.getParticipants().contains(personListCell.getPerson())));
         ProjektTitelLabel.setText(projekt.getTitel());
