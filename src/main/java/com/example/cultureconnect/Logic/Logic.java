@@ -98,11 +98,30 @@ public class Logic {
         dao.createMedarbejderInfo(lokation, cpr, stilling, true);
     }
 
+    public void updateAnsvarlig(Lokation lokation, Person ansvarlig){
+        String lokationNavn = lokation.getName();
+        String cpr = ansvarlig.getCPR();
+
+        dao.updateAnsvarlig(lokationNavn, cpr, true);
+    }
+
     public void deletePerson(Person person){
         dao.deletePerson(person);
     }
 
     public void deleteLokation(Lokation lokation){
         dao.deleteLokation(lokation);
+    }
+
+    public void updateLokation(Lokation lokation, String name){
+        dao.updateLokation(lokation, name);
+    }
+
+    public Person findAnsvarlig(String lokationNavn){
+        return dao.readAnsvarligForLokation(lokationNavn);
+    }
+
+    public void deleteAnsvarlig(Lokation lokation, String cpr){
+        dao.deleteAnsvarlig(lokation.getName(), cpr);
     }
 }

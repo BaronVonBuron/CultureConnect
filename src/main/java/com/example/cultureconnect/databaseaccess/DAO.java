@@ -333,4 +333,56 @@ public class DAO {
             System.err.println("Can't create medarbejder info: " + e.getErrorCode() + e.getMessage());
         }
     }
+
+    //prepared statement to update ansvarlig in medarbejderInfo table
+    public void updateAnsvarlig(String lokation, String cpr, boolean ansvarlig){
+        String sql = "UPDATE MedarbejderInfo SET Ansvarlig = ? WHERE Lokation_Navn = ? AND Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setBoolean(1, ansvarlig);
+            preparedStatement.setString(2, lokation);
+            preparedStatement.setString(3, cpr);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+    }
+
+    //prepared statement to read from MedarbejderInfo table where lokation is and ansvarlig is true make it return person
+    public Person readAnsvarligForLokation(String lokation){
+        String sql = "SELECT * FROM MedarbejderInfo WHERE Lokation_Navn = ? AND Ansvarlig = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, lokation);
+            preparedStatement.setBoolean(2, true);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String CPR = resultSet.getString("Person_CPR");
+                for (Person person : readAllPersons()) {
+                    if (person.getCPR().equals(CPR)){
+                        return person;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+    //Prepared statement to delete the row where lokation and cpr is in the MedarbejderInfo table
+    public void deleteAnsvarlig(String lokation, String cpr){
+        String sql = "UPDATE MedarbejderInfo SET Ansvarlig = ? WHERE Lokation_Navn = ? AND Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setBoolean(1, false);
+            preparedStatement.setString(2, lokation);
+            preparedStatement.setString(3, cpr);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+    }
+
+
+
 }

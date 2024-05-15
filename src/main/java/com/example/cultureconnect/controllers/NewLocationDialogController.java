@@ -40,9 +40,14 @@ public class NewLocationDialogController {
 
     @FXML
     private ColorPicker lokationColorchooser;
+    @FXML
+    private Label opretNyLokationLabel;
 
     private Logic logic;
     private CultureConnectController cultureConnectController;
+
+    private Lokation nuværendeLokation;
+    private Person ansvarligPerson;
 
     public void initialize(){
         this.logic = Logic.getInstance();
@@ -62,42 +67,80 @@ public class NewLocationDialogController {
 
     @FXML
     void opretNyLokationKnapPressed(ActionEvent event) {
-        String name = navnNyLokationFelt.getText();
-        String email = emailNyLokationFelt.getText();
-        String telefonnummer = telefonnummerNyLokationFelt.getText();
-        Color color = lokationColorchooser.getValue();
-        String farveKode = String.format("#%02X%02X%02X",
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255) );
-        String selectedAnsvarlig = ansvarligVælger.getValue();
-        Person ansvarlig = logic.getPersons().stream().
-                filter(person -> person.getName().equals(selectedAnsvarlig)).
-                findFirst().orElse(null);
+        if(opretNyLokationKnap.getText().equals("Opret")){
+            String name = navnNyLokationFelt.getText();
+            String email = emailNyLokationFelt.getText();
+            String telefonnummer = telefonnummerNyLokationFelt.getText();
+            Color color = lokationColorchooser.getValue();
+            String farveKode = String.format("#%02X%02X%02X",
+                    (int) (color.getRed() * 255),
+                    (int) (color.getGreen() * 255),
+                    (int) (color.getBlue() * 255) );
+            String selectedAnsvarlig = ansvarligVælger.getValue();
+            Person ansvarlig = logic.getPersons().stream().
+                    filter(person -> person.getName().equals(selectedAnsvarlig)).
+                    findFirst().orElse(null);
 
-        if (ansvarlig == null) {
-            return;
-        }
-
-        if (name == null || name.trim().isEmpty()) {
-            locationMustHaveName();
-            return;
-        }
-
-        List<Lokation> alreadyThere = logic.getLocations();
-        for (Lokation lok : alreadyThere){
-            if (lok.getName().equals(name)){
-                locationExistsAlready();
+            if (ansvarlig == null) {
                 return;
             }
+
+            if (name == null || name.trim().isEmpty()) {
+                locationMustHaveName();
+                return;
+            }
+
+            List<Lokation> alreadyThere = logic.getLocations();
+            for (Lokation lok : alreadyThere){
+                if (lok.getName().equals(name)){
+                    locationExistsAlready();
+                    return;
+                }
+            }
+
+            Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
+            logic.createLocation(lok);
+            logic.setAnsvarligForLocation(lok, ansvarlig);
+
+            Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
+            stage.close();
+        } else{
+            System.out.println("Gemmer");
+            String name = navnNyLokationFelt.getText();
+            String email = emailNyLokationFelt.getText();
+            String telefonnummer = telefonnummerNyLokationFelt.getText();
+            Color color = lokationColorchooser.getValue();
+            String farveKode = String.format("#%02X%02X%02X",
+                    (int) (color.getRed() * 255),
+                    (int) (color.getGreen() * 255),
+                    (int) (color.getBlue() * 255) );
+            String selectedAnsvarlig = ansvarligVælger.getValue();
+            Person ansvarlig = logic.getPersons().stream().
+                    filter(person -> person.getName().equals(selectedAnsvarlig)).
+                    findFirst().orElse(null);
+
+            if (ansvarlig == null) {
+                return;
+            }
+
+            if (name == null || name.trim().isEmpty()) {
+                locationMustHaveName();
+                return;
+            }
+
+            nuværendeLokation.setDescription(email + "\n   " + telefonnummer);
+            nuværendeLokation.setFarveKode(farveKode);
+
+            logic.updateLokation(nuværendeLokation, name);
+            logic.updateAnsvarlig(nuværendeLokation, ansvarlig);
+
+            if (ansvarlig != ansvarligPerson && ansvarligPerson != null){
+                logic.deleteAnsvarlig(nuværendeLokation, ansvarligPerson.getCPR());
+            }
+
+            Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
+            stage.close();
         }
-
-        Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
-        logic.createLocation(lok);
-        logic.setAnsvarligForLocation(lok, ansvarlig);
-
-        Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
-        stage.close();
     }
 
     public void locationMustHaveName(){
@@ -139,5 +182,28 @@ public class NewLocationDialogController {
                 teansvarligTefonnummerNyLokationFelt.setText(String.valueOf(ansvarlig.getTlfNr()));
             }
         });
+    }
+
+    public void editInfo(Lokation lokation){
+        nuværendeLokation = lokation;
+
+        opretNyLokationKnap.setText("Gem");
+        opretNyLokationLabel.setText("Rediger Lokation");
+        this.logic = Logic.getInstance();
+        ansvarligPerson = logic.findAnsvarlig(lokation.getName());
+
+        emailNyLokationFelt.setText(lokation.getDescription());
+        telefonnummerNyLokationFelt.setText(lokation.getDescription());
+        lokationColorchooser.setValue(Color.valueOf(lokation.getFarveKode()));
+        navnNyLokationFelt.setText(lokation.getName());
+
+        if (ansvarligPerson == null) {
+            ansvarligVælger.setValue("Vælg ansvarlig");
+        }else{
+            ansvarligVælger.setValue(ansvarligPerson.getName());
+            ansvarligEmailNyLokationFelt.setText(ansvarligPerson.getEmail());
+            teansvarligTefonnummerNyLokationFelt.setText(String.valueOf(ansvarligPerson.getTlfNr()));
+        }
+
     }
 }
