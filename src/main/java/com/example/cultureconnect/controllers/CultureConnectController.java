@@ -4,6 +4,7 @@ import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
+import com.example.cultureconnect.Projekt.ProjektAktivitet;
 import com.example.cultureconnect.calendar.CalendarCell;
 import com.example.cultureconnect.calendar.ProjektCell;
 import com.example.cultureconnect.customListview.LokationListCell;
@@ -22,8 +23,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -35,7 +34,7 @@ public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
-    public ToggleGroup group; //TODO make one button selected from the start, and make sure allways one button is selected.
+    public ToggleGroup group;
     public HBox ListviewSearchHBox;
     public TextField ListviewSearchTextField;
     public Button ListviewSearchButton;
@@ -73,6 +72,7 @@ public class CultureConnectController {
     public Label projektDato;
     public Label projektMøder;
     public Label projektNoter;////////
+    public ListView<ProjektAktivitet> createProjektAktiviteterListview;
     private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
     private ObservableList<PersonListCell> createNewProjektCreatorList;
@@ -82,11 +82,20 @@ public class CultureConnectController {
     public DatePicker plannedActivityStartDatePicker;
     public DatePicker plannedActivityEndDatePicker;
     public TextField plannedActivityTitleTextField;
-    @FXML
-    private TextArea nytProjektPlanlagteMøderFelt;
     //Create new projekt tab slut////////////////////////////////////////////
 
     //Edit projekt tab start////////////////////////////////////////////
+    public Button gemÆndringerKnap;
+    public Button sletProjektKnap;
+    public TextField RedigerTitelPåAktivitetFelt;
+    public Button redigerNyAktivitetKnap;
+    public DatePicker redigerSlutdatoDatepicker;
+    public DatePicker RedigerStartdatoDatepicker;
+    public DatePicker redigerArrangementDatoDatepicker;
+    public TextField redigerTitelFelt;
+    public ListView<PersonListCell> redigerProjektdeltagereListview; //TODO lav drag ting
+    public ListView<PersonListCell> redigerProjektejereListview;//TODO lav drag ting
+    public ListView<LokationListCell> redigerLokationerListview;//TODO lav drag ting
     @FXML
     private TextArea redigerBeskrivelseFelt;
 
@@ -101,6 +110,7 @@ public class CultureConnectController {
     private int calendarRows = 35;//skal sættes af antallet af projekter.
     private int columnWidth = 35;
     private int rowHeight = 35;
+    private Projekt currentlySelectedProjekt;
     Tooltip projektTooltip = new Tooltip();
     private Logic logic;
     ObservableList<PersonListCell> users = FXCollections.observableArrayList();
@@ -119,7 +129,7 @@ public class CultureConnectController {
         startSequence();
         loginSequence();
 
-        autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea, nytProjektPlanlagteMøderFelt,
+        autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt, redigerPlanlagteMøderFelt
         );
 
@@ -496,6 +506,7 @@ public class CultureConnectController {
     }
 
     public void openProjektTab(Projekt projekt){
+        this.currentlySelectedProjekt = projekt;
         //check if the projekt tab is already open with the projekt based on the title. If it is, select the tab, if not, create a new tab.
         if(CalendarTabPane.getTabs().contains(ProjektTab)){
             if (ProjektTitelLabel.getText().equals(projekt.getTitel())){
@@ -532,9 +543,7 @@ public class CultureConnectController {
     }
 
 
-    public void editProjektButtonPressed(ActionEvent actionEvent) {
 
-    }
 
     public void cancelCreateProjektButtonPressed(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -559,7 +568,6 @@ public class CultureConnectController {
     }
 
     public void createProjektButtonPressed(ActionEvent actionEvent) {
-        //TODO check if the projekt is valid, and if not, show an error message.
         if (CreateNewProjectTitleTextField.getText().isEmpty() ||
                 CreateNewProjektEndDatePicker.getValue() == null ||
                 CreateNewProjektCreatorListView.getItems().isEmpty()){
@@ -571,13 +579,13 @@ public class CultureConnectController {
         } else {
             Date startDate;
             Date endDate;
-            if (nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
+            if (createProjektAktiviteterListview.getItems().isEmpty()) {
                 startDate = new Date();
             } else {
-                startDate = findEarliestDate(nytProjektPlanlagteMøderFelt.getText());
+                startDate = findEarliestDate(createProjektAktiviteterListview.getItems());
             }
-            if (!nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
-                Date latestDate = findLatestDate(nytProjektPlanlagteMøderFelt.getText());
+            if (!createProjektAktiviteterListview.getItems().isEmpty()) {
+                Date latestDate = findLatestDate(createProjektAktiviteterListview.getItems());
                 LocalDate endDateLocalDate = CreateNewProjektEndDatePicker.getValue();
                 Instant instant = endDateLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
                 endDate = Date.from(instant);
@@ -622,8 +630,8 @@ public class CultureConnectController {
             if (!CreateNewProjectLokationListView.getItems().isEmpty()){
                 nytProjekt.setLokation(CreateNewProjectLokationListView.getItems().getFirst().getLokation());
             }
-            if (!nytProjektPlanlagteMøderFelt.getText().isEmpty()){
-                nytProjekt.setAktiviteter(nytProjektPlanlagteMøderFelt.getText());
+            if (!createProjektAktiviteterListview.getItems().isEmpty()){
+                nytProjekt.setProjektAktiviteter(createProjektAktiviteterListview.getItems());
             }
             logic.createProject(nytProjekt);
             projects.add(nytProjekt);
@@ -642,8 +650,9 @@ public class CultureConnectController {
             alert.setContentText("Aktiviteten skal have en titel og en start- og slutdato.");
             alert.showAndWait();
         } else {
-            String activity = plannedActivityStartDatePicker.getValue().toString() + " | " + plannedActivityEndDatePicker.getValue().toString() + " | " + plannedActivityTitleTextField.getText();
-            nytProjektPlanlagteMøderFelt.setText(nytProjektPlanlagteMøderFelt.getText() + "\n" + activity);
+            ProjektAktivitet aktivitet = new ProjektAktivitet(plannedActivityStartDatePicker.getValue(), plannedActivityEndDatePicker.getValue(), plannedActivityTitleTextField.getText());
+            createProjektAktiviteterListview.getItems().add(aktivitet);
+            createProjektAktiviteterListview.refresh();
             plannedActivityEndDatePicker.setValue(null);
             plannedActivityStartDatePicker.setValue(null);
             plannedActivityTitleTextField.clear();
@@ -651,8 +660,8 @@ public class CultureConnectController {
         //add to the nytprojektPlanlagteMøderFelt
     }
 
-    public Date findEarliestDate(String datesText) {
-        List<Date> dates = getDatesInActivities(datesText);
+    public Date findEarliestDate(List<ProjektAktivitet> aktiviteter) {
+        List<Date> dates = getDatesInActivities(aktiviteter);
         Date earliestDate = new Date(Long.MAX_VALUE);
         for (Date date : dates) {
             if (date.before(earliestDate)) {
@@ -662,38 +671,73 @@ public class CultureConnectController {
         return earliestDate;
     }
 
-    public Date findLatestDate(String datesText) {
-        List<Date> dates = getDatesInActivities(datesText);
+    public Date findLatestDate(List<ProjektAktivitet> aktiviteter) {
+        List<Date> dates = getDatesInActivities(aktiviteter);
         Date latestDate = new Date(Long.MIN_VALUE);
         for (Date date : dates) {
-            System.out.println(date + " date");
             if (date.after(latestDate)) {
                 latestDate = date;
             }
-            System.out.println(latestDate + " latest date");
         }
         return latestDate;
     }
 
-    public List<Date> getDatesInActivities(String activities){
+    public List<Date> getDatesInActivities(List<ProjektAktivitet> activities){
         List<Date> dates = new ArrayList<>();
-        String[] dateStrings = activities.split("\\|");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        for (String dateString : dateStrings) {
-            try {
-                Date date = dateFormat.parse(dateString.trim());
-                dates.add(date);
-                System.out.println(date + " date in activity");
-            } catch (ParseException e) {
-                // Skip over invalid date strings and continue processing
-                System.err.println("Skipping invalid date string: " + dateString);
-            }
+        for (ProjektAktivitet activity : activities) {
+            dates.add(activity.getStartDatoAsUtilDate());
+            dates.add(activity.getEndDatoAsUtilDate());
         }
         return dates;
     }
 
 
+    public void editProjektButtonPressed(ActionEvent actionEvent) {
+        if (CalendarTabPane.getTabs().contains(editProjectTab)){
+            CalendarTabPane.getSelectionModel().select(editProjectTab);
+        } else {
+            CalendarTabPane.getTabs().add(editProjectTab);
+            CalendarTabPane.getSelectionModel().select(editProjectTab);
+        }
+        setProjektForEditing(currentlySelectedProjekt);
+    }
 
+    public void setProjektForEditing(Projekt projekt){
+        redigerBeskrivelseFelt.setText(projekt.getDescription());
+        redigerNoterFelt.setText(projekt.getNotes());
+        redigerPlanlagteMøderFelt.setText(projekt.getAktiviteter());
+        redigerTitelFelt.setText(projekt.getTitel());
+        Instant instant1 = Instant.ofEpochMilli(projekt.getStartDate().getTime());
+        Instant instant2 = Instant.ofEpochMilli(projekt.getEndDate().getTime());
+        LocalDate startDate = instant1.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endDate = instant2.atZone(ZoneId.systemDefault()).toLocalDate();
+        redigerArrangementDatoDatepicker.setValue(startDate);
+        redigerSlutdatoDatepicker.setValue(endDate);
+        redigerProjektejereListview.setItems(FXCollections.observableArrayList(projekt.getProjectCreator().stream().map(PersonListCell::new).collect(Collectors.toList())));
+        redigerProjektdeltagereListview.setItems(FXCollections.observableArrayList(projekt.getParticipants().stream().map(PersonListCell::new).collect(Collectors.toList())));
+        redigerLokationerListview.setItems(FXCollections.observableArrayList(new LokationListCell(projekt.getLokation())));
+        /*
+        public Button gemÆndringerKnap;
+    public Button sletProjektKnap;
+    public TextField RedigerTitelPåAktivitetFelt;
+    public Button redigerNyAktivitetKnap;
+    public DatePicker redigerSlutdatoDatepicker;
+    public DatePicker RedigerStartdatoDatepicker;
+    public DatePicker redigerArrangementDatoDatepicker;
+    public TextField redigerTitelFelt;
+    public ListView redigerProjektdeltagereListview;
+    public ListView redigerProjektejereListview;
+    public ListView redigerLokationerListview;
+    @FXML
+    private TextArea redigerBeskrivelseFelt;
+
+    @FXML
+    private TextArea redigerNoterFelt;
+
+    @FXML
+    private TextArea redigerPlanlagteMøderFelt;
+         */
+    }
 
     public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
 
@@ -826,7 +870,7 @@ public class CultureConnectController {
         // Accept the drag operation if the dragboard has a String
         if (dragEvent.getDragboard().hasString()) {
             dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            System.out.println("Dragged over to participant listview");
+            //System.out.println("Dragged over to participant listview");
         }
         dragEvent.consume();
     }
