@@ -124,4 +124,20 @@ public class Logic {
     public void deleteAnsvarlig(Lokation lokation, String cpr){
         dao.deleteAnsvarlig(lokation.getName(), cpr);
     }
+
+    public String findBrugersLokation(String cpr){
+        return dao.readLokationForPerson(cpr);
+    }
+
+    public String findBrugersStilling(String cpr){
+        return dao.readStillingForPerson(cpr);
+    }
+
+    public Lokation findLokation(String lokationNavn){
+        return dao.readLokation(lokationNavn);
+    }
+
+    public String findBrugerKodeord(String cpr){
+        return dao.readKodeForPerson(cpr);
+    }
 }

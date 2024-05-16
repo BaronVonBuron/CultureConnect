@@ -91,7 +91,7 @@ public class LokationListCell extends ListCell {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/NewLocationDialog.fxml"));
                 Stage editLokation = new Stage();
-                editLokation.setTitle("Edit Location");
+                editLokation.setTitle("Rediger lokation");
                 AnchorPane editLayout = loader.load();
                 Scene scene = new Scene(editLayout);
                 editLokation.setScene(scene);

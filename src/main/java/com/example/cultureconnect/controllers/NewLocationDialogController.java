@@ -186,14 +186,20 @@ public class NewLocationDialogController {
 
     public void editInfo(Lokation lokation){
         nuværendeLokation = lokation;
+        String tlfOgEmail = lokation.getDescription();
+
+        String[] parts = tlfOgEmail.split("\\s+");
+
+        String phoneNumber = parts[1];
+        String email = parts[0];
 
         opretNyLokationKnap.setText("Gem");
         opretNyLokationLabel.setText("Rediger Lokation");
         this.logic = Logic.getInstance();
         ansvarligPerson = logic.findAnsvarlig(lokation.getName());
 
-        emailNyLokationFelt.setText(lokation.getDescription());
-        telefonnummerNyLokationFelt.setText(lokation.getDescription());
+        emailNyLokationFelt.setText(email);
+        telefonnummerNyLokationFelt.setText(phoneNumber);
         lokationColorchooser.setValue(Color.valueOf(lokation.getFarveKode()));
         navnNyLokationFelt.setText(lokation.getName());
         navnNyLokationFelt.setEditable(false);

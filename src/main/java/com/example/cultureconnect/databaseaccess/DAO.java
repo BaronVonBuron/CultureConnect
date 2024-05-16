@@ -383,6 +383,74 @@ public class DAO {
         }
     }
 
+    //Prepared statement to select from MedarbejderInfo column lokation_navn where cpr is
+    public String readLokationForPerson(String cpr){
+        String sql = "SELECT Lokation_Navn FROM MedarbejderInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Lokation_Navn");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read lokation for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to select from MedarbejderInfo column stilling where cpr is
+    public String readStillingForPerson(String cpr){
+        String sql = "SELECT Stilling FROM MedarbejderInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Stilling");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read stilling for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to return a location where the name is
+    public Lokation readLokation(String name){
+        String sql = "SELECT * FROM Lokation WHERE Navn = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String description = resultSet.getString("Beskrivelse");
+                String farveKode = resultSet.getString("Farvekode");
+                return new Lokation(name, description, farveKode);
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read location: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to select from logininfo column kode where cpr is
+    public String readKodeForPerson(String cpr){
+        String sql = "SELECT Kode FROM LoginInfo WHERE Mail = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Kode");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read kode for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+
+
 
 
 }
