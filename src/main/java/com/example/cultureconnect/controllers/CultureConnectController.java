@@ -259,6 +259,7 @@ public class CultureConnectController {
                 //set title on the project cells
                 Label title = new Label(projekt.getTitel());
                 title.setStyle("-fx-text-fill: white; -fx-font-weight: bold");
+                title.setMouseTransparent(true);
                 StackPane sp = new StackPane();
                 sp.getChildren().addAll(pcell, title);
 
@@ -487,6 +488,7 @@ public class CultureConnectController {
         Label titleLabel = new Label(projekt.getTitel());
         titleLabel.getStyleClass().add("ProjectTooltipTitle");
         Label descriptionLabel = new Label(projekt.getDescription());
+        descriptionLabel.setWrapText(true);
         Label startDateLabel = new Label("Startdato: " + projekt.getStartDate().toString());
         Label endDateLabel = new Label("Slutdato: " + projekt.getEndDate().toString());
         Button moreInfoButton = new Button("Se mere");
@@ -720,27 +722,6 @@ public class CultureConnectController {
         redigerProjektejereListview.setItems(FXCollections.observableArrayList(projekt.getProjectCreator().stream().map(PersonListCell::new).collect(Collectors.toList())));
         redigerProjektdeltagereListview.setItems(FXCollections.observableArrayList(projekt.getParticipants().stream().map(PersonListCell::new).collect(Collectors.toList())));
         redigerLokationerListview.setItems(FXCollections.observableArrayList(new LokationListCell(projekt.getLokation())));
-        /*
-        public Button gemÆndringerKnap;
-    public Button sletProjektKnap;
-    public TextField RedigerTitelPåAktivitetFelt;
-    public Button redigerNyAktivitetKnap;
-    public DatePicker redigerSlutdatoDatepicker;
-    public DatePicker RedigerStartdatoDatepicker;
-    public DatePicker redigerArrangementDatoDatepicker;
-    public TextField redigerTitelFelt;
-    public ListView redigerProjektdeltagereListview;
-    public ListView redigerProjektejereListview;
-    public ListView redigerLokationerListview;
-    @FXML
-    private TextArea redigerBeskrivelseFelt;
-
-    @FXML
-    private TextArea redigerNoterFelt;
-
-    @FXML
-    private TextArea redigerPlanlagteMøderFelt;
-         */
     }
 
     public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
