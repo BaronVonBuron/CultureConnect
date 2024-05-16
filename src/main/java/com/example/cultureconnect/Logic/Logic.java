@@ -47,8 +47,8 @@ public class Logic {
     public void updateLists() {
         Thread t = new Thread(() -> {
             this.isUpdating = true;
-            this.persons = dao.readAllPersons();
             this.locations = dao.readAllLokations();
+            this.persons = dao.readAllPersons(locations);
             this.projects = dao.readAllProjects(persons, locations);
             this.isUpdating = false;
         });
@@ -113,6 +113,7 @@ public class Logic {
         dao.deleteLokation(lokation);
     }
     public void createUser(Person person){
+        this.persons.add(person);
         dao.createPerson(person);
     }
 
@@ -121,7 +122,7 @@ public class Logic {
     }
 
     public Person findAnsvarlig(String lokationNavn){
-        return dao.readAnsvarligForLokation(lokationNavn);
+        return this.persons.stream().filter(person -> person.getLokation().getName().equals(lokationNavn)).findFirst().orElse(null);
     }
 
     public void deleteAnsvarlig(Lokation lokation, String cpr){
@@ -142,5 +143,9 @@ public class Logic {
 
     public String findBrugerKodeord(String cpr){
         return dao.readKodeForPerson(cpr);
+    }
+
+    public void updateUser(Person nuværendePerson) {
+        dao.updatePerson(nuværendePerson);
     }
 }

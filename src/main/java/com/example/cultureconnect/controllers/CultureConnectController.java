@@ -455,7 +455,7 @@ public class CultureConnectController {
             cells.add(new PersonListCell(person));
         }
         users.addAll(cells);
-
+        //UserOrLocationListview.getItems().clear();
         UserOrLocationListview.setItems(users);
     }
 
@@ -467,6 +467,7 @@ public class CultureConnectController {
         }
         places.clear();
         places.addAll(cells);
+        //UserOrLocationListview.getItems().clear();
         UserOrLocationListview.setItems(places);
     }
 
@@ -868,5 +869,15 @@ public class CultureConnectController {
 
     public void userLokationListViewDragDone(DragEvent dragEvent) {
 
+    }
+
+    public void updateList() {
+        loadLokations();
+        loadUsers();
+        if (UserToggleButton.isSelected()){
+            UserOrLocationListview.setItems(users);
+        } else {
+            UserOrLocationListview.setItems(places);
+        }
     }
 }
