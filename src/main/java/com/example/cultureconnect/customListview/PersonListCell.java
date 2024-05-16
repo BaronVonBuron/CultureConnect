@@ -1,20 +1,28 @@
 package com.example.cultureconnect.customListview;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.controllers.CultureConnectController;
+import com.example.cultureconnect.controllers.NewLocationDialogController;
+import com.example.cultureconnect.controllers.NewUserDialogController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +96,30 @@ public class PersonListCell extends ListCell {
             if (alert.getResult() == ButtonType.YES) {
                 this.logic = Logic.getInstance();
                 logic.deletePerson(personClicked);
+            }
+        });
+
+        editButton.setOnMouseClicked(event -> {
+            Person personClicked = this.getPerson();
+
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/NewUserDialog.fxml"));
+                Stage editLokation = new Stage();
+                editLokation.setTitle("Rediger Bruger");
+                AnchorPane editLayout = loader.load();
+                Scene scene = new Scene(editLayout);
+                editLokation.setScene(scene);
+                editLokation.setResizable(false);
+
+                // Get the controller instance from the FXMLLoader
+                NewUserDialogController userController = loader.getController();
+
+                // Call a method to initialize the controller with the clicked location
+                userController.editInfo(personClicked);
+
+                editLokation.show();
+            } catch (IOException e) {
+                System.out.println("Can't open edit location window");
             }
         });
 

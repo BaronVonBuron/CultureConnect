@@ -2,6 +2,7 @@ package com.example.cultureconnect.controllers;
 
 import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
+import com.example.cultureconnect.Person.Person;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,7 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -47,7 +50,13 @@ public class NewUserDialogController {
     @FXML
     private Button vælgFilKnap;
 
+    @FXML
+    private Label opretNyBrugerLabel;
+
     private Logic logic;
+
+    private Person nuværendePerson;
+    private Lokation arbejdsplads;
 
     public void initialize(){
         this.logic = Logic.getInstance();
@@ -79,6 +88,34 @@ public class NewUserDialogController {
         if (selectedFile != null){
             billedeNyBrugerFelt.setText(selectedFile.getAbsolutePath());
         }
+    }
+
+    public void editInfo(Person person){
+        nuværendePerson = person;
+        String kodeord = logic.findBrugerKodeord(person.getCPR());
+        System.out.println(kodeord);
+
+        opretNyBrugerKnap.setText("Gem");
+        opretNyBrugerLabel.setText("Rediger bruger");
+        this.logic = Logic.getInstance();
+        String arbejdspladsNavn = logic.findBrugersLokation(nuværendePerson.getCPR());
+        arbejdsplads = logic.findLokation(arbejdspladsNavn);
+
+        emailNyBrugerFelt.setText(nuværendePerson.getEmail());
+        telefonnummerNyBrugerFelt.setText(String.valueOf(nuværendePerson.getTlfNr()));
+        cprNyBrugerFelt.setText(nuværendePerson.getCPR());
+        cprNyBrugerFelt.setEditable(false);
+        navnNyBrugerFelt.setText(nuværendePerson.getName());
+        stillingNyBrugerFelt.setText(logic.findBrugersStilling(nuværendePerson.getCPR()));
+        kodeordNyBrugerFelt.setText(logic.findBrugerKodeord(nuværendePerson.getCPR()));
+        billedeNyBrugerFelt.setText(nuværendePerson.getPicture().getUrl());
+
+        if (arbejdsplads == null) {
+            arbejdspladsVælger.setValue("Vælg arbejdsplads");
+        }else{
+            arbejdspladsVælger.setValue(arbejdsplads.getName());
+        }
+
     }
 
 }

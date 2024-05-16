@@ -361,4 +361,124 @@ public class DAO {
             System.err.println("Can't create medarbejder info: " + e.getErrorCode() + e.getMessage());
         }
     }
+
+    //prepared statement to update ansvarlig in medarbejderInfo table
+    public void updateAnsvarlig(String lokation, String cpr, boolean ansvarlig){
+        String sql = "UPDATE MedarbejderInfo SET Ansvarlig = ? WHERE Lokation_Navn = ? AND Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setBoolean(1, ansvarlig);
+            preparedStatement.setString(2, lokation);
+            preparedStatement.setString(3, cpr);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+    }
+
+    //prepared statement to read from MedarbejderInfo table where lokation is and ansvarlig is true make it return person
+    public Person readAnsvarligForLokation(String lokation){
+        String sql = "SELECT * FROM MedarbejderInfo WHERE Lokation_Navn = ? AND Ansvarlig = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, lokation);
+            preparedStatement.setBoolean(2, true);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String CPR = resultSet.getString("Person_CPR");
+                for (Person person : readAllPersons()) {
+                    if (person.getCPR().equals(CPR)){
+                        return person;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+    //Prepared statement to delete the row where lokation and cpr is in the MedarbejderInfo table
+    public void deleteAnsvarlig(String lokation, String cpr){
+        String sql = "UPDATE MedarbejderInfo SET Ansvarlig = ? WHERE Lokation_Navn = ? AND Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setBoolean(1, false);
+            preparedStatement.setString(2, lokation);
+            preparedStatement.setString(3, cpr);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+    }
+
+    //Prepared statement to select from MedarbejderInfo column lokation_navn where cpr is
+    public String readLokationForPerson(String cpr){
+        String sql = "SELECT Lokation_Navn FROM MedarbejderInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Lokation_Navn");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read lokation for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to select from MedarbejderInfo column stilling where cpr is
+    public String readStillingForPerson(String cpr){
+        String sql = "SELECT Stilling FROM MedarbejderInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Stilling");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read stilling for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to return a location where the name is
+    public Lokation readLokation(String name){
+        String sql = "SELECT * FROM Lokation WHERE Navn = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String description = resultSet.getString("Beskrivelse");
+                String farveKode = resultSet.getString("Farvekode");
+                return new Lokation(name, description, farveKode);
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read location: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to select from logininfo column kode where cpr is
+    public String readKodeForPerson(String cpr){
+        String sql = "SELECT Kode FROM LoginInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Kode");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read kode for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+
+
+
+
 }

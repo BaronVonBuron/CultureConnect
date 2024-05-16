@@ -4,14 +4,21 @@ import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.controllers.CultureConnectController;
+import com.example.cultureconnect.controllers.NewLocationDialogController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class LokationListCell extends ListCell {
 
@@ -75,6 +82,30 @@ public class LokationListCell extends ListCell {
             if (alert.getResult() == ButtonType.YES) {
                 this.logic = Logic.getInstance();
                 logic.deleteLokation(lokationClicked);
+            }
+        });
+
+        editButton.setOnMouseClicked(event -> {
+            Lokation lokationClicked = this.getLokation();
+
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/NewLocationDialog.fxml"));
+                Stage editLokation = new Stage();
+                editLokation.setTitle("Rediger lokation");
+                AnchorPane editLayout = loader.load();
+                Scene scene = new Scene(editLayout);
+                editLokation.setScene(scene);
+                editLokation.setResizable(false);
+
+                // Get the controller instance from the FXMLLoader
+                NewLocationDialogController lokationController = loader.getController();
+
+                // Call a method to initialize the controller with the clicked location
+                lokationController.editInfo(lokationClicked);
+
+                editLokation.show();
+            } catch (IOException e) {
+                System.out.println("Can't open edit location window");
             }
         });
 
