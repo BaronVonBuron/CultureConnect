@@ -75,10 +75,6 @@ public class NewLocationDialogController {
                 filter(person -> person.getName().equals(selectedAnsvarlig)).
                 findFirst().orElse(null);
 
-        if (ansvarlig == null) {
-            return;
-        }
-
         if (name == null || name.trim().isEmpty()) {
             locationMustHaveName();
             return;
@@ -94,7 +90,9 @@ public class NewLocationDialogController {
 
         Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
         logic.createLocation(lok);
-        logic.setAnsvarligForLocation(lok, ansvarlig);
+        if (ansvarligVælger != null && ansvarlig != null){
+            logic.setAnsvarligForLocation(lok, ansvarlig);
+        }
 
         Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
         stage.close();
