@@ -435,7 +435,7 @@ public class DAO {
 
     //Prepared statement to select from logininfo column kode where cpr is
     public String readKodeForPerson(String cpr){
-        String sql = "SELECT Kode FROM LoginInfo WHERE Mail = ?";
+        String sql = "SELECT Kode FROM LoginInfo WHERE Person_CPR = ?";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setString(1, cpr);

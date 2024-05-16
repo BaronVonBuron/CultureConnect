@@ -92,6 +92,8 @@ public class NewUserDialogController {
 
     public void editInfo(Person person){
         nuværendePerson = person;
+        String kodeord = logic.findBrugerKodeord(person.getCPR());
+        System.out.println(kodeord);
 
         opretNyBrugerKnap.setText("Gem");
         opretNyBrugerLabel.setText("Rediger bruger");
