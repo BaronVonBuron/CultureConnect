@@ -21,6 +21,7 @@ public class Person {
     private int tlfNr;
     private Image picture;
     private String CPR;
+    private String kode;
 
 
     public Person(String name, String email, int tlfNr, Image picture, String CPR) {
@@ -98,6 +99,13 @@ public class Person {
         this.tlfNr = tlfNr;
     }
 
+    public String getKode() {
+        return kode;
+    }
+
+    public void setKode(String kode) {
+        this.kode = kode;
+    }
     public Image getPicture() {
         return picture;
     }

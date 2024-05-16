@@ -27,6 +27,14 @@ public class ProjektAktivitet {
                 .toInstant());
     }
 
+    public java.sql.Date getStartDatoAsSqlDate() {
+        return java.sql.Date.valueOf(this.startDato);
+    }
+
+    public java.sql.Date getEndDatoAsSqlDate() {
+        return java.sql.Date.valueOf(this.slutDato);
+    }
+
     public LocalDate getStartDato() {
         return startDato;
     }

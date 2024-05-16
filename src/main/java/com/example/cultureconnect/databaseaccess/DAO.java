@@ -3,6 +3,7 @@ package com.example.cultureconnect.databaseaccess;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
+import com.example.cultureconnect.Projekt.ProjektAktivitet;
 import javafx.scene.image.Image;
 
 import java.io.ByteArrayInputStream;
@@ -27,20 +28,41 @@ public class DAO {
     //TODO CRUD for Person
     //PS for inserting person into person table, columns: CPR - String, Navn - String, Telefon - int, Email - String, Billede - Byte[]
     //make the method take in a Person object and get the values from the persons getters
-    public void createPerson(Person person){
+    public void createPerson(Person person) {
         //prepare the sql statement
-        String sql = "INSERT INTO Person (CPR, Navn, Telefon, Email, Billede) VALUES (?, ?, ?, ?, ?)";
+        String sqlPerson = "INSERT INTO Person (CPR, Navn, Telefon, Email, Billede) VALUES (?, ?, ?, ?, ?)";
+        String sqlLogin = "INSERT INTO LoginInfo (Person_CPR, Mail, Kode) VALUES (?, ?, ?)";
+        String sqlMedarbejder = "INSERT INTO MedarbejderInfo (Lokation_Navn, Person_CPR, Stilling, Ansvarlig) VALUES (?, ?, ?, ?)";
         try {
             //prepare the statement
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatementPerson = con.prepareStatement(sqlPerson);
             //set the values
-            preparedStatement.setString(1, person.getCPR());
-            preparedStatement.setString(2, person.getName());
-            preparedStatement.setInt(3, person.getTlfNr());
-            preparedStatement.setString(4, person.getEmail());
-            preparedStatement.setBytes(5, person.getPictureAsByteArray());
+            preparedStatementPerson.setString(1, person.getCPR());
+            preparedStatementPerson.setString(2, person.getName());
+            preparedStatementPerson.setInt(3, person.getTlfNr());
+            preparedStatementPerson.setString(4, person.getEmail());
+            preparedStatementPerson.setBytes(5, person.getPictureAsByteArray());
             //execute the statement
-            preparedStatement.executeUpdate();
+            preparedStatementPerson.executeUpdate();
+
+            //prepare statement for inserting into LoginInfo table
+            PreparedStatement preparedStatementLogin = con.prepareStatement(sqlLogin);
+            //set the values
+            preparedStatementLogin.setString(1, person.getCPR());
+            preparedStatementLogin.setString(2, person.getEmail());
+            preparedStatementLogin.setString(3, person.getKode());
+            //execute the statement
+            preparedStatementLogin.executeUpdate();
+
+            //prepare statement for inserting into MedarbejderInfo table
+            PreparedStatement preparedStatementMedarbejder = con.prepareStatement(sqlMedarbejder);
+            //set the values
+            preparedStatementMedarbejder.setString(1, String.valueOf(person.getLokation()));
+            preparedStatementMedarbejder.setString(2, person.getCPR());
+            preparedStatementMedarbejder.setString(3, person.getPosition());
+            preparedStatementMedarbejder.setBoolean(4, false);
+
+
         } catch (SQLException e) {
             System.err.println("Can't create person: " + e.getErrorCode() + e.getMessage());
         }
@@ -185,13 +207,12 @@ public class DAO {
         } catch (SQLException e) {
             System.err.println("Can't create project: " + e.getErrorCode() + e.getMessage());
         }
-        String sql1 = "INSERT INTO ProjektInfo (Projekt_ID, Beskrivelse, Møder, Noter) VALUES (?, ?, ?, ?)";
+        String sql1 = "INSERT INTO ProjektInfo (Projekt_ID, Beskrivelse, Noter) VALUES (?, ?, ?)";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql1);
             preparedStatement.setString(1, projekt.getId());
             preparedStatement.setString(2, projekt.getDescription());
-            preparedStatement.setString(3, projekt.getAktiviteter());
-            preparedStatement.setString(4, projekt.getNotes());
+            preparedStatement.setString(3, projekt.getNotes());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't create project info: " + e.getErrorCode() + e.getMessage());
@@ -226,6 +247,21 @@ public class DAO {
             System.err.println("Can't create project location: " + e.getErrorCode() + e.getMessage());
         }
 
+        //insert the projekt's aktiviteter into the ProjektAktivitet table, where Projekt_ID is a foreign key to the Projekt table.
+        //Insert into these columns: Projekt_ID - String, Aktivitet - String, StartDato - Date, SlutDato - Date
+        String sql4 = "INSERT INTO ProjektAktivitet (Projekt_ID, Aktivitet, StartDato, SlutDato) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql4);
+            for (ProjektAktivitet aktivitet : projekt.getProjektAktiviteter()) {
+                preparedStatement.setString(1, projekt.getId());
+                preparedStatement.setString(2, aktivitet.getAktivitet());
+                preparedStatement.setDate(3, aktivitet.getStartDatoAsSqlDate());
+                preparedStatement.setDate(4, aktivitet.getEndDatoAsSqlDate());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't create project activities: " + e.getErrorCode() + e.getMessage());
+        }
     }
 
     //PreparedStatement for reading all the projects from the Projekt table, and returning a list of them all
@@ -254,7 +290,6 @@ public class DAO {
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()){
                     projekt.setDescription(resultSet.getString("Beskrivelse"));
-                    projekt.setAktiviteter(resultSet.getString("Møder"));
                     projekt.setNotes(resultSet.getString("Noter"));
                 }
             } catch (SQLException e) {
@@ -298,6 +333,21 @@ public class DAO {
                 }
             } catch (SQLException e) {
                 System.err.println("Can't read project location: " + e.getErrorCode() + e.getMessage());
+            }
+            //make a statement to get the activities from the ProjektAktivitet table and set them on the project object
+            String sql4 = "SELECT * FROM ProjektAktivitet WHERE Projekt_ID = ?";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(sql4);
+                preparedStatement.setString(1, projekt.getId());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()){
+                    Date startDato = resultSet.getDate("StartDato");
+                    Date slutDato = resultSet.getDate("SlutDato");
+                    String aktivitet = resultSet.getString("Aktivitet");
+                    projekt.getProjektAktiviteter().add(new ProjektAktivitet(startDato.toLocalDate(), slutDato.toLocalDate(), aktivitet));
+                }
+            } catch (SQLException e) {
+                System.err.println("Can't read project activities: " + e.getErrorCode() + e.getMessage());
             }
         }
         return projects;

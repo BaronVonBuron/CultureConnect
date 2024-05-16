@@ -112,6 +112,9 @@ public class Logic {
     public void deleteLokation(Lokation lokation){
         dao.deleteLokation(lokation);
     }
+    public void createUser(Person person){
+        dao.createPerson(person);
+    }
 
     public void updateLokation(Lokation lokation, String name){
         dao.updateLokation(lokation, name);
