@@ -2,6 +2,7 @@ package com.example.cultureconnect.controllers;
 
 import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
+import com.example.cultureconnect.Person.Person;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -66,7 +67,23 @@ public class NewUserDialogController {
 
     @FXML
     void opretNyBrugerKnapPressed(ActionEvent event) {
+        String name = navnNyBrugerFelt.getText();
+        String email = emailNyBrugerFelt.getText();
+        int tlfNr = Integer.parseInt(telefonnummerNyBrugerFelt.getText());
+        String picture = billedeNyBrugerFelt.getText();
+        String CPR = cprNyBrugerFelt.getText();
+        String position = stillingNyBrugerFelt.getText();
+        String kode = kodeordNyBrugerFelt.getText();
+        String location = arbejdspladsVælger.getValue();
 
+        Person user = new Person(name, email, tlfNr, null, CPR);
+        user.setKode(kode);
+        user.setPosition(position);
+        user.setLokation(logic.getLocations().stream().
+                filter(l -> l.getName().equals(location)).
+                findFirst().orElse(null));
+
+        logic.createUser(user);
     }
 
     @FXML

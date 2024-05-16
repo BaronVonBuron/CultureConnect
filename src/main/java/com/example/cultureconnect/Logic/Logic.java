@@ -105,4 +105,8 @@ public class Logic {
     public void deleteLokation(Lokation lokation){
         dao.deleteLokation(lokation);
     }
+
+    public void createUser(Person person){
+        dao.createPerson(person);
+    }
 }
