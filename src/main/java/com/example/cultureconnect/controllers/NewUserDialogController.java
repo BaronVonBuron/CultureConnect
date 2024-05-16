@@ -99,7 +99,7 @@ public class NewUserDialogController {
             tlfNr = 0;
         }
         if (picture == null || picture.trim().isEmpty()){
-            image = new Image("file:src/main/resources/images/Persona.png");
+            image = new Image("file:src/main/resources/images/avatar.png");
         }
 
         Person user = new Person(name, email, tlfNr, image, CPR);

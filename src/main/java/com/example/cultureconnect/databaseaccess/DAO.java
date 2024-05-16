@@ -81,7 +81,7 @@ public class DAO {
                 int tlf = resultSet.getInt("Telefon");
                 String email = resultSet.getString("Email");
                 byte[] picture = resultSet.getBytes("Billede");
-                Image image = new Image("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png");
+                Image image = new Image("file:src/main/resources/images/avatar.png");
                 if (picture != null) {
                     //convert bytearray to image again
                     image = new Image(new ByteArrayInputStream(picture));
