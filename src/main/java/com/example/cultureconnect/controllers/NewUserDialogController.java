@@ -3,17 +3,19 @@ package com.example.cultureconnect.controllers;
 import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.List;
@@ -54,6 +56,7 @@ public class NewUserDialogController {
     private Label opretNyBrugerLabel;
 
     private Logic logic;
+    private CultureConnectController cultureConnectController;
 
     private Person nuværendePerson;
     private Lokation arbejdsplads;
@@ -75,7 +78,57 @@ public class NewUserDialogController {
 
     @FXML
     void opretNyBrugerKnapPressed(ActionEvent event) {
+        String name = navnNyBrugerFelt.getText();
+        String email = emailNyBrugerFelt.getText();
+        String tlfNrText = telefonnummerNyBrugerFelt.getText();
+        Integer tlfNr = null;
+        if (tlfNrText != null && !tlfNrText.trim().isEmpty()) {
+            tlfNr = Integer.parseInt(tlfNrText.trim()); // Parse if not empty
+        }
+        String picture = billedeNyBrugerFelt.getText();
+        Image image = null;
+        if (picture != null && !picture.trim().isEmpty()) {
+            image = new Image(new File(picture).toURI().toString());
+        }
+        String CPR = cprNyBrugerFelt.getText();
+        String position = stillingNyBrugerFelt.getText();
+        String kode = kodeordNyBrugerFelt.getText();
+        String location = arbejdspladsVælger.getValue();
 
+        if (tlfNr == null || tlfNrText.trim().isEmpty()){
+            tlfNr = 0;
+        }
+        if (picture == null || picture.trim().isEmpty()){
+            image = new Image("file:src/main/resources/images/Persona.png");
+        }
+
+        Person user = new Person(name, email, tlfNr, image, CPR);
+        user.setKode(kode);
+        user.setPosition(position);
+        user.setLokation(logic.getLocations().stream().
+                filter(l -> l.getName().equals(location)).
+                findFirst().orElse(null));
+
+        if (CPR == null || CPR.trim().isEmpty()){
+            personNeedsCpr();
+            return;
+        }
+        if (name == null || name.trim().isEmpty()){
+            personNeedName();
+            return;
+        }
+        //sørger for alle brugere har login info, hvis felterne ikke udfyldes:
+        if (email == null || email.trim().isEmpty()){
+            user.setEmail(name + "@mail.dk");
+        }
+        if (kode == null || kode.trim().isEmpty()){
+            user.setKode(name);
+        }
+
+        logic.createUser(user);
+
+        Stage stage = (Stage) opretNyBrugerKnap.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
@@ -90,6 +143,31 @@ public class NewUserDialogController {
         }
     }
 
+    public void personNeedsCpr(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Fejl");
+        alert.setHeaderText("Brugere skal have et CPR nummer");
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.showAndWait();
+    }
+
+    public void personNeedName(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Fejl");
+        alert.setHeaderText("Brugere skal have et navn");
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.showAndWait();
+    }
+
+    public void setMainController(CultureConnectController cultureConnectController) {
+        this.cultureConnectController = cultureConnectController;
+    }
     public void editInfo(Person person){
         nuværendePerson = person;
         String kodeord = logic.findBrugerKodeord(person.getCPR());
@@ -117,5 +195,4 @@ public class NewUserDialogController {
         }
 
     }
-
 }
