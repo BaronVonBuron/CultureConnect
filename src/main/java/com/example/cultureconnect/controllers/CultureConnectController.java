@@ -249,6 +249,7 @@ public class CultureConnectController {
                 //set title on the project cells
                 Label title = new Label(projekt.getTitel());
                 title.setStyle("-fx-text-fill: white; -fx-font-weight: bold");
+                title.setMouseTransparent(true);
                 StackPane sp = new StackPane();
                 sp.getChildren().addAll(pcell, title);
 
