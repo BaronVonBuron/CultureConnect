@@ -85,6 +85,7 @@ public class NewLocationDialogController {
                 return;
             }
 
+
             if (name == null || name.trim().isEmpty()) {
                 locationMustHaveName();
                 return;
@@ -128,8 +129,15 @@ public class NewLocationDialogController {
                 return;
             }
 
+
             nuværendeLokation.setDescription(email + "\n   " + telefonnummer);
             nuværendeLokation.setFarveKode(farveKode);
+
+        Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
+        logic.createLocation(lok);
+        if (ansvarligVælger != null && ansvarlig != null){
+            logic.setAnsvarligForLocation(lok, ansvarlig);
+        }
 
             logic.updateLokation(nuværendeLokation, name);
             logic.updateAnsvarlig(nuværendeLokation, ansvarlig);
