@@ -358,7 +358,11 @@ public class CultureConnectController {
                 addUser.setScene(scene);
                 addUser.setResizable(false);
 
+                NewUserDialogController controller = loader.getController();
+                controller.setMainController(this);
+
                 addUser.show();
+                addUser.setOnHidden(e -> loadUsers());
 
             } catch (IOException e){
                 System.out.println("Can't open new user window");
