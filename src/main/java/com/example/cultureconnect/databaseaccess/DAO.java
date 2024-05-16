@@ -29,39 +29,18 @@ public class DAO {
     //make the method take in a Person object and get the values from the persons getters
     public void createPerson(Person person){
         //prepare the sql statement
-        String sqlPerson = "INSERT INTO Person (CPR, Navn, Telefon, Email, Billede) VALUES (?, ?, ?, ?, ?)";
-        String sqlLogin = "INSERT INTO LoginInfo (Person_CPR, Mail, Kode) VALUES (?, ?, ?)";
-        String sqlMedarbejder = "INSERT INTO MedarbejderInfo (Lokation_Navn, Person_CPR, Stilling, Ansvarlig) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Person (CPR, Navn, Telefon, Email, Billede) VALUES (?, ?, ?, ?, ?)";
         try {
             //prepare the statement
-            PreparedStatement preparedStatementPerson = con.prepareStatement(sqlPerson);
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
             //set the values
-            preparedStatementPerson.setString(1, person.getCPR());
-            preparedStatementPerson.setString(2, person.getName());
-            preparedStatementPerson.setInt(3, person.getTlfNr());
-            preparedStatementPerson.setString(4, person.getEmail());
-            preparedStatementPerson.setBytes(5, person.getPictureAsByteArray());
+            preparedStatement.setString(1, person.getCPR());
+            preparedStatement.setString(2, person.getName());
+            preparedStatement.setInt(3, person.getTlfNr());
+            preparedStatement.setString(4, person.getEmail());
+            preparedStatement.setBytes(5, person.getPictureAsByteArray());
             //execute the statement
-            preparedStatementPerson.executeUpdate();
-
-            //prepare statement for inserting into LoginInfo table
-            PreparedStatement preparedStatementLogin = con.prepareStatement(sqlLogin);
-            //set the values
-            preparedStatementLogin.setString(1, person.getCPR());
-            preparedStatementLogin.setString(2, person.getEmail());
-            preparedStatementLogin.setString(3, person.getKode());
-            //execute the statement
-            preparedStatementLogin.executeUpdate();
-
-            //prepare statement for inserting into MedarbejderInfo table
-            PreparedStatement preparedStatementMedarbejder = con.prepareStatement(sqlMedarbejder);
-            //set the values
-            preparedStatementMedarbejder.setString(1, String.valueOf(person.getLokation()));
-            preparedStatementMedarbejder.setString(2, person.getCPR());
-            preparedStatementMedarbejder.setString(3, person.getPosition());
-            preparedStatementMedarbejder.setBoolean(4, false);
-
-
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't create person: " + e.getErrorCode() + e.getMessage());
         }
