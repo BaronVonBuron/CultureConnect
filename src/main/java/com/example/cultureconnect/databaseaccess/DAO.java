@@ -29,39 +29,18 @@ public class DAO {
     //make the method take in a Person object and get the values from the persons getters
     public void createPerson(Person person){
         //prepare the sql statement
-        String sqlPerson = "INSERT INTO Person (CPR, Navn, Telefon, Email, Billede) VALUES (?, ?, ?, ?, ?)";
-        String sqlLogin = "INSERT INTO LoginInfo (Person_CPR, Mail, Kode) VALUES (?, ?, ?)";
-        String sqlMedarbejder = "INSERT INTO MedarbejderInfo (Lokation_Navn, Person_CPR, Stilling, Ansvarlig) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Person (CPR, Navn, Telefon, Email, Billede) VALUES (?, ?, ?, ?, ?)";
         try {
             //prepare the statement
-            PreparedStatement preparedStatementPerson = con.prepareStatement(sqlPerson);
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
             //set the values
-            preparedStatementPerson.setString(1, person.getCPR());
-            preparedStatementPerson.setString(2, person.getName());
-            preparedStatementPerson.setInt(3, person.getTlfNr());
-            preparedStatementPerson.setString(4, person.getEmail());
-            preparedStatementPerson.setBytes(5, person.getPictureAsByteArray());
+            preparedStatement.setString(1, person.getCPR());
+            preparedStatement.setString(2, person.getName());
+            preparedStatement.setInt(3, person.getTlfNr());
+            preparedStatement.setString(4, person.getEmail());
+            preparedStatement.setBytes(5, person.getPictureAsByteArray());
             //execute the statement
-            preparedStatementPerson.executeUpdate();
-
-            //prepare statement for inserting into LoginInfo table
-            PreparedStatement preparedStatementLogin = con.prepareStatement(sqlLogin);
-            //set the values
-            preparedStatementLogin.setString(1, person.getCPR());
-            preparedStatementLogin.setString(2, person.getEmail());
-            preparedStatementLogin.setString(3, person.getKode());
-            //execute the statement
-            preparedStatementLogin.executeUpdate();
-
-            //prepare statement for inserting into MedarbejderInfo table
-            PreparedStatement preparedStatementMedarbejder = con.prepareStatement(sqlMedarbejder);
-            //set the values
-            preparedStatementMedarbejder.setString(1, String.valueOf(person.getLokation()));
-            preparedStatementMedarbejder.setString(2, person.getCPR());
-            preparedStatementMedarbejder.setString(3, person.getPosition());
-            preparedStatementMedarbejder.setBoolean(4, false);
-
-
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't create person: " + e.getErrorCode() + e.getMessage());
         }
@@ -235,11 +214,22 @@ public class DAO {
         } catch (SQLException e) {
             System.err.println("Can't create project participants: " + e.getErrorCode() + e.getMessage());
         }
+        //Insert the projekt's lokation into the ProjektLokation table, where Projekt_ID is a foreign key to the Projekt table and Lokation_Navn is a foreign key to the Lokation table.
+        //Insert into these columns: Projekt_ID - String, Lokation_Navn - String
+        String sql3 = "INSERT INTO ProjektLokation (Projekt_ID, Lokation_Navn) VALUES (?, ?)";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql3);
+            preparedStatement.setString(1, projekt.getId());
+            preparedStatement.setString(2, projekt.getLokation().getName());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't create project location: " + e.getErrorCode() + e.getMessage());
+        }
 
     }
 
     //PreparedStatement for reading all the projects from the Projekt table, and returning a list of them all
-    public List<Projekt> readAllProjects(){
+    public List<Projekt> readAllProjects(List<Person> persons, List<Lokation> lokations){
         List<Projekt> projects = new ArrayList<>();
         String sql = "SELECT * FROM Projekt";
         try {
@@ -279,7 +269,7 @@ public class DAO {
                 while (resultSet.next()){
                     String CPR = resultSet.getString("Person_CPR");
                     boolean isCreator = resultSet.getBoolean("Ejer");
-                    for (Person person : readAllPersons()) {
+                    for (Person person : persons) {
                         if (person.getCPR().equals(CPR)){
                             if (isCreator){
                                 projekt.getProjectCreator().add(person);
@@ -291,6 +281,23 @@ public class DAO {
                 }
             } catch (SQLException e) {
                 System.err.println("Can't read project participants: " + e.getErrorCode() + e.getMessage());
+            }
+            //make a statement to get the location from the ProjektLokation table and set it on the project object
+            String sql3 = "SELECT * FROM ProjektLokation WHERE Projekt_ID = ?";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(sql3);
+                preparedStatement.setString(1, projekt.getId());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()){
+                    String name = resultSet.getString("Lokation_Navn");
+                    for (Lokation lokation : lokations) {
+                        if (lokation.getName().equals(name)){
+                            projekt.setLokation(lokation);
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("Can't read project location: " + e.getErrorCode() + e.getMessage());
             }
         }
         return projects;
@@ -354,4 +361,124 @@ public class DAO {
             System.err.println("Can't create medarbejder info: " + e.getErrorCode() + e.getMessage());
         }
     }
+
+    //prepared statement to update ansvarlig in medarbejderInfo table
+    public void updateAnsvarlig(String lokation, String cpr, boolean ansvarlig){
+        String sql = "UPDATE MedarbejderInfo SET Ansvarlig = ? WHERE Lokation_Navn = ? AND Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setBoolean(1, ansvarlig);
+            preparedStatement.setString(2, lokation);
+            preparedStatement.setString(3, cpr);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+    }
+
+    //prepared statement to read from MedarbejderInfo table where lokation is and ansvarlig is true make it return person
+    public Person readAnsvarligForLokation(String lokation){
+        String sql = "SELECT * FROM MedarbejderInfo WHERE Lokation_Navn = ? AND Ansvarlig = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, lokation);
+            preparedStatement.setBoolean(2, true);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String CPR = resultSet.getString("Person_CPR");
+                for (Person person : readAllPersons()) {
+                    if (person.getCPR().equals(CPR)){
+                        return person;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+    //Prepared statement to delete the row where lokation and cpr is in the MedarbejderInfo table
+    public void deleteAnsvarlig(String lokation, String cpr){
+        String sql = "UPDATE MedarbejderInfo SET Ansvarlig = ? WHERE Lokation_Navn = ? AND Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setBoolean(1, false);
+            preparedStatement.setString(2, lokation);
+            preparedStatement.setString(3, cpr);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update ansvarlig: " + e.getErrorCode() + e.getMessage());
+        }
+    }
+
+    //Prepared statement to select from MedarbejderInfo column lokation_navn where cpr is
+    public String readLokationForPerson(String cpr){
+        String sql = "SELECT Lokation_Navn FROM MedarbejderInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Lokation_Navn");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read lokation for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to select from MedarbejderInfo column stilling where cpr is
+    public String readStillingForPerson(String cpr){
+        String sql = "SELECT Stilling FROM MedarbejderInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Stilling");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read stilling for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to return a location where the name is
+    public Lokation readLokation(String name){
+        String sql = "SELECT * FROM Lokation WHERE Navn = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String description = resultSet.getString("Beskrivelse");
+                String farveKode = resultSet.getString("Farvekode");
+                return new Lokation(name, description, farveKode);
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read location: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to select from logininfo column kode where cpr is
+    public String readKodeForPerson(String cpr){
+        String sql = "SELECT Kode FROM LoginInfo WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpr);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Kode");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read kode for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+
+
+
+
 }

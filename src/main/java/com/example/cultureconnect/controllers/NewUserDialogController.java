@@ -9,6 +9,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -47,8 +52,14 @@ public class NewUserDialogController {
     @FXML
     private Button vælgFilKnap;
 
+    @FXML
+    private Label opretNyBrugerLabel;
+
     private Logic logic;
     private CultureConnectController cultureConnectController;
+
+    private Person nuværendePerson;
+    private Lokation arbejdsplads;
 
     public void initialize(){
         this.logic = Logic.getInstance();
@@ -156,5 +167,32 @@ public class NewUserDialogController {
 
     public void setMainController(CultureConnectController cultureConnectController) {
         this.cultureConnectController = cultureConnectController;
+    }
+    public void editInfo(Person person){
+        nuværendePerson = person;
+        String kodeord = logic.findBrugerKodeord(person.getCPR());
+        System.out.println(kodeord);
+
+        opretNyBrugerKnap.setText("Gem");
+        opretNyBrugerLabel.setText("Rediger bruger");
+        this.logic = Logic.getInstance();
+        String arbejdspladsNavn = logic.findBrugersLokation(nuværendePerson.getCPR());
+        arbejdsplads = logic.findLokation(arbejdspladsNavn);
+
+        emailNyBrugerFelt.setText(nuværendePerson.getEmail());
+        telefonnummerNyBrugerFelt.setText(String.valueOf(nuværendePerson.getTlfNr()));
+        cprNyBrugerFelt.setText(nuværendePerson.getCPR());
+        cprNyBrugerFelt.setEditable(false);
+        navnNyBrugerFelt.setText(nuværendePerson.getName());
+        stillingNyBrugerFelt.setText(logic.findBrugersStilling(nuværendePerson.getCPR()));
+        kodeordNyBrugerFelt.setText(logic.findBrugerKodeord(nuværendePerson.getCPR()));
+        billedeNyBrugerFelt.setText(nuværendePerson.getPicture().getUrl());
+
+        if (arbejdsplads == null) {
+            arbejdspladsVælger.setValue("Vælg arbejdsplads");
+        }else{
+            arbejdspladsVælger.setValue(arbejdsplads.getName());
+        }
+
     }
 }

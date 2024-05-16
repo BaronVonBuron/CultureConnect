@@ -49,7 +49,7 @@ public class Logic {
             this.isUpdating = true;
             this.persons = dao.readAllPersons();
             this.locations = dao.readAllLokations();
-            this.projects = dao.readAllProjects();
+            this.projects = dao.readAllProjects(persons, locations);
             this.isUpdating = false;
         });
         t.start();
@@ -98,6 +98,13 @@ public class Logic {
         dao.createMedarbejderInfo(lokation, cpr, stilling, true);
     }
 
+    public void updateAnsvarlig(Lokation lokation, Person ansvarlig){
+        String lokationNavn = lokation.getName();
+        String cpr = ansvarlig.getCPR();
+
+        dao.updateAnsvarlig(lokationNavn, cpr, true);
+    }
+
     public void deletePerson(Person person){
         dao.deletePerson(person);
     }
@@ -106,7 +113,31 @@ public class Logic {
         dao.deleteLokation(lokation);
     }
 
-    public void createUser(Person person){
-        dao.createPerson(person);
+    public void updateLokation(Lokation lokation, String name){
+        dao.updateLokation(lokation, name);
+    }
+
+    public Person findAnsvarlig(String lokationNavn){
+        return dao.readAnsvarligForLokation(lokationNavn);
+    }
+
+    public void deleteAnsvarlig(Lokation lokation, String cpr){
+        dao.deleteAnsvarlig(lokation.getName(), cpr);
+    }
+
+    public String findBrugersLokation(String cpr){
+        return dao.readLokationForPerson(cpr);
+    }
+
+    public String findBrugersStilling(String cpr){
+        return dao.readStillingForPerson(cpr);
+    }
+
+    public Lokation findLokation(String lokationNavn){
+        return dao.readLokation(lokationNavn);
+    }
+
+    public String findBrugerKodeord(String cpr){
+        return dao.readKodeForPerson(cpr);
     }
 }
