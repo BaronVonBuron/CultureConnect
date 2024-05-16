@@ -1,6 +1,7 @@
 package com.example.cultureconnect.Projekt;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class ProjektAktivitet {
@@ -15,15 +16,15 @@ public class ProjektAktivitet {
     }
 
     public Date getStartDatoAsUtilDate() {
-        Date date = new Date();
-        date.setTime(this.startDato.toEpochDay());
-        return date;
+        return Date.from(this.startDato.atStartOfDay()
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
     }
 
     public Date getEndDatoAsUtilDate() {
-        Date date = new Date();
-        date.setTime(this.slutDato.toEpochDay());
-        return date;
+        return Date.from(this.slutDato.atStartOfDay()
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
     }
 
     public LocalDate getStartDato() {

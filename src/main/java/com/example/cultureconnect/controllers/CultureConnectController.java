@@ -4,6 +4,7 @@ import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
+import com.example.cultureconnect.Projekt.ProjektAktivitet;
 import com.example.cultureconnect.calendar.CalendarCell;
 import com.example.cultureconnect.calendar.ProjektCell;
 import com.example.cultureconnect.customListview.LokationListCell;
@@ -22,8 +23,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -35,7 +34,7 @@ public class CultureConnectController {
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
-    public ToggleGroup group; //TODO make one button selected from the start, and make sure allways one button is selected.
+    public ToggleGroup group;
     public HBox ListviewSearchHBox;
     public TextField ListviewSearchTextField;
     public Button ListviewSearchButton;
@@ -73,6 +72,7 @@ public class CultureConnectController {
     public Label projektDato;
     public Label projektMøder;
     public Label projektNoter;////////
+    public ListView<ProjektAktivitet> createProjektAktiviteterListview;
     private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
     private ObservableList<PersonListCell> createNewProjektCreatorList;
@@ -82,8 +82,6 @@ public class CultureConnectController {
     public DatePicker plannedActivityStartDatePicker;
     public DatePicker plannedActivityEndDatePicker;
     public TextField plannedActivityTitleTextField;
-    @FXML
-    private TextArea nytProjektPlanlagteMøderFelt;
     //Create new projekt tab slut////////////////////////////////////////////
 
     //Edit projekt tab start////////////////////////////////////////////
@@ -131,7 +129,7 @@ public class CultureConnectController {
         startSequence();
         loginSequence();
 
-        autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea, nytProjektPlanlagteMøderFelt,
+        autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt, redigerPlanlagteMøderFelt
         );
 
@@ -570,7 +568,6 @@ public class CultureConnectController {
     }
 
     public void createProjektButtonPressed(ActionEvent actionEvent) {
-        //TODO check if the projekt is valid, and if not, show an error message.
         if (CreateNewProjectTitleTextField.getText().isEmpty() ||
                 CreateNewProjektEndDatePicker.getValue() == null ||
                 CreateNewProjektCreatorListView.getItems().isEmpty()){
@@ -582,13 +579,13 @@ public class CultureConnectController {
         } else {
             Date startDate;
             Date endDate;
-            if (nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
+            if (createProjektAktiviteterListview.getItems().isEmpty()) {
                 startDate = new Date();
             } else {
-                startDate = findEarliestDate(nytProjektPlanlagteMøderFelt.getText());
+                startDate = findEarliestDate(createProjektAktiviteterListview.getItems());
             }
-            if (!nytProjektPlanlagteMøderFelt.getText().isEmpty()) {
-                Date latestDate = findLatestDate(nytProjektPlanlagteMøderFelt.getText());
+            if (!createProjektAktiviteterListview.getItems().isEmpty()) {
+                Date latestDate = findLatestDate(createProjektAktiviteterListview.getItems());
                 LocalDate endDateLocalDate = CreateNewProjektEndDatePicker.getValue();
                 Instant instant = endDateLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
                 endDate = Date.from(instant);
@@ -633,8 +630,8 @@ public class CultureConnectController {
             if (!CreateNewProjectLokationListView.getItems().isEmpty()){
                 nytProjekt.setLokation(CreateNewProjectLokationListView.getItems().getFirst().getLokation());
             }
-            if (!nytProjektPlanlagteMøderFelt.getText().isEmpty()){
-                nytProjekt.setAktiviteter(nytProjektPlanlagteMøderFelt.getText());
+            if (!createProjektAktiviteterListview.getItems().isEmpty()){
+                nytProjekt.setProjektAktiviteter(createProjektAktiviteterListview.getItems());
             }
             logic.createProject(nytProjekt);
             projects.add(nytProjekt);
@@ -653,8 +650,9 @@ public class CultureConnectController {
             alert.setContentText("Aktiviteten skal have en titel og en start- og slutdato.");
             alert.showAndWait();
         } else {
-            String activity = plannedActivityStartDatePicker.getValue().toString() + " | " + plannedActivityEndDatePicker.getValue().toString() + " | " + plannedActivityTitleTextField.getText();
-            nytProjektPlanlagteMøderFelt.setText(nytProjektPlanlagteMøderFelt.getText() + "\n" + activity);
+            ProjektAktivitet aktivitet = new ProjektAktivitet(plannedActivityStartDatePicker.getValue(), plannedActivityEndDatePicker.getValue(), plannedActivityTitleTextField.getText());
+            createProjektAktiviteterListview.getItems().add(aktivitet);
+            createProjektAktiviteterListview.refresh();
             plannedActivityEndDatePicker.setValue(null);
             plannedActivityStartDatePicker.setValue(null);
             plannedActivityTitleTextField.clear();
@@ -662,8 +660,8 @@ public class CultureConnectController {
         //add to the nytprojektPlanlagteMøderFelt
     }
 
-    public Date findEarliestDate(String datesText) {
-        List<Date> dates = getDatesInActivities(datesText);
+    public Date findEarliestDate(List<ProjektAktivitet> aktiviteter) {
+        List<Date> dates = getDatesInActivities(aktiviteter);
         Date earliestDate = new Date(Long.MAX_VALUE);
         for (Date date : dates) {
             if (date.before(earliestDate)) {
@@ -673,32 +671,22 @@ public class CultureConnectController {
         return earliestDate;
     }
 
-    public Date findLatestDate(String datesText) {
-        List<Date> dates = getDatesInActivities(datesText);
+    public Date findLatestDate(List<ProjektAktivitet> aktiviteter) {
+        List<Date> dates = getDatesInActivities(aktiviteter);
         Date latestDate = new Date(Long.MIN_VALUE);
         for (Date date : dates) {
-            System.out.println(date + " date");
             if (date.after(latestDate)) {
                 latestDate = date;
             }
-            System.out.println(latestDate + " latest date");
         }
         return latestDate;
     }
 
-    public List<Date> getDatesInActivities(String activities){
+    public List<Date> getDatesInActivities(List<ProjektAktivitet> activities){
         List<Date> dates = new ArrayList<>();
-        String[] dateStrings = activities.split("\\|");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        for (String dateString : dateStrings) {
-            try {
-                Date date = dateFormat.parse(dateString.trim());
-                dates.add(date);
-                System.out.println(date + " date in activity");
-            } catch (ParseException e) {
-                // Skip over invalid date strings and continue processing
-                System.err.println("Skipping invalid date string: " + dateString);
-            }
+        for (ProjektAktivitet activity : activities) {
+            dates.add(activity.getStartDatoAsUtilDate());
+            dates.add(activity.getEndDatoAsUtilDate());
         }
         return dates;
     }

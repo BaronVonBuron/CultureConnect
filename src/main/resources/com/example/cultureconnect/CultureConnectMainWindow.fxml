@@ -574,14 +574,11 @@
                                                                         <Font name="System Bold" size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <TextArea fx:id="nytProjektPlanlagteMøderFelt" editable="false" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0" styleClass="TextField" wrapText="true">
-                                                                     <font>
-                                                                        <Font size="16.0" />
-                                                                     </font>
+                                                                  <ListView fx:id="createProjektAktiviteterListview" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
-                                                                  </TextArea>
+                                                                  </ListView>
                                                                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                                                      <children>
                                                                         <Label text="Start">
