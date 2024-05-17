@@ -62,6 +62,7 @@ public class DAO {
             preparedStatementMedarbejder.setString(3, person.getPosition());
             preparedStatementMedarbejder.setBoolean(4, person.isErAnsvarlig());
 
+            preparedStatementMedarbejder.executeUpdate();
 
         } catch (SQLException e) {
             System.err.println("Can't create person: " + e.getErrorCode() + e.getMessage());
@@ -133,16 +134,25 @@ public class DAO {
         }
         //update the person in the MedarbejderInfo table, where Lokation_Navn is a foreign key to the Lokation table and Person_CPR is a foreign key to the Person table
         //update the Stilling column and Ansvarlig column
-        String sql1 = "UPDATE MedarbejderInfo SET Stilling = ?, Ansvarlig = ? WHERE Person_CPR = ?";
-        try {
-            PreparedStatement preparedStatement = con.prepareStatement(sql1);
-            preparedStatement.setString(1, person.getPosition());
-            preparedStatement.setBoolean(2, person.isErAnsvarlig());
-            preparedStatement.setString(3, person.getCPR());
+        String sql1 = "MERGE INTO MedarbejderInfo AS target " +
+                "USING (SELECT ? AS Lokation_Navn, ? AS Person_CPR, ? AS Stilling, ? AS Ansvarlig) AS source " +
+                "ON target.Person_CPR = source.Person_CPR " +
+                "WHEN MATCHED THEN " +
+                "UPDATE SET target.Stilling = source.Stilling, target.Ansvarlig = source.Ansvarlig " +
+                "WHEN NOT MATCHED THEN " +
+                "INSERT (Lokation_Navn, Person_CPR, Stilling, Ansvarlig) " +
+                "VALUES (source.Lokation_Navn, source.Person_CPR, source.Stilling, source.Ansvarlig);";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(sql1)) {
+            preparedStatement.setString(1, person.getLokation().getName());
+            preparedStatement.setString(2, person.getCPR());
+            preparedStatement.setString(3, person.getPosition());
+            preparedStatement.setBoolean(4, person.isErAnsvarlig());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Can't update medarbejder info: " + e.getErrorCode() + e.getMessage());
+            System.err.println("Can't insert or update medarbejder info: " + e.getErrorCode() + " " + e.getMessage());
         }
+
     }
 
     //PreparedStatement for deleting a person in the person table based on the CPR
@@ -284,7 +294,7 @@ public class DAO {
 
         //insert the projekt's aktiviteter into the ProjektAktivitet table, where Projekt_ID is a foreign key to the Projekt table.
         //Insert into these columns: Projekt_ID - String, Aktivitet - String, StartDato - Date, SlutDato - Date
-        String sql4 = "INSERT INTO ProjektAktivitet (Projekt_ID, Aktivitet, StartDato, SlutDato) VALUES (?, ?, ?, ?)";
+        String sql4 = "INSERT INTO ProjektAktivitet (Projekt_ID, AktivitetNavn, StartDato, SlutDato) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql4);
             for (ProjektAktivitet aktivitet : projekt.getProjektAktiviteter()) {

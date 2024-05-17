@@ -131,10 +131,11 @@ public class NewUserDialogController {
                 tlfNr = Integer.parseInt(tlfNrText.trim()); // Parse if not empty
             }
             String picture = billedeNyBrugerFelt.getText();
-            Image image = null;
+            Image image = nuværendePerson.getPicture();
             if (picture != null && !picture.trim().isEmpty()) {
                 image = new Image(new File(picture).toURI().toString());
             }
+
             String CPR = cprNyBrugerFelt.getText();
             String position = stillingNyBrugerFelt.getText();
             String kode = kodeordNyBrugerFelt.getText();
@@ -142,9 +143,6 @@ public class NewUserDialogController {
 
             if (tlfNr == null || tlfNrText.trim().isEmpty()) {
                 tlfNr = 0;
-            }
-            if (picture == null || picture.trim().isEmpty()) {
-                image = new Image("file:src/main/resources/images/avatar.png");
             }
 
             nuværendePerson.setName(name);
@@ -234,7 +232,6 @@ public class NewUserDialogController {
         navnNyBrugerFelt.setText(nuværendePerson.getName());
         stillingNyBrugerFelt.setText(logic.findBrugersStilling(nuværendePerson.getCPR()));
         kodeordNyBrugerFelt.setText(logic.findBrugerKodeord(nuværendePerson.getCPR()));
-        billedeNyBrugerFelt.setText(nuværendePerson.getPicture().getUrl());
 
         if (arbejdsplads == null) {
             arbejdspladsVælger.setValue("Vælg arbejdsplads");
