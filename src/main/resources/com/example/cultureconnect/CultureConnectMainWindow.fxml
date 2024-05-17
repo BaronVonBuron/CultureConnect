@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -22,6 +23,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
@@ -267,14 +269,11 @@
                                                                         <Font name="System Bold" size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <Label fx:id="projektMøder" layoutX="10.0" layoutY="73.0" maxWidth="515.0" text="Tekst" wrapText="true">
-                                                                     <font>
-                                                                        <Font size="16.0" />
-                                                                     </font>
+                                                                  <ListView fx:id="ProjektAktiviteterListview" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0" styleClass="LokationProjektejereProjektdeltagere">
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
-                                                                  </Label>
+                                                                  </ListView>
                                                                   <Label maxWidth="515.0" text="Noter til arrangementet:" wrapText="true">
                                                                      <font>
                                                                         <Font name="System Bold" size="16.0" />
@@ -410,14 +409,28 @@
                                                                         <Font name="System Bold" size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <TextArea fx:id="redigerPlanlagteMøderFelt" minHeight="50.0" minWidth="0.0" prefWidth="200.0" styleClass="TextField" text="Allerede planlagte møder" wrapText="true">
-                                                                     <font>
-                                                                        <Font size="16.0" />
-                                                                     </font>
+                                                                  <ListView fx:id="EditProjektAktiviteterListview" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                                     <VBox.margin>
+                                                                        <Insets bottom="10.0" />
+                                                                     </VBox.margin>
+                                                                  </ListView>
+                                                                  <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                                                     <buttons>
+                                                                        <Button fx:id="RedigerProjektSletAktivitetKnap" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#RedigerProjektSletAktivitetKnapPressed" prefHeight="35.0" styleClass="Buttons" text="Slet">
+                                                                           <font>
+                                                                              <Font name="System Bold" size="13.0" />
+                                                                           </font>
+                                                                        </Button>
+                                                                        <Button fx:id="RedigerProjektRedigerAktivitetKnap" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#RedigerProjektRedigerAktivitetKnapPressed" prefHeight="35.0" styleClass="Buttons" text="Rediger">
+                                                                           <font>
+                                                                              <Font name="System Bold" size="13.0" />
+                                                                           </font>
+                                                                        </Button>
+                                                                     </buttons>
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
-                                                                  </TextArea>
+                                                                  </ButtonBar>
                                                                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                                                      <children>
                                                                         <Label text="Start">
@@ -471,11 +484,13 @@
                                                     <Button fx:id="sletProjektKnap" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#sletProjektKnapPressed" prefHeight="35.0" styleClass="Buttons" text="Slet projekt">
                                                          <font>
                                                             <Font name="System Bold" size="13.0" />
-                                                         </font></Button>
+                                                         </font>
+                                                      </Button>
                                                       <Button fx:id="gemÆndringerKnap" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#gemÆndringerKnapPressed" prefHeight="35.0" styleClass="Buttons" text="Gem ændringer">
                                                          <font>
                                                             <Font name="System Bold" size="13.0" />
-                                                         </font></Button>
+                                                         </font>
+                                                      </Button>
                                                   </buttons>
                                                    <VBox.margin>
                                                       <Insets top="15.0" />
@@ -577,6 +592,19 @@
                                                                         <Font size="16.0" />
                                                                      </font>
                                                                   </TextArea>
+                                                                  <Label layoutX="10.0" layoutY="80.0" maxWidth="515.0" text="Vælg farve til projekt:" wrapText="true">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="16.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <ColorPicker fx:id="ProjektColorpicker" minHeight="35.0" prefHeight="35.0">
+                                                                     <VBox.margin>
+                                                                        <Insets bottom="25.0" />
+                                                                     </VBox.margin>
+                                                                     <value>
+                                                                        <Color red="0.631798267364502" green="0.3265107274055481" blue="0.8815789222717285" />
+                                                                     </value>
+                                                                  </ColorPicker>
                                                                   <Label maxWidth="515.0" text="Dato for arrangementet: " wrapText="true">
                                                                      <font>
                                                                         <Font name="System Bold" size="16.0" />
@@ -592,11 +620,28 @@
                                                                         <Font name="System Bold" size="16.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <ListView fx:id="createProjektAktiviteterListview" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0">
+                                                                  <ListView fx:id="createProjektAktiviteterListview" minHeight="75.0" minWidth="0.0" prefHeight="75.0" prefWidth="200.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                                     <VBox.margin>
+                                                                        <Insets bottom="10.0" />
+                                                                     </VBox.margin>
+                                                                  </ListView>
+                                                                  <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                                                     <buttons>
+                                                                        <Button fx:id="NytProjektSletAktivitetKnap" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#NytProjektSletAktivitetKnapPressed" prefHeight="35.0" styleClass="Buttons" text="Slet">
+                                                                           <font>
+                                                                              <Font name="System Bold" size="13.0" />
+                                                                           </font>
+                                                                        </Button>
+                                                                        <Button fx:id="NytProjektRedigerAktivitetKnap" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#NytProjektRedigerAktivitetKnapPressed" prefHeight="35.0" styleClass="Buttons" text="Rediger">
+                                                                           <font>
+                                                                              <Font name="System Bold" size="13.0" />
+                                                                           </font>
+                                                                        </Button>
+                                                                     </buttons>
                                                                      <VBox.margin>
                                                                         <Insets bottom="25.0" />
                                                                      </VBox.margin>
-                                                                  </ListView>
+                                                                  </ButtonBar>
                                                                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                                                      <children>
                                                                         <Label text="Start">
@@ -650,11 +695,13 @@
                                                       <Button fx:id="CancelCreateProjektButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#cancelCreateProjektButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Anuller">
                                                          <font>
                                                             <Font name="System Bold" size="13.0" />
-                                                         </font></Button>
+                                                         </font>
+                                                      </Button>
                                                       <Button fx:id="CreateProjektButton" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#createProjektButtonPressed" prefHeight="35.0" styleClass="Buttons" text="Opret projekt">
                                                          <font>
                                                             <Font name="System Bold" size="13.0" />
-                                                         </font></Button>
+                                                         </font>
+                                                      </Button>
                                                    </buttons>
                                                    <VBox.margin>
                                                       <Insets top="15.0" />
