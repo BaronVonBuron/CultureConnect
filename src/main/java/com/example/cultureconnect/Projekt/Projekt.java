@@ -22,20 +22,30 @@ public class Projekt {
     private String notes;
     private String aktiviteter;
     private List<ProjektAktivitet> projektAktiviteter;
+    private Date arrangementDato;
 
     //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
     //mile dates og event dates - lister til dem
 
-    public Projekt(String titel, Date startDate, Date endDate, UUID id) {
+    public Projekt(String titel, Date startDate, Date arrangementDato, Date endDate, UUID id) {
         this.id = id;
         this.titel = titel;
         this.startDate = startDate;
+        this.arrangementDato = arrangementDato;
         this.endDate = endDate;
         //initialize lists
         this.participants = new ArrayList<>();
         this.projectCreator = new ArrayList<>();
         this.projektAktiviteter = new ArrayList<>();
     }//konstruktør for projekt
+
+    public Date getArrangementDato() {
+        return arrangementDato;
+    }
+
+    public void setArrangementDato(Date arrangementDato) {
+        this.arrangementDato = arrangementDato;
+    }
 
     public void addAktivitet(ProjektAktivitet aktivitet){
         projektAktiviteter.add(aktivitet);

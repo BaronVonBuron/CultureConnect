@@ -602,6 +602,7 @@ public class CultureConnectController {
         } else {
             Date startDate;
             Date endDate;
+            Date arrangementDate = new Date().from(Instant.from(CreateNewProjektEndDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
             if (createProjektAktiviteterListview.getItems().isEmpty()) {
                 startDate = new Date();
             } else {
@@ -622,7 +623,7 @@ public class CultureConnectController {
                 Instant instant = endDateLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
                 endDate = Date.from(instant);
             }
-            Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, endDate, UUID.randomUUID());
+            Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, arrangementDate, endDate, UUID.randomUUID());
 
             if(!CreateNewProjektDescriptionTextArea.getText().isEmpty()){
                 nytProjekt.setDescription(CreateNewProjektDescriptionTextArea.getText());
@@ -733,12 +734,9 @@ public class CultureConnectController {
         redigerNoterFelt.setText(projekt.getNotes());
         EditProjektAktiviteterListview.setItems(FXCollections.observableArrayList(projekt.getProjektAktiviteter()));
         redigerTitelFelt.setText(projekt.getTitel());
-        Instant instant1 = Instant.ofEpochMilli(projekt.getStartDate().getTime());
-        Instant instant2 = Instant.ofEpochMilli(projekt.getEndDate().getTime());
-        LocalDate startDate = instant1.atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate endDate = instant2.atZone(ZoneId.systemDefault()).toLocalDate();
-        redigerArrangementDatoDatepicker.setValue(endDate);
-        //redigerSlutdatoDatepicker.setValue(endDate);
+        Instant instant2 = Instant.ofEpochMilli(projekt.getArrangementDato().getTime());
+        LocalDate arrangementDato = instant2.atZone(ZoneId.systemDefault()).toLocalDate();
+        redigerArrangementDatoDatepicker.setValue(arrangementDato);
         redigerProjektejereListview.setItems(FXCollections.observableArrayList(projekt.getProjectCreator().stream().map(PersonListCell::new).collect(Collectors.toList())));
         redigerProjektdeltagereListview.setItems(FXCollections.observableArrayList(projekt.getParticipants().stream().map(PersonListCell::new).collect(Collectors.toList())));
         redigerLokationerListview.setItems(FXCollections.observableArrayList(new LokationListCell(projekt.getLokation())));

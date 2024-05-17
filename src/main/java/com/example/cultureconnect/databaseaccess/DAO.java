@@ -240,7 +240,7 @@ public class DAO {
 
 
     public void createProjekt(Projekt projekt) {
-        String sql = "INSERT INTO Projekt (ProjektID, Navn, StartDato, SlutDato) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Projekt (ProjektID, Navn, StartDato, SlutDato, ArrangementDato) VALUES (?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -248,6 +248,7 @@ public class DAO {
             preparedStatement.setString(2, projekt.getTitel());
             preparedStatement.setDate(3, new Date(projekt.getStartDate().getTime()));
             preparedStatement.setDate(4, new Date(projekt.getEndDate().getTime()));
+            preparedStatement.setDate(5, new Date(projekt.getArrangementDato().getTime()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't create project: " + e.getErrorCode() + e.getMessage());
@@ -322,7 +323,8 @@ public class DAO {
                 String name = resultSet.getString("Navn");
                 Date startDate = resultSet.getDate("StartDato");
                 Date endDate = resultSet.getDate("SlutDato");
-                projects.add(new Projekt( name, startDate, endDate, id));
+                Date arrangementDato = resultSet.getDate("ArrangementDato");
+                projects.add(new Projekt( name, startDate, arrangementDato, endDate, id));
             }
         } catch (SQLException e) {
             System.err.println("Can't read all projects: " + e.getErrorCode() + e.getMessage());
@@ -402,13 +404,14 @@ public class DAO {
 
     //PreparedStatement for updating a project in the Projekt table based on the ID
     public void updateProjekt(Projekt projekt){
-        String sql = "UPDATE Projekt SET Navn = ?, StartDato = ?, SlutDato = ? WHERE ProjektID = ?";
+        String sql = "UPDATE Projekt SET Navn = ?, StartDato = ?, ArrangementDato = ?, SlutDato = ? WHERE ProjektID = ?";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setString(1, projekt.getTitel());
             preparedStatement.setDate(2, new Date(projekt.getStartDate().getTime()));
-            preparedStatement.setDate(3, new Date(projekt.getEndDate().getTime()));
-            preparedStatement.setString(4, projekt.getId());
+            preparedStatement.setDate(3, new Date(projekt.getArrangementDato().getTime()));
+            preparedStatement.setDate(4, new Date(projekt.getEndDate().getTime()));
+            preparedStatement.setString(5, projekt.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't update project: " + e.getErrorCode() + e.getMessage());
