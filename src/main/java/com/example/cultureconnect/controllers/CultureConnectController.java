@@ -79,6 +79,13 @@ public class CultureConnectController {
     public Button NytProjektRedigerAktivitetKnap;
     public Button NytProjektSletAktivitetKnap;
     public ColorPicker ProjektColorpicker;
+    public TextField projektSøgefelt;
+    public Button projektSøgKnap;
+    public ChoiceBox filterChooser;
+    public Button tilbageTilIDageKnap;
+    public Button KalenderVenstreKnap;
+    public Button KalenderHøjreKnap;
+    public Label KalenderLabel;
     private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
     private ObservableList<PersonListCell> createNewProjektCreatorList;
@@ -897,5 +904,20 @@ public class CultureConnectController {
     }
 
     public void NytProjektRedigerAktivitetKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void projektSøgefeltKeyPressed(KeyEvent keyEvent) {
+    }
+
+    public void projektSøgKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void KalenderVenstreKnapPressed(ActionEvent actionEvent) {
+    }
+    
+    public void KalenderHøjreKnapPressed(ActionEvent actionEvent) {
     }
 }
