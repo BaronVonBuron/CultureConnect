@@ -22,6 +22,7 @@ public class Person {
     private Image picture;
     private String CPR;
     private String kode;
+    private boolean erAnsvarlig;
 
 
     public Person(String name, String email, int tlfNr, Image picture, String CPR) {
@@ -30,7 +31,16 @@ public class Person {
         this.email = email;
         this.tlfNr = tlfNr;
         this.picture = picture;
+        this.erAnsvarlig = false;
     } //konstruktør for person
+
+    public boolean isErAnsvarlig() {
+        return erAnsvarlig;
+    }
+
+    public void setErAnsvarlig(boolean erAnsvarlig) {
+        this.erAnsvarlig = erAnsvarlig;
+    }
 
     public String getName() {
         return name;

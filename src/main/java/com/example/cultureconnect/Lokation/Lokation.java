@@ -9,6 +9,7 @@ public class Lokation {
     private String description;
     private String farveKode;
     private List<Person> employees;
+    private Person ansvarligPerson;
 
     //kontakt oplysninger som email og tlfnr skal muligvis tilføjes
     public Lokation(String name, String description, String farveKode) {
@@ -19,6 +20,14 @@ public class Lokation {
 
     public String getName() {
         return name;
+    }
+
+    public Person getAnsvarligPerson() {
+        return ansvarligPerson;
+    }
+
+    public void setAnsvarligPerson(Person ansvarligPerson) {
+        this.ansvarligPerson = ansvarligPerson;
     }
 
     public void setName(String name) {

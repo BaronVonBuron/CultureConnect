@@ -45,7 +45,7 @@ public class PersonListCell extends ListCell {
         super(); // Call the constructor of the superclass
         this.person = person;
         Circle frame = new Circle(30);
-        Image image = new Image("https://www.w3schools.com/w3images/avatar2.png"); //placeholder if they have to picture
+        Image image = person.getPicture();
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(45);
         imageView.setFitWidth(45);

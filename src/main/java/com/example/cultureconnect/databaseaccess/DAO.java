@@ -57,10 +57,10 @@ public class DAO {
             //prepare statement for inserting into MedarbejderInfo table
             PreparedStatement preparedStatementMedarbejder = con.prepareStatement(sqlMedarbejder);
             //set the values
-            preparedStatementMedarbejder.setString(1, String.valueOf(person.getLokation()));
+            preparedStatementMedarbejder.setString(1, person.getLokation().getName());
             preparedStatementMedarbejder.setString(2, person.getCPR());
             preparedStatementMedarbejder.setString(3, person.getPosition());
-            preparedStatementMedarbejder.setBoolean(4, false);
+            preparedStatementMedarbejder.setBoolean(4, person.isErAnsvarlig());
 
 
         } catch (SQLException e) {
@@ -69,7 +69,7 @@ public class DAO {
     }
 
     //PreparedStatement for reading alle the persons from the person table, and returning a list of them all
-    public List<Person> readAllPersons(){
+    public List<Person> readAllPersons(List<Lokation> locations){
         List<Person> persons = new ArrayList<>();
         String sql = "SELECT * FROM Person";
         try {
@@ -81,7 +81,7 @@ public class DAO {
                 int tlf = resultSet.getInt("Telefon");
                 String email = resultSet.getString("Email");
                 byte[] picture = resultSet.getBytes("Billede");
-                Image image = new Image("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png");
+                Image image = new Image("file:src/main/resources/images/avatar.png");
                 if (picture != null) {
                     //convert bytearray to image again
                     image = new Image(new ByteArrayInputStream(picture));
@@ -90,6 +90,29 @@ public class DAO {
             }
         } catch (SQLException e) {
             System.err.println("Can't read all persons: " + e.getErrorCode() + e.getMessage());
+        }
+        for (Person person : persons) {
+            String sql1 = "SELECT * FROM MedarbejderInfo WHERE Person_CPR = ?";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(sql1);
+                preparedStatement.setString(1, person.getCPR());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()){
+                    String lokation = resultSet.getString("Lokation_Navn");
+                    String stilling = resultSet.getString("Stilling");
+                    boolean ansvarlig = resultSet.getBoolean("Ansvarlig");
+                    person.setLokation(locations.stream().filter(l -> l.getName().equals(lokation)).findFirst().orElse(null));
+                    person.setPosition(stilling);
+                    person.setErAnsvarlig(ansvarlig);
+                }
+            } catch (SQLException e) {
+                System.err.println("Can't read medarbejder info: " + e.getErrorCode() + e.getMessage());
+            }
+        }
+        for (Person person : persons) {
+            if (person.isErAnsvarlig()){
+                locations.stream().filter(l -> l.getName().equals(person.getLokation().getName())).findFirst().orElse(null).setAnsvarligPerson(person);
+            }
         }
         return persons;
     }
@@ -107,6 +130,18 @@ public class DAO {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't update person: " + e.getErrorCode() + e.getMessage());
+        }
+        //update the person in the MedarbejderInfo table, where Lokation_Navn is a foreign key to the Lokation table and Person_CPR is a foreign key to the Person table
+        //update the Stilling column and Ansvarlig column
+        String sql1 = "UPDATE MedarbejderInfo SET Stilling = ?, Ansvarlig = ? WHERE Person_CPR = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql1);
+            preparedStatement.setString(1, person.getPosition());
+            preparedStatement.setBoolean(2, person.isErAnsvarlig());
+            preparedStatement.setString(3, person.getCPR());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update medarbejder info: " + e.getErrorCode() + e.getMessage());
         }
     }
 
@@ -426,27 +461,7 @@ public class DAO {
         }
     }
 
-    //prepared statement to read from MedarbejderInfo table where lokation is and ansvarlig is true make it return person
-    public Person readAnsvarligForLokation(String lokation){
-        String sql = "SELECT * FROM MedarbejderInfo WHERE Lokation_Navn = ? AND Ansvarlig = ?";
-        try {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            preparedStatement.setString(1, lokation);
-            preparedStatement.setBoolean(2, true);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()){
-                String CPR = resultSet.getString("Person_CPR");
-                for (Person person : readAllPersons()) {
-                    if (person.getCPR().equals(CPR)){
-                        return person;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Can't read ansvarlig: " + e.getErrorCode() + e.getMessage());
-        }
-        return null;
-    }
+
     //Prepared statement to delete the row where lokation and cpr is in the MedarbejderInfo table
     public void deleteAnsvarlig(String lokation, String cpr){
         String sql = "UPDATE MedarbejderInfo SET Ansvarlig = ? WHERE Lokation_Navn = ? AND Person_CPR = ?";

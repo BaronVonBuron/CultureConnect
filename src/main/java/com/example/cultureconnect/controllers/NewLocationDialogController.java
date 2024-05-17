@@ -133,14 +133,12 @@ public class NewLocationDialogController {
             nuværendeLokation.setDescription(email + "\n   " + telefonnummer);
             nuværendeLokation.setFarveKode(farveKode);
 
-        Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
-        logic.createLocation(lok);
-        if (ansvarligVælger != null && ansvarlig != null){
-            logic.setAnsvarligForLocation(lok, ansvarlig);
-        }
+            if (ansvarligVælger != null && ansvarlig != null){
+                ansvarlig.setErAnsvarlig(true);
+                logic.updateUser(ansvarlig);
+            }
 
             logic.updateLokation(nuværendeLokation, name);
-            logic.updateAnsvarlig(nuværendeLokation, ansvarlig);
 
             if (ansvarlig != ansvarligPerson && ansvarligPerson != null){
                 logic.deleteAnsvarlig(nuværendeLokation, ansvarligPerson.getCPR());
@@ -149,6 +147,7 @@ public class NewLocationDialogController {
             Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
             stage.close();
         }
+        this.cultureConnectController.updateList();
     }
 
     public void locationMustHaveName(){
@@ -203,8 +202,10 @@ public class NewLocationDialogController {
 
         opretNyLokationKnap.setText("Gem");
         opretNyLokationLabel.setText("Rediger Lokation");
-        this.logic = Logic.getInstance();
-        ansvarligPerson = logic.findAnsvarlig(lokation.getName());
+
+        if (lokation.getAnsvarligPerson() != null){
+            ansvarligPerson = lokation.getAnsvarligPerson();
+        }
 
         emailNyLokationFelt.setText(email);
         telefonnummerNyLokationFelt.setText(phoneNumber);

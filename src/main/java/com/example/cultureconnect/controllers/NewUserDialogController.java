@@ -78,54 +78,109 @@ public class NewUserDialogController {
 
     @FXML
     void opretNyBrugerKnapPressed(ActionEvent event) {
-        String name = navnNyBrugerFelt.getText();
-        String email = emailNyBrugerFelt.getText();
-        String tlfNrText = telefonnummerNyBrugerFelt.getText();
-        Integer tlfNr = null;
-        if (tlfNrText != null && !tlfNrText.trim().isEmpty()) {
-            tlfNr = Integer.parseInt(tlfNrText.trim()); // Parse if not empty
-        }
-        String picture = billedeNyBrugerFelt.getText();
-        Image image = null;
-        if (picture != null && !picture.trim().isEmpty()) {
-            image = new Image(new File(picture).toURI().toString());
-        }
-        String CPR = cprNyBrugerFelt.getText();
-        String position = stillingNyBrugerFelt.getText();
-        String kode = kodeordNyBrugerFelt.getText();
-        String location = arbejdspladsVælger.getValue();
+        if (nuværendePerson == null) {
+            String name = navnNyBrugerFelt.getText();
+            String email = emailNyBrugerFelt.getText();
+            String tlfNrText = telefonnummerNyBrugerFelt.getText();
+            Integer tlfNr = null;
+            if (tlfNrText != null && !tlfNrText.trim().isEmpty()) {
+                tlfNr = Integer.parseInt(tlfNrText.trim()); // Parse if not empty
+            }
+            String picture = billedeNyBrugerFelt.getText();
+            Image image = null;
+            if (picture != null && !picture.trim().isEmpty()) {
+                image = new Image(new File(picture).toURI().toString());
+            }
+            String CPR = cprNyBrugerFelt.getText();
+            String position = stillingNyBrugerFelt.getText();
+            String kode = kodeordNyBrugerFelt.getText();
+            String location = arbejdspladsVælger.getValue();
 
-        if (tlfNr == null || tlfNrText.trim().isEmpty()){
-            tlfNr = 0;
-        }
-        if (picture == null || picture.trim().isEmpty()){
-            image = new Image("file:src/main/resources/images/Persona.png");
-        }
+            if (tlfNr == null || tlfNrText.trim().isEmpty()) {
+                tlfNr = 0;
+            }
+            if (picture == null || picture.trim().isEmpty()) {
+                image = new Image("file:src/main/resources/images/avatar.png");
+            }
 
-        Person user = new Person(name, email, tlfNr, image, CPR);
-        user.setKode(kode);
-        user.setPosition(position);
-        user.setLokation(logic.getLocations().stream().
-                filter(l -> l.getName().equals(location)).
-                findFirst().orElse(null));
+            Person user = new Person(name, email, tlfNr, image, CPR);
+            user.setKode(kode);
+            user.setPosition(position);
+            user.setLokation(logic.getLocations().stream().
+                    filter(l -> l.getName().equals(location)).
+                    findFirst().orElse(null));
 
-        if (CPR == null || CPR.trim().isEmpty()){
-            personNeedsCpr();
-            return;
-        }
-        if (name == null || name.trim().isEmpty()){
-            personNeedName();
-            return;
-        }
-        //sørger for alle brugere har login info, hvis felterne ikke udfyldes:
-        if (email == null || email.trim().isEmpty()){
-            user.setEmail(name + "@mail.dk");
-        }
-        if (kode == null || kode.trim().isEmpty()){
-            user.setKode(name);
-        }
+            if (CPR == null || CPR.trim().isEmpty()) {
+                personNeedsCpr();
+                return;
+            }
+            if (name == null || name.trim().isEmpty()) {
+                personNeedName();
+                return;
+            }
+            //sørger for alle brugere har login info, hvis felterne ikke udfyldes:
+            if (email == null || email.trim().isEmpty()) {
+                user.setEmail(name + "@mail.dk");
+            }
+            if (kode == null || kode.trim().isEmpty()) {
+                user.setKode(name);
+            }
 
-        logic.createUser(user);
+            logic.createUser(user);
+        } else {
+            String name = navnNyBrugerFelt.getText();
+            String email = emailNyBrugerFelt.getText();
+            String tlfNrText = telefonnummerNyBrugerFelt.getText();
+            Integer tlfNr = null;
+            if (tlfNrText != null && !tlfNrText.trim().isEmpty()) {
+                tlfNr = Integer.parseInt(tlfNrText.trim()); // Parse if not empty
+            }
+            String picture = billedeNyBrugerFelt.getText();
+            Image image = null;
+            if (picture != null && !picture.trim().isEmpty()) {
+                image = new Image(new File(picture).toURI().toString());
+            }
+            String CPR = cprNyBrugerFelt.getText();
+            String position = stillingNyBrugerFelt.getText();
+            String kode = kodeordNyBrugerFelt.getText();
+            String location = arbejdspladsVælger.getValue();
+
+            if (tlfNr == null || tlfNrText.trim().isEmpty()) {
+                tlfNr = 0;
+            }
+            if (picture == null || picture.trim().isEmpty()) {
+                image = new Image("file:src/main/resources/images/avatar.png");
+            }
+
+            nuværendePerson.setName(name);
+            nuværendePerson.setEmail(email);
+            nuværendePerson.setTlfNr(tlfNr);
+            nuværendePerson.setPicture(image);
+            nuværendePerson.setPosition(position);
+            nuværendePerson.setKode(kode);
+            nuværendePerson.setLokation(logic.getLocations().stream().
+                    filter(l -> l.getName().equals(location)).
+                    findFirst().orElse(null));
+
+            if (CPR == null || CPR.trim().isEmpty()) {
+                personNeedsCpr();
+                return;
+            }
+            if (name == null || name.trim().isEmpty()) {
+                personNeedName();
+                return;
+            }
+            //sørger for alle brugere har login info, hvis felterne ikke udfyldes:
+            if (email == null || email.trim().isEmpty()) {
+                nuværendePerson.setEmail(name + "@mail.dk");
+            }
+            if (kode == null || kode.trim().isEmpty()) {
+                nuværendePerson.setKode(name);
+            }
+
+            logic.updateUser(nuværendePerson);
+        }
+        cultureConnectController.updateList();
 
         Stage stage = (Stage) opretNyBrugerKnap.getScene().getWindow();
         stage.close();
@@ -138,7 +193,7 @@ public class NewUserDialogController {
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(
                 "Image Files", "*png")); //TODO evt. tilføje flere filtyper
         File selectedFile = fileChooser.showOpenDialog(vælgFilKnap.getScene().getWindow());
-        if (selectedFile != null){
+        if (selectedFile != null && selectedFile.getName().endsWith(".png")){
             billedeNyBrugerFelt.setText(selectedFile.getAbsolutePath());
         }
     }
@@ -172,10 +227,8 @@ public class NewUserDialogController {
         nuværendePerson = person;
         String kodeord = logic.findBrugerKodeord(person.getCPR());
         System.out.println(kodeord);
-
         opretNyBrugerKnap.setText("Gem");
         opretNyBrugerLabel.setText("Rediger bruger");
-        this.logic = Logic.getInstance();
         String arbejdspladsNavn = logic.findBrugersLokation(nuværendePerson.getCPR());
         arbejdsplads = logic.findLokation(arbejdspladsNavn);
 
