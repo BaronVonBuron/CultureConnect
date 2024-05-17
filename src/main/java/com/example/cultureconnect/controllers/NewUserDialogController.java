@@ -9,11 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -180,7 +175,7 @@ public class NewUserDialogController {
 
             logic.updateUser(nuværendePerson);
         }
-        cultureConnectController.updateList();
+
 
         Stage stage = (Stage) opretNyBrugerKnap.getScene().getWindow();
         stage.close();
@@ -191,7 +186,7 @@ public class NewUserDialogController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Vælg billed");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(
-                "Image Files", "*png")); //TODO evt. tilføje flere filtyper
+                "Image Files", "*.png")); //TODO evt. tilføje flere filtyper
         File selectedFile = fileChooser.showOpenDialog(vælgFilKnap.getScene().getWindow());
         if (selectedFile != null && selectedFile.getName().endsWith(".png")){
             billedeNyBrugerFelt.setText(selectedFile.getAbsolutePath());

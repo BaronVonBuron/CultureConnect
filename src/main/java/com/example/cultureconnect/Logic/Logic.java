@@ -3,6 +3,7 @@ package com.example.cultureconnect.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
+import com.example.cultureconnect.controllers.CultureConnectController;
 import com.example.cultureconnect.databaseaccess.DAO;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Logic {
     private List<Projekt> projects = new ArrayList<>();
     private boolean isUpdating = false;
     private Person currentUser;
+    private CultureConnectController cultureConnectController;
 
     private Logic(){
         this.dao = new DAO();
@@ -88,6 +90,7 @@ public class Logic {
   
     public void createLocation(Lokation lokation){
         dao.createLokation(lokation);
+        updateListsInController();
     }
 
     public void setAnsvarligForLocation(Lokation lok, Person ansvarlig){
@@ -96,6 +99,7 @@ public class Logic {
         String stilling = ansvarlig.getPosition();
 
         dao.createMedarbejderInfo(lokation, cpr, stilling, true);
+        updateListsInController();
     }
 
     public void updateAnsvarlig(Lokation lokation, Person ansvarlig){
@@ -103,6 +107,7 @@ public class Logic {
         String cpr = ansvarlig.getCPR();
 
         dao.updateAnsvarlig(lokationNavn, cpr, true);
+        updateListsInController();
     }
 
     public void deletePerson(Person person){
@@ -115,10 +120,20 @@ public class Logic {
     public void createUser(Person person){
         this.persons.add(person);
         dao.createPerson(person);
+        updateListsInController();
     }
 
     public void updateLokation(Lokation lokation, String name){
         dao.updateLokation(lokation, name);
+        for (Lokation location : this.locations) {
+            if (location.getName().equals(lokation.getName())) {
+                location.setName(name);
+                location.setDescription(lokation.getDescription());
+                location.setFarveKode(lokation.getFarveKode());
+                break;
+            }
+        }
+        updateListsInController();
     }
 
     public Person findAnsvarlig(String lokationNavn){
@@ -147,5 +162,25 @@ public class Logic {
 
     public void updateUser(Person nuværendePerson) {
         dao.updatePerson(nuværendePerson);
+        for (Person person : this.persons) {
+            if (person.getCPR().equals(nuværendePerson.getCPR())) {
+                person.setName(nuværendePerson.getName());
+                person.setEmail(nuværendePerson.getEmail());
+                person.setTlfNr(nuværendePerson.getTlfNr());
+                person.setPicture(nuværendePerson.getPicture());
+                person.setCPR(nuværendePerson.getCPR());
+                person.setPosition(nuværendePerson.getPosition());
+                person.setLokation(nuværendePerson.getLokation());
+                break;
+            }
+        }
+        updateListsInController();
+    }
+
+    public void setMainWindowController(CultureConnectController cultureConnectController) {
+        this.cultureConnectController = cultureConnectController;
+    }
+    public void updateListsInController(){
+        cultureConnectController.updateList();
     }
 }

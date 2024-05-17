@@ -126,6 +126,7 @@ public class CultureConnectController {
 
     public void initialize() {
         this.logic = Logic.getInstance();
+        this.logic.setMainWindowController(this);
         startSequence();
         loginSequence();
 
@@ -872,12 +873,11 @@ public class CultureConnectController {
     }
 
     public void updateList() {
-        loadLokations();
-        loadUsers();
+        UserOrLocationListview.getItems().clear();
         if (UserToggleButton.isSelected()){
-            UserOrLocationListview.setItems(users);
+            loadUsers();
         } else {
-            UserOrLocationListview.setItems(places);
+            loadLokations();
         }
     }
 }

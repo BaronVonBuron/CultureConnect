@@ -147,7 +147,6 @@ public class NewLocationDialogController {
             Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
             stage.close();
         }
-        this.cultureConnectController.updateList();
     }
 
     public void locationMustHaveName(){
