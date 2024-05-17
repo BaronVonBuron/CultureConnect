@@ -161,7 +161,6 @@ public class Logic {
     }
 
     public void updateUser(Person nuværendePerson) {
-        dao.updatePerson(nuværendePerson);
         for (Person person : this.persons) {
             if (person.getCPR().equals(nuværendePerson.getCPR())) {
                 person.setName(nuværendePerson.getName());
@@ -174,6 +173,7 @@ public class Logic {
                 break;
             }
         }
+        dao.updatePerson(nuværendePerson);
         updateListsInController();
     }
 
