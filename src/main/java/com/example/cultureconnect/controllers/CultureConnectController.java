@@ -137,7 +137,7 @@ public class CultureConnectController {
         loginSequence();
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
-                redigerBeskrivelseFelt, redigerNoterFelt, redigerPlanlagteMøderFelt
+                redigerBeskrivelseFelt, redigerNoterFelt
         );
 
         //eventlistener, to see which tab is selected
