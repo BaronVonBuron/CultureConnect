@@ -73,6 +73,12 @@ public class CultureConnectController {
     public Label projektMøder;
     public Label projektNoter;////////
     public ListView<ProjektAktivitet> createProjektAktiviteterListview;
+    public Button RedigerProjektRedigerAktivitetKnap;
+    public Button RedigerProjektSletAktivitetKnap;
+    public ListView EditProjektAktiviteterListview;
+    public Button NytProjektRedigerAktivitetKnap;
+    public Button NytProjektSletAktivitetKnap;
+    public ColorPicker ProjektColorpicker;
     private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
     private ObservableList<PersonListCell> createNewProjektCreatorList;
@@ -879,5 +885,17 @@ public class CultureConnectController {
         } else {
             loadLokations();
         }
+    }
+
+    public void RedigerProjektSletAktivitetKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void RedigerProjektRedigerAktivitetKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void NytProjektSletAktivitetKnapPressed(ActionEvent actionEvent) {
+    }
+
+    public void NytProjektRedigerAktivitetKnapPressed(ActionEvent actionEvent) {
     }
 }
