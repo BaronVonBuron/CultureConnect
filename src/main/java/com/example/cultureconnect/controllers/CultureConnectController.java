@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class CultureConnectController {
     public ListView<ProjektAktivitet> createProjektAktiviteterListview;
     public Button RedigerProjektRedigerAktivitetKnap;
     public Button RedigerProjektSletAktivitetKnap;
-    public ListView EditProjektAktiviteterListview;
+    public ListView<ProjektAktivitet> EditProjektAktiviteterListview;
     public Button NytProjektRedigerAktivitetKnap;
     public Button NytProjektSletAktivitetKnap;
     public ColorPicker ProjektColorpicker;
@@ -86,6 +87,7 @@ public class CultureConnectController {
     public Button KalenderVenstreKnap;
     public Button KalenderHøjreKnap;
     public Label KalenderLabel;
+    public ListView<ProjektAktivitet> ProjektAktiviteterListview;
     private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
     private ObservableList<PersonListCell> createNewProjektCreatorList;
@@ -240,6 +242,7 @@ public class CultureConnectController {
     public void fillCalendarWithProjects(){
         //clear the gridpane of projects
         CalendarGridPane.getChildren().removeIf(node -> node instanceof ProjektCell);
+        this.projects = logic.getProjects();
 
         if (projects.isEmpty()){
             System.out.println("No projects to show");
@@ -268,7 +271,7 @@ public class CultureConnectController {
                 pcell.setHeight(rowHeight);
                 pcell.setWidth(columnWidth * length); // Adjust the width of the cell
                 //make the cell red
-                pcell.setFill(javafx.scene.paint.Color.RED);
+                pcell.setFill(Paint.valueOf(projekt.getColor()));
 
                 //set title on the project cells
                 Label title = new Label(projekt.getTitel());
@@ -549,7 +552,7 @@ public class CultureConnectController {
         ObservableList<PersonListCell> tempUsers = FXCollections.observableArrayList();
         ObservableList<PersonListCell> tempCreators = FXCollections.observableArrayList();
         ObservableList<LokationListCell> tempPlaces = FXCollections.observableArrayList();
-
+        ProjektAktiviteterListview.setItems(FXCollections.observableArrayList(projekt.getProjektAktiviteter()));
         projekt.getProjectCreator().forEach(person -> tempCreators.add(new PersonListCell(person)));
         projekt.getParticipants().forEach(person -> tempUsers.add(new PersonListCell(person)));
         tempPlaces.add(new LokationListCell(projekt.getLokation()));
@@ -558,8 +561,7 @@ public class CultureConnectController {
         projektProjektdeltagereListview.setItems(tempUsers);
         ProjektTitelLabel.setText(projekt.getTitel());
         projektBeskrivelse.setText(projekt.getDescription());
-        projektDato.setText("Startdato: " + projekt.getStartDate().toString() + " Slutdato: " + projekt.getEndDate().toString());
-        projektMøder.setText(projekt.getAktiviteter());
+        projektDato.setText(projekt.getEndDate().toString());
         projektNoter.setText(projekt.getNotes());
     }
 
@@ -600,6 +602,7 @@ public class CultureConnectController {
         } else {
             Date startDate;
             Date endDate;
+            Date arrangementDate = new Date().from(Instant.from(CreateNewProjektEndDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
             if (createProjektAktiviteterListview.getItems().isEmpty()) {
                 startDate = new Date();
             } else {
@@ -620,7 +623,7 @@ public class CultureConnectController {
                 Instant instant = endDateLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
                 endDate = Date.from(instant);
             }
-            Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, endDate, UUID.randomUUID());
+            Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, arrangementDate, endDate, UUID.randomUUID());
 
             if(!CreateNewProjektDescriptionTextArea.getText().isEmpty()){
                 nytProjekt.setDescription(CreateNewProjektDescriptionTextArea.getText());
@@ -654,8 +657,12 @@ public class CultureConnectController {
             if (!createProjektAktiviteterListview.getItems().isEmpty()){
                 nytProjekt.setProjektAktiviteter(createProjektAktiviteterListview.getItems());
             }
+            if (ProjektColorpicker.getValue() != null){
+                nytProjekt.setColor(ProjektColorpicker.getValue().toString());
+            } else {
+                nytProjekt.setColor("ffffff");
+            }
             logic.createProject(nytProjekt);
-            projects.add(nytProjekt);
             fillCalendarWithProjects();
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(CreateNewProjektTab);
@@ -678,7 +685,6 @@ public class CultureConnectController {
             plannedActivityStartDatePicker.setValue(null);
             plannedActivityTitleTextField.clear();
         }
-        //add to the nytprojektPlanlagteMøderFelt
     }
 
     public Date findEarliestDate(List<ProjektAktivitet> aktiviteter) {
@@ -726,14 +732,11 @@ public class CultureConnectController {
     public void setProjektForEditing(Projekt projekt){
         redigerBeskrivelseFelt.setText(projekt.getDescription());
         redigerNoterFelt.setText(projekt.getNotes());
-        redigerPlanlagteMøderFelt.setText(projekt.getAktiviteter());
+        EditProjektAktiviteterListview.setItems(FXCollections.observableArrayList(projekt.getProjektAktiviteter()));
         redigerTitelFelt.setText(projekt.getTitel());
-        Instant instant1 = Instant.ofEpochMilli(projekt.getStartDate().getTime());
-        Instant instant2 = Instant.ofEpochMilli(projekt.getEndDate().getTime());
-        LocalDate startDate = instant1.atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate endDate = instant2.atZone(ZoneId.systemDefault()).toLocalDate();
-        redigerArrangementDatoDatepicker.setValue(startDate);
-        redigerSlutdatoDatepicker.setValue(endDate);
+        Instant instant2 = Instant.ofEpochMilli(projekt.getArrangementDato().getTime());
+        LocalDate arrangementDato = instant2.atZone(ZoneId.systemDefault()).toLocalDate();
+        redigerArrangementDatoDatepicker.setValue(arrangementDato);
         redigerProjektejereListview.setItems(FXCollections.observableArrayList(projekt.getProjectCreator().stream().map(PersonListCell::new).collect(Collectors.toList())));
         redigerProjektdeltagereListview.setItems(FXCollections.observableArrayList(projekt.getParticipants().stream().map(PersonListCell::new).collect(Collectors.toList())));
         redigerLokationerListview.setItems(FXCollections.observableArrayList(new LokationListCell(projekt.getLokation())));
@@ -744,13 +747,59 @@ public class CultureConnectController {
     }
 
     public void redigerNyAktivitetKnapPressed(ActionEvent actionEvent) {
-
+        if (RedigerStartdatoDatepicker.getValue() != null && redigerSlutdatoDatepicker.getValue() != null && RedigerTitelPåAktivitetFelt.getText() != null){
+            ProjektAktivitet aktivitet = new ProjektAktivitet(RedigerStartdatoDatepicker.getValue(), redigerSlutdatoDatepicker.getValue(), RedigerTitelPåAktivitetFelt.getText());
+            EditProjektAktiviteterListview.getItems().add(aktivitet);
+            EditProjektAktiviteterListview.refresh();
+            RedigerStartdatoDatepicker.setValue(null);
+            redigerSlutdatoDatepicker.setValue(null);
+            RedigerTitelPåAktivitetFelt.clear();
+        }
     }
 
     public void sletProjektKnapPressed(ActionEvent actionEvent) {
+        //alert to make sure, else delete the projekt
     }
 
     public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
+        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Fejl i redigering af projekt");
+            alert.setHeaderText("Projektet kunne ikke redigeres");
+            alert.setContentText("Projektet skal have en titel og en slutdato.");
+            alert.showAndWait();
+        } else {
+            Projekt projekt = currentlySelectedProjekt;
+            projekt.setTitel(redigerTitelFelt.getText());
+            projekt.setDescription(redigerBeskrivelseFelt.getText());
+            projekt.setNotes(redigerNoterFelt.getText());
+
+            if (!redigerProjektejereListview.getItems().isEmpty()){
+                List<Person> creators = new ArrayList<>();
+                for (PersonListCell creator : redigerProjektejereListview.getItems()) {
+                    creators.add(creator.getPerson());
+                }
+                projekt.setProjectCreator(creators);
+            }
+            if (!redigerProjektdeltagereListview.getItems().isEmpty()){
+                List<Person> participants = new ArrayList<>();
+                for (PersonListCell participant : redigerProjektdeltagereListview.getItems()) {
+                    participants.add(participant.getPerson());
+                }
+                projekt.setParticipants(participants);
+            }
+            if (!redigerLokationerListview.getItems().isEmpty()){
+                projekt.setLokation(redigerLokationerListview.getItems().getFirst().getLokation());
+            }
+            if (!EditProjektAktiviteterListview.getItems().isEmpty()){
+                projekt.setProjektAktiviteter(EditProjektAktiviteterListview.getItems());
+            }
+            logic.updateProjekt(projekt);
+            fillCalendarWithProjects();
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(editProjectTab);
+        }
+        //TODO save the changes to the projekt
     }
 
     public void createProjektLokationDragDropped(DragEvent dragEvent) {

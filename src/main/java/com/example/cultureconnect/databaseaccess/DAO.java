@@ -240,7 +240,7 @@ public class DAO {
 
 
     public void createProjekt(Projekt projekt) {
-        String sql = "INSERT INTO Projekt (ProjektID, Navn, StartDato, SlutDato) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Projekt (ProjektID, Navn, StartDato, SlutDato, ArrangementDato) VALUES (?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -248,16 +248,18 @@ public class DAO {
             preparedStatement.setString(2, projekt.getTitel());
             preparedStatement.setDate(3, new Date(projekt.getStartDate().getTime()));
             preparedStatement.setDate(4, new Date(projekt.getEndDate().getTime()));
+            preparedStatement.setDate(5, new Date(projekt.getArrangementDato().getTime()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't create project: " + e.getErrorCode() + e.getMessage());
         }
-        String sql1 = "INSERT INTO ProjektInfo (Projekt_ID, Beskrivelse, Noter) VALUES (?, ?, ?)";
+        String sql1 = "INSERT INTO ProjektInfo (Projekt_ID, Beskrivelse, Noter, ProjektFarve) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql1);
             preparedStatement.setString(1, projekt.getId());
             preparedStatement.setString(2, projekt.getDescription());
             preparedStatement.setString(3, projekt.getNotes());
+            preparedStatement.setString(4, projekt.getColor());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't create project info: " + e.getErrorCode() + e.getMessage());
@@ -321,7 +323,8 @@ public class DAO {
                 String name = resultSet.getString("Navn");
                 Date startDate = resultSet.getDate("StartDato");
                 Date endDate = resultSet.getDate("SlutDato");
-                projects.add(new Projekt( name, startDate, endDate, id));
+                Date arrangementDato = resultSet.getDate("ArrangementDato");
+                projects.add(new Projekt( name, startDate, arrangementDato, endDate, id));
             }
         } catch (SQLException e) {
             System.err.println("Can't read all projects: " + e.getErrorCode() + e.getMessage());
@@ -336,6 +339,7 @@ public class DAO {
                 while (resultSet.next()){
                     projekt.setDescription(resultSet.getString("Beskrivelse"));
                     projekt.setNotes(resultSet.getString("Noter"));
+                    projekt.setColor(resultSet.getString("ProjektFarve"));
                 }
             } catch (SQLException e) {
                 System.err.println("Can't read project info: " + e.getErrorCode() + e.getMessage());
@@ -388,8 +392,8 @@ public class DAO {
                 while (resultSet.next()){
                     Date startDato = resultSet.getDate("StartDato");
                     Date slutDato = resultSet.getDate("SlutDato");
-                    String aktivitet = resultSet.getString("Aktivitet");
-                    projekt.getProjektAktiviteter().add(new ProjektAktivitet(startDato.toLocalDate(), slutDato.toLocalDate(), aktivitet));
+                    String aktivitet = resultSet.getString("AktivitetNavn");
+                    projekt.addAktivitet(new ProjektAktivitet(startDato.toLocalDate(), slutDato.toLocalDate(), aktivitet));
                 }
             } catch (SQLException e) {
                 System.err.println("Can't read project activities: " + e.getErrorCode() + e.getMessage());
@@ -399,17 +403,91 @@ public class DAO {
     }
 
     //PreparedStatement for updating a project in the Projekt table based on the ID
-    public void updateProject(Projekt projekt){
-        String sql = "UPDATE Projekt SET Navn = ?, StartDato = ?, SlutDato = ? WHERE ProjektID = ?";
+    public void updateProjekt(Projekt projekt){
+        String sql = "UPDATE Projekt SET Navn = ?, StartDato = ?, ArrangementDato = ?, SlutDato = ? WHERE ProjektID = ?";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setString(1, projekt.getTitel());
             preparedStatement.setDate(2, new Date(projekt.getStartDate().getTime()));
-            preparedStatement.setDate(3, new Date(projekt.getEndDate().getTime()));
-            preparedStatement.setString(4, projekt.getId());
+            preparedStatement.setDate(3, new Date(projekt.getArrangementDato().getTime()));
+            preparedStatement.setDate(4, new Date(projekt.getEndDate().getTime()));
+            preparedStatement.setString(5, projekt.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't update project: " + e.getErrorCode() + e.getMessage());
+        }
+        //update the project in the ProjektInfo table, where Projekt_ID is a foreign key to the Projekt table
+        //update the columns: Beskrivelse - String, Noter - String, ProjektFarve - String
+        String sql1 = "UPDATE ProjektInfo SET Beskrivelse = ?, Noter = ?, ProjektFarve = ? WHERE Projekt_ID = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql1);
+            preparedStatement.setString(1, projekt.getDescription());
+            preparedStatement.setString(2, projekt.getNotes());
+            preparedStatement.setString(3, projekt.getColor());
+            preparedStatement.setString(4, projekt.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update project info: " + e.getErrorCode() + e.getMessage());
+        }
+        //update the participants in the ProjektDeltager table, where Projekt_ID is a foreign key to the Projekt table and Person_CPR is a foreign key to the Person table
+        //update the columns: Ejer - bit. if person is on the creator list, Ejer is true
+        //if the person is not in the list of participants, delete the row
+        String sql2 = "MERGE INTO ProjektDeltager AS target " +
+                "USING (SELECT ? AS Projekt_ID, ? AS Person_CPR, ? AS Ejer) AS source " +
+                "ON target.Person_CPR = source.Person_CPR AND target.Projekt_ID = source.Projekt_ID " +
+                "WHEN MATCHED THEN " +
+                "UPDATE SET target.Ejer = source.Ejer " +
+                "WHEN NOT MATCHED THEN " +
+                "INSERT (Projekt_ID, Person_CPR, Ejer) " +
+                "VALUES (source.Projekt_ID, source.Person_CPR, source.Ejer);";
+        try (PreparedStatement preparedStatement = con.prepareStatement(sql2)) {
+            for (Person person : projekt.getParticipants()) {
+                preparedStatement.setString(1, projekt.getId());
+                preparedStatement.setString(2, person.getCPR());
+                preparedStatement.setBoolean(3, false);
+                preparedStatement.executeUpdate();
+            }
+            for (Person person : projekt.getProjectCreator()) {
+                preparedStatement.setString(1, projekt.getId());
+                preparedStatement.setString(2, person.getCPR());
+                preparedStatement.setBoolean(3, true);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't insert or update project participants: " + e.getErrorCode() + " " + e.getMessage());
+        }
+        //update the location in the ProjektLokation table, where Projekt_ID is a foreign key to the Projekt table and Lokation_Navn is a foreign key to the Lokation table
+        //update the columns: Lokation_Navn - String
+        String sql3 = "UPDATE ProjektLokation SET Lokation_Navn = ? WHERE Projekt_ID = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql3);
+            preparedStatement.setString(1, projekt.getLokation().getName());
+            preparedStatement.setString(2, projekt.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Can't update project location: " + e.getErrorCode() + e.getMessage());
+        }
+        //update the activities in the ProjektAktivitet table, where Projekt_ID is a foreign key to the Projekt table
+        //update the columns: Aktivitet - String, StartDato - Date, SlutDato - Date
+        //if the activity is not in the list of activities, delete the row
+        String sql4 = "MERGE INTO ProjektAktivitet AS target " +
+                "USING (SELECT ? AS Projekt_ID, ? AS AktivitetNavn, ? AS StartDato, ? AS SlutDato) AS source " +
+                "ON target.AktivitetNavn = source.AktivitetNavn AND target.Projekt_ID = source.Projekt_ID " +
+                "WHEN MATCHED THEN " +
+                "UPDATE SET target.StartDato = source.StartDato, target.SlutDato = source.SlutDato " +
+                "WHEN NOT MATCHED THEN " +
+                "INSERT (Projekt_ID, AktivitetNavn, StartDato, SlutDato) " +
+                "VALUES (source.Projekt_ID, source.AktivitetNavn, source.StartDato, source.SlutDato);";
+        try (PreparedStatement preparedStatement = con.prepareStatement(sql4)) {
+            for (ProjektAktivitet aktivitet : projekt.getProjektAktiviteter()) {
+                preparedStatement.setString(1, projekt.getId());
+                preparedStatement.setString(2, aktivitet.getAktivitet());
+                preparedStatement.setDate(3, aktivitet.getStartDatoAsSqlDate());
+                preparedStatement.setDate(4, aktivitet.getEndDatoAsSqlDate());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't insert or update project activities: " + e.getErrorCode() + " " + e.getMessage());
         }
     }
 

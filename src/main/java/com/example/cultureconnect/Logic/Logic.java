@@ -183,4 +183,23 @@ public class Logic {
     public void updateListsInController(){
         cultureConnectController.updateList();
     }
+
+    public void updateProjekt(Projekt projekt) {
+        for (Projekt project : this.projects) {
+            if(project.getId().equals(projekt.getId())){
+                project.setProjektAktiviteter(projekt.getProjektAktiviteter());
+                project.setDescription(projekt.getDescription());
+                project.setParticipants(projekt.getParticipants());
+                project.setProjectCreator(projekt.getProjectCreator());
+                project.setTitel(projekt.getTitel());
+                project.setLokation(projekt.getLokation());
+                project.setEndDate(projekt.getEndDate());
+                project.setStartDate(projekt.getStartDate());
+                project.setColor(projekt.getColor());
+                break;
+            }
+        }
+        dao.updateProjekt(projekt);
+        updateListsInController();
+    }
 }
