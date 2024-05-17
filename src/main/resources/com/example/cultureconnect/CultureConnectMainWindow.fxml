@@ -22,6 +22,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
@@ -118,9 +119,9 @@
                                  <children>
                                     <VBox layoutX="280.0" layoutY="160.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="80.0">
+                                          <HBox alignment="CENTER" prefHeight="50.0" spacing="80.0">
                                              <children>
-                                                <HBox alignment="CENTER_LEFT" minWidth="500.0" prefHeight="100.0" spacing="5.0">
+                                                <HBox alignment="CENTER_LEFT" minWidth="500.0" prefHeight="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <ChoiceBox fx:id="filterChooser" maxWidth="200.0" prefHeight="35.0" prefWidth="150.0">
                                                          <HBox.margin>
@@ -138,6 +139,9 @@
                                                          </graphic>
                                                       </Button>
                                                    </children>
+                                                   <HBox.margin>
+                                                      <Insets left="50.0" />
+                                                   </HBox.margin>
                                                 </HBox>
                                                 <HBox alignment="CENTER_RIGHT" minWidth="200.0" prefHeight="100.0">
                                                    <children>
@@ -154,20 +158,27 @@
                                                          </font>
                                                       </Button>
                                                    </children>
+                                                   <HBox.margin>
+                                                      <Insets right="50.0" />
+                                                   </HBox.margin>
                                                 </HBox>
                                              </children>
                                              <VBox.margin>
-                                                <Insets bottom="25.0" left="50.0" right="50.0" />
+                                                <Insets bottom="25.0" />
                                              </VBox.margin>
                                           </HBox>
-                                          <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">
+                                          <HBox alignment="CENTER" prefHeight="50.0" spacing="10.0">
                                              <children>
-                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                                <HBox alignment="CENTER_LEFT" minWidth="150.0" prefHeight="100.0">
                                                    <children>
-                                                      <Button fx:id="tilbageTilIDageKnap" maxHeight="35.0" maxWidth="100.0" mnemonicParsing="false" onAction="#tilbageTilIDageKnapPressed" prefHeight="35.0" prefWidth="70.0" styleClass="Buttons" text="I dag" />
+                                                      <Button fx:id="tilbageTilIDageKnap" maxHeight="35.0" maxWidth="70.0" mnemonicParsing="false" onAction="#tilbageTilIDageKnapPressed" prefHeight="35.0" prefWidth="70.0" styleClass="Buttons" text="I dag" />
                                                    </children>
+                                                   <HBox.margin>
+                                                      <Insets left="50.0" />
+                                                   </HBox.margin>
                                                 </HBox>
-                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="400.0">
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <HBox alignment="CENTER" minWidth="250.0" prefHeight="100.0">
                                                    <children>
                                                       <Button fx:id="KalenderVenstreKnap" contentDisplay="GRAPHIC_ONLY" maxHeight="35.0" maxWidth="35.0" minHeight="35.0" minWidth="35.0" mnemonicParsing="false" onAction="#KalenderVenstreKnapPressed" prefHeight="35.0" prefWidth="35.0" styleClass="SearchButton" text="Button">
                                                          <graphic>
@@ -197,7 +208,8 @@
                                                       </Button>
                                                    </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <HBox alignment="CENTER_RIGHT" minWidth="150.0" prefHeight="100.0" spacing="10.0">
                                                    <children>
                                                       <Button fx:id="ZoomInCalendarButton" contentDisplay="GRAPHIC_ONLY" maxHeight="35.0" maxWidth="70.0" minHeight="35.0" mnemonicParsing="false" onAction="#zoomInCalendarButtonPressed" prefHeight="35.0" prefWidth="70.0" styleClass="Buttons" text="Zoom Ind">
                                                          <graphic>
@@ -217,14 +229,17 @@
                                                             </ImageView>
                                                          </graphic>
                                                          <HBox.margin>
-                                                            <Insets left="10.0" />
+                                                            <Insets />
                                                          </HBox.margin>
                                                       </Button>
                                                    </children>
+                                                   <HBox.margin>
+                                                      <Insets right="50.0" />
+                                                   </HBox.margin>
                                                 </HBox>
                                              </children>
                                              <VBox.margin>
-                                                <Insets left="50.0" right="50.0" />
+                                                <Insets />
                                              </VBox.margin>
                                           </HBox>
                                           <AnchorPane fx:id="AnchorPaneForCalendarTableView" prefHeight="497.0" prefWidth="659.0" styleClass="CalendarPane" stylesheets="@../../../CultureConnectCSS.css" VBox.vgrow="ALWAYS">
