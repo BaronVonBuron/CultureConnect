@@ -53,6 +53,8 @@ public class NewLocationDialogController {
         this.logic = Logic.getInstance();
         choiceBoxOptions();
         autoFillInfo();
+        colorRandomizer();
+        illegalColorChosen();
     }
 
     public void choiceBoxOptions(){
@@ -81,11 +83,6 @@ public class NewLocationDialogController {
                     filter(person -> person.getName().equals(selectedAnsvarlig)).
                     findFirst().orElse(null);
 
-            if (ansvarlig == null) {
-                return;
-            }
-
-
             if (name == null || name.trim().isEmpty()) {
                 locationMustHaveName();
                 return;
@@ -101,7 +98,10 @@ public class NewLocationDialogController {
 
             Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
             logic.createLocation(lok);
-            logic.setAnsvarligForLocation(lok, ansvarlig);
+
+            if (ansvarlig != null) {
+                logic.setAnsvarligForLocation(lok, ansvarlig);
+            }
 
             Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
             stage.close();
@@ -220,5 +220,23 @@ public class NewLocationDialogController {
             teansvarligTefonnummerNyLokationFelt.setText(String.valueOf(ansvarligPerson.getTlfNr()));
         }
 
+    }
+
+    public void illegalColorChosen(){
+        lokationColorchooser.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.getRed() > 0.9 && newValue.getGreen() > 0.9 && newValue.getBlue() > 0.9){
+                lokationColorchooser.setValue(oldValue);
+            }
+            if (Math.abs(newValue.getRed() - newValue.getGreen()) < 0.01 && Math.abs(newValue.getGreen() - newValue.getBlue()) < 0.01){
+                lokationColorchooser.setValue(oldValue);
+            }
+        });
+    }
+
+    public void colorRandomizer(){
+        double red = Math.random();
+        double green = Math.random();
+        double blue = Math.random();
+        lokationColorchooser.setValue(Color.color(red, green, blue));
     }
 }
