@@ -561,7 +561,7 @@ public class CultureConnectController {
         projektProjektdeltagereListview.setItems(tempUsers);
         ProjektTitelLabel.setText(projekt.getTitel());
         projektBeskrivelse.setText(projekt.getDescription());
-        projektDato.setText(projekt.getEndDate().toString());
+        projektDato.setText(projekt.getArrangementDato().toString().substring(0, 10));
         projektNoter.setText(projekt.getNotes());
     }
 
@@ -773,6 +773,7 @@ public class CultureConnectController {
             projekt.setTitel(redigerTitelFelt.getText());
             projekt.setDescription(redigerBeskrivelseFelt.getText());
             projekt.setNotes(redigerNoterFelt.getText());
+            projekt.setArrangementDato(Date.from(Instant.from(redigerArrangementDatoDatepicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())));
 
             if (!redigerProjektejereListview.getItems().isEmpty()){
                 List<Person> creators = new ArrayList<>();
