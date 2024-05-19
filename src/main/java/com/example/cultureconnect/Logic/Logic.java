@@ -202,4 +202,9 @@ public class Logic {
         dao.updateProjekt(projekt);
         updateListsInController();
     }
+
+    public void deleteProjekt(Projekt currentlySelectedProjekt) {
+        this.projects.remove(currentlySelectedProjekt);
+        dao.deleteProjekt(currentlySelectedProjekt);
+    }
 }

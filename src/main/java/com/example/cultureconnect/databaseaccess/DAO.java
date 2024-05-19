@@ -492,10 +492,27 @@ public class DAO {
     }
 
     //PreparedStatement for deleting a project in the Projekt table based on the ID
-    public void deleteProject(Projekt projekt){
-        String sql = "DELETE FROM Projekt WHERE ProjektID = ?";
+    //make the statement delete from ProjektLokation, ProjektInfo, ProjektDeltager, ProjektAktivitet first, before deleting from the Projekt Table. All keys are the projektID
+    public void deleteProjekt(Projekt projekt){
+        String sql1 = "DELETE FROM ProjektLokation WHERE Projekt_ID = ?";
+        String sql2 = "DELETE FROM ProjektInfo WHERE Projekt_ID = ?";
+        String sql3 = "DELETE FROM ProjektDeltager WHERE Projekt_ID = ?";
+        String sql4 = "DELETE FROM ProjektAktivitet WHERE Projekt_ID = ?";
+        String sql5 = "DELETE FROM Projekt WHERE ProjektID = ?";
         try {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement(sql1);
+            preparedStatement.setString(1, projekt.getId());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql2);
+            preparedStatement.setString(1, projekt.getId());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql3);
+            preparedStatement.setString(1, projekt.getId());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql4);
+            preparedStatement.setString(1, projekt.getId());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql5);
             preparedStatement.setString(1, projekt.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -629,9 +646,4 @@ public class DAO {
         }
         return null;
     }
-
-
-
-
-
 }

@@ -32,6 +32,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class CultureConnectController {
+    private final int calendarColumns = 52;
+    private final int calendarRows = 35;//skal sættes af antallet af projekter.
+    private final int columnWidth = 35;
+    private final int rowHeight = 35;
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
@@ -55,7 +59,6 @@ public class CultureConnectController {
     public Tab editProjectTab;
     public Button EditProjektButton;
     public Tab ProjektTab;
-
     //Create new projekt tab////////////////////////////////////////////////
     public Tab CreateNewProjektTab;
     public Button CancelCreateProjektButton;
@@ -88,17 +91,13 @@ public class CultureConnectController {
     public Button KalenderHøjreKnap;
     public Label KalenderLabel;
     public ListView<ProjektAktivitet> ProjektAktiviteterListview;
-    private ObservableList<PersonListCell> createNewProjektPersonList;
     public ListView<PersonListCell> CreateNewProjektCreatorListView;
-    private ObservableList<PersonListCell> createNewProjektCreatorList;
     public ListView<LokationListCell> CreateNewProjectLokationListView;
-    private ObservableList<LokationListCell> createNewProjektLokationList;
     public Label ProjektTitelLabel;
     public DatePicker plannedActivityStartDatePicker;
     public DatePicker plannedActivityEndDatePicker;
-    public TextField plannedActivityTitleTextField;
     //Create new projekt tab slut////////////////////////////////////////////
-
+    public TextField plannedActivityTitleTextField;
     //Edit projekt tab start////////////////////////////////////////////
     public Button gemÆndringerKnap;
     public Button sletProjektKnap;
@@ -111,33 +110,26 @@ public class CultureConnectController {
     public ListView<PersonListCell> redigerProjektdeltagereListview; //TODO lav drag ting
     public ListView<PersonListCell> redigerProjektejereListview;//TODO lav drag ting
     public ListView<LokationListCell> redigerLokationerListview;//TODO lav drag ting
-    @FXML
-    private TextArea redigerBeskrivelseFelt;
-
-    @FXML
-    private TextArea redigerNoterFelt;
-
-    @FXML
-    private TextArea redigerPlanlagteMøderFelt;
-    //Edit projekt tab slut////////////////////////////////////////////
-
-    private int calendarColumns = 52;
-    private int calendarRows = 35;//skal sættes af antallet af projekter.
-    private int columnWidth = 35;
-    private int rowHeight = 35;
-    private Projekt currentlySelectedProjekt;
     Tooltip projektTooltip = new Tooltip();
-    private Logic logic;
     ObservableList<PersonListCell> users = FXCollections.observableArrayList();
+    //Edit projekt tab slut////////////////////////////////////////////
     ObservableList<PersonListCell> usersForNewProjekt;// = FXCollections.observableArrayList();
     ObservableList<LokationListCell> places = FXCollections.observableArrayList();
     ObservableList<LokationListCell> placesForNewProjekt;// = FXCollections.observableArrayList();
     List<Projekt> projects = new ArrayList<>();
     //SimpleIntegerProperty count = new SimpleIntegerProperty();
     int rowHeightTextareas = 10;
-
-
-
+    private ObservableList<PersonListCell> createNewProjektPersonList;
+    private ObservableList<PersonListCell> createNewProjektCreatorList;
+    private ObservableList<LokationListCell> createNewProjektLokationList;
+    @FXML
+    private TextArea redigerBeskrivelseFelt;
+    @FXML
+    private TextArea redigerNoterFelt;
+    @FXML
+    private TextArea redigerPlanlagteMøderFelt;
+    private Projekt currentlySelectedProjekt;
+    private Logic logic;
 
     public void initialize() {
         this.logic = Logic.getInstance();
@@ -151,22 +143,22 @@ public class CultureConnectController {
 
         //eventlistener, to see which tab is selected
         CalendarTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.equals(CreateNewProjektTab)){
-                if (UserToggleButton.isSelected()){
+            if (newValue.equals(CreateNewProjektTab)) {
+                if (UserToggleButton.isSelected()) {
                     UserOrLocationListview.setItems(placesForNewProjekt);
                     UserOrLocationListview.setItems(usersForNewProjekt);
                 } else {
                     UserOrLocationListview.setItems(usersForNewProjekt);
                     UserOrLocationListview.setItems(placesForNewProjekt);
                 }
-            } else if (newValue.equals(CalendarTab)){
+            } else if (newValue.equals(CalendarTab)) {
 
-                if (UserToggleButton.isSelected()){
+                if (UserToggleButton.isSelected()) {
                     UserOrLocationListview.setItems(users);
                 } else {
                     UserOrLocationListview.setItems(places);
                 }
-            } else if (newValue.equals(ProjektTab)){
+            } else if (newValue.equals(ProjektTab)) {
                 //something
             }
         });
@@ -186,14 +178,14 @@ public class CultureConnectController {
 
             // Listen for scroll events
             textArea.scrollTopProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
-                if(newVal.intValue() > rowHeightTextareas){
+                if (newVal.intValue() > rowHeightTextareas) {
                     count.set(count.get() + newVal.intValue());
                 }
             });
         }
     }
 
-    public void startSequence(){
+    public void startSequence() {
         CalendarTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         CalendarTab.setOnCloseRequest(event -> event.consume());
         CreateNewProjektTab.setOnCloseRequest(event -> event.consume());
@@ -219,7 +211,7 @@ public class CultureConnectController {
         CalendarScrollPane.setHvalue(getCurrentWeekNumber() / 52.0);
     }
 
-    public void loginSequence(){
+    public void loginSequence() {
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/CultureConnectLogin.fxml"));
         Stage loginStage = new Stage();
         loginStage.setTitle("CultureConnect Login");
@@ -239,19 +231,19 @@ public class CultureConnectController {
     }
 
 
-    public void fillCalendarWithProjects(){
+    public void fillCalendarWithProjects() {
         //clear the gridpane of projects
         CalendarGridPane.getChildren().removeIf(node -> node instanceof ProjektCell);
         this.projects = logic.getProjects();
 
-        if (projects.isEmpty()){
+        if (projects.isEmpty()) {
             System.out.println("No projects to show");
         } else {
             int noOfProjects = 1;
             AtomicInteger reuseableRow = new AtomicInteger();
             HashMap<Integer, Projekt> projektGrid = new HashMap<>();
             for (Projekt projekt : projects) {
-                if (noOfProjects > 15){
+                if (noOfProjects > 15) {
                     //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
                     projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
                         Date endDate = value.getEndDate();
@@ -280,7 +272,7 @@ public class CultureConnectController {
                 StackPane sp = new StackPane();
                 sp.getChildren().addAll(pcell, title);
 
-                if (reuseableRow.get() > 0){
+                if (reuseableRow.get() > 0) {
                     CalendarGridPane.add(sp, startWeek, reuseableRow.get());
                     GridPane.setColumnSpan(sp, length); // Make the cell span multiple weeks
                     projektGrid.put(reuseableRow.get(), projekt);
@@ -302,13 +294,11 @@ public class CultureConnectController {
     }
 
 
-
-
     public void populateGridPane() {
         //fills the gridpane with empty cells and weeknumbers.
         for (int row = 0; row < calendarRows; row++) {
             for (int col = 1; col <= calendarColumns; col++) {
-                if(row == 0){
+                if (row == 0) {
                     Label label = new Label(String.valueOf(col));
                     label.setAlignment(javafx.geometry.Pos.CENTER);
                     CalendarGridPane.setAlignment(javafx.geometry.Pos.CENTER);
@@ -339,7 +329,7 @@ public class CultureConnectController {
     }
 
     public void newProjectCalendarButtonPressed(ActionEvent event) {
-        if (!CalendarTabPane.getTabs().contains(CreateNewProjektTab)){
+        if (!CalendarTabPane.getTabs().contains(CreateNewProjektTab)) {
             CalendarTabPane.getTabs().add(CreateNewProjektTab);
             CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
             createNewProjektCreatorList = FXCollections.observableArrayList();
@@ -350,7 +340,7 @@ public class CultureConnectController {
             usersForNewProjekt.addAll(users);
             placesForNewProjekt.addAll(places);
             for (PersonListCell user : usersForNewProjekt) {
-                if (user.getPerson().getEmail().equals(logic.getCurrentUser().getEmail())){
+                if (user.getPerson().getEmail().equals(logic.getCurrentUser().getEmail())) {
                     PersonListCell pcell = new PersonListCell(logic.getCurrentUser());
                     createNewProjektCreatorList.add(pcell);
                     CreateNewProjektCreatorListView.setItems(createNewProjektCreatorList);
@@ -361,7 +351,7 @@ public class CultureConnectController {
             }
         } else {
             CalendarTabPane.getSelectionModel().select(CreateNewProjektTab);
-            if (UserToggleButton.isSelected()){
+            if (UserToggleButton.isSelected()) {
                 UserOrLocationListview.setItems(placesForNewProjekt);
                 UserOrLocationListview.setItems(usersForNewProjekt);
             } else {
@@ -391,7 +381,7 @@ public class CultureConnectController {
                 addUser.show();
                 addUser.setOnHidden(e -> loadUsers());
 
-            } catch (IOException e){
+            } catch (IOException e) {
                 System.out.println("Can't open new user window");
             }
 
@@ -411,14 +401,14 @@ public class CultureConnectController {
                 addLocation.show();
                 addLocation.setOnHidden(e -> loadLokations());
 
-            } catch (IOException e){
+            } catch (IOException e) {
                 System.out.println("Can't open new location window");
             }
         }
     }
 
     public void listviewSearchButtonPressed() { //TODO null pointer safety
-        if (ListviewSearchTextField != null && UserToggleButton.isSelected()){
+        if (ListviewSearchTextField != null && UserToggleButton.isSelected()) {
             String searchText = ListviewSearchTextField.getText().toLowerCase();
             //search for persons
             List<PersonListCell> searchResults = users.stream()
@@ -444,7 +434,7 @@ public class CultureConnectController {
     }
 
     public void userToggleButtonPressed(ActionEvent event) {
-        if (CreateNewProjektTab.isSelected()){
+        if (CreateNewProjektTab.isSelected()) {
             UserOrLocationListview.setItems(usersForNewProjekt);
         } else {
             UserOrLocationListview.setItems(users);
@@ -455,7 +445,7 @@ public class CultureConnectController {
     }
 
     public void locationToggleButtonPressed(ActionEvent event) {
-        if (CreateNewProjektTab.isSelected()){
+        if (CreateNewProjektTab.isSelected()) {
             UserOrLocationListview.setItems(placesForNewProjekt);
         } else {
             UserOrLocationListview.setItems(places);
@@ -465,7 +455,7 @@ public class CultureConnectController {
         LocationToggleButton.setSelected(true);
     }
 
-    public void loadUsers(){
+    public void loadUsers() {
         List<Person> persons = logic.getPersons();
         List<PersonListCell> cells = new ArrayList<>();
         for (Person person : persons) {
@@ -476,7 +466,7 @@ public class CultureConnectController {
         UserOrLocationListview.setItems(users);
     }
 
-    public void loadLokations(){
+    public void loadLokations() {
         List<Lokation> lokations = logic.getLocations();
         List<LokationListCell> cells = new ArrayList<>();
         for (Lokation lokation : lokations) {
@@ -493,15 +483,14 @@ public class CultureConnectController {
     }
 
     public void GridPaneClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getTarget() instanceof ProjektCell && !this.projektTooltip.isShowing()) {
-            ProjektCell cell = (ProjektCell) mouseEvent.getTarget();
+        if (mouseEvent.getTarget() instanceof ProjektCell cell && !this.projektTooltip.isShowing()) {
             openSmallProjektDialogWindow(cell.getProjekt(), mouseEvent);
         } else {
             this.projektTooltip.hide();
         }
     }
 
-    public void openSmallProjektDialogWindow(Projekt projekt, MouseEvent mouseEvent){
+    public void openSmallProjektDialogWindow(Projekt projekt, MouseEvent mouseEvent) {
         VBox dialogVBox = new VBox();
         Label titleLabel = new Label(projekt.getTitel());
         titleLabel.getStyleClass().add("ProjectTooltipTitle");
@@ -529,11 +518,11 @@ public class CultureConnectController {
         });
     }
 
-    public void openProjektTab(Projekt projekt){
+    public void openProjektTab(Projekt projekt) {
         this.currentlySelectedProjekt = projekt;
         //check if the projekt tab is already open with the projekt based on the title. If it is, select the tab, if not, create a new tab.
-        if(CalendarTabPane.getTabs().contains(ProjektTab)){
-            if (ProjektTitelLabel.getText().equals(projekt.getTitel())){
+        if (CalendarTabPane.getTabs().contains(ProjektTab)) {
+            if (ProjektTitelLabel.getText().equals(projekt.getTitel())) {
                 setProjektInformation(projekt);
                 CalendarTabPane.getSelectionModel().select(ProjektTab);
             }
@@ -547,7 +536,7 @@ public class CultureConnectController {
         System.out.println(projekt.getParticipants());
     }
 
-    public void setProjektInformation(Projekt projekt){
+    public void setProjektInformation(Projekt projekt) {
         ProjektTab.setText(projekt.getTitel());
         ObservableList<PersonListCell> tempUsers = FXCollections.observableArrayList();
         ObservableList<PersonListCell> tempCreators = FXCollections.observableArrayList();
@@ -566,8 +555,6 @@ public class CultureConnectController {
     }
 
 
-
-
     public void cancelCreateProjektButtonPressed(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Annuller oprettelse af  projekt");
@@ -584,7 +571,7 @@ public class CultureConnectController {
         alert.showAndWait();
 
 
-        if (alert.getResult() == buttonType){
+        if (alert.getResult() == buttonType) {
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         }
@@ -593,7 +580,7 @@ public class CultureConnectController {
     public void createProjektButtonPressed(ActionEvent actionEvent) {
         if (CreateNewProjectTitleTextField.getText().isEmpty() ||
                 CreateNewProjektEndDatePicker.getValue() == null ||
-                CreateNewProjektCreatorListView.getItems().isEmpty()){
+                CreateNewProjektCreatorListView.getItems().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i oprettelse af projekt");
             alert.setHeaderText("Projektet kunne ikke oprettes");
@@ -602,7 +589,7 @@ public class CultureConnectController {
         } else {
             Date startDate;
             Date endDate;
-            Date arrangementDate = new Date().from(Instant.from(CreateNewProjektEndDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            Date arrangementDate = Date.from(Instant.from(CreateNewProjektEndDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
             if (createProjektAktiviteterListview.getItems().isEmpty()) {
                 startDate = new Date();
             } else {
@@ -625,39 +612,39 @@ public class CultureConnectController {
             }
             Projekt nytProjekt = new Projekt(CreateNewProjectTitleTextField.getText(), startDate, arrangementDate, endDate, UUID.randomUUID());
 
-            if(!CreateNewProjektDescriptionTextArea.getText().isEmpty()){
+            if (!CreateNewProjektDescriptionTextArea.getText().isEmpty()) {
                 nytProjekt.setDescription(CreateNewProjektDescriptionTextArea.getText());
             } else {
                 nytProjekt.setDescription("Ingen beskrivelse");
             }
 
-            if(!CreateNewProjectNotesTextArea.getText().isEmpty()){
+            if (!CreateNewProjectNotesTextArea.getText().isEmpty()) {
                 nytProjekt.setNotes(CreateNewProjectNotesTextArea.getText());
             } else {
                 nytProjekt.setNotes("Ingen noter");
             }
 
-            if(!CreateNewProjektCreatorListView.getItems().isEmpty()){
+            if (!CreateNewProjektCreatorListView.getItems().isEmpty()) {
                 List<Person> creators = new ArrayList<>();
                 for (PersonListCell creator : CreateNewProjektCreatorListView.getItems()) {
                     creators.add(creator.getPerson());
                 }
                 nytProjekt.setProjectCreator(creators);
             }
-            if (!CreateNewProjektPersonListView.getItems().isEmpty()){
+            if (!CreateNewProjektPersonListView.getItems().isEmpty()) {
                 List<Person> participants = new ArrayList<>();
                 for (PersonListCell participant : CreateNewProjektPersonListView.getItems()) {
                     participants.add(participant.getPerson());
                 }
                 nytProjekt.setParticipants(participants);
             }
-            if (!CreateNewProjectLokationListView.getItems().isEmpty()){
+            if (!CreateNewProjectLokationListView.getItems().isEmpty()) {
                 nytProjekt.setLokation(CreateNewProjectLokationListView.getItems().getFirst().getLokation());
             }
-            if (!createProjektAktiviteterListview.getItems().isEmpty()){
+            if (!createProjektAktiviteterListview.getItems().isEmpty()) {
                 nytProjekt.setProjektAktiviteter(createProjektAktiviteterListview.getItems());
             }
-            if (ProjektColorpicker.getValue() != null){
+            if (ProjektColorpicker.getValue() != null) {
                 nytProjekt.setColor(ProjektColorpicker.getValue().toString());
             } else {
                 nytProjekt.setColor("ffffff");
@@ -671,7 +658,7 @@ public class CultureConnectController {
 
     public void createNewProjectAddActivityButtonPressed(ActionEvent actionEvent) {
         if (plannedActivityStartDatePicker.getValue() == null || plannedActivityEndDatePicker.getValue() == null || plannedActivityTitleTextField.getText().isEmpty() ||
-                plannedActivityEndDatePicker.getValue().isBefore(plannedActivityStartDatePicker.getValue())){
+                plannedActivityEndDatePicker.getValue().isBefore(plannedActivityStartDatePicker.getValue())) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i oprettelse af aktivitet");
             alert.setHeaderText("Aktiviteten kunne ikke oprettes");
@@ -709,7 +696,7 @@ public class CultureConnectController {
         return latestDate;
     }
 
-    public List<Date> getDatesInActivities(List<ProjektAktivitet> activities){
+    public List<Date> getDatesInActivities(List<ProjektAktivitet> activities) {
         List<Date> dates = new ArrayList<>();
         for (ProjektAktivitet activity : activities) {
             dates.add(activity.getStartDatoAsUtilDate());
@@ -720,7 +707,7 @@ public class CultureConnectController {
 
 
     public void editProjektButtonPressed(ActionEvent actionEvent) {
-        if (CalendarTabPane.getTabs().contains(editProjectTab)){
+        if (CalendarTabPane.getTabs().contains(editProjectTab)) {
             CalendarTabPane.getSelectionModel().select(editProjectTab);
         } else {
             CalendarTabPane.getTabs().add(editProjectTab);
@@ -729,7 +716,7 @@ public class CultureConnectController {
         setProjektForEditing(currentlySelectedProjekt);
     }
 
-    public void setProjektForEditing(Projekt projekt){
+    public void setProjektForEditing(Projekt projekt) {
         redigerBeskrivelseFelt.setText(projekt.getDescription());
         redigerNoterFelt.setText(projekt.getNotes());
         EditProjektAktiviteterListview.setItems(FXCollections.observableArrayList(projekt.getProjektAktiviteter()));
@@ -747,7 +734,7 @@ public class CultureConnectController {
     }
 
     public void redigerNyAktivitetKnapPressed(ActionEvent actionEvent) {
-        if (RedigerStartdatoDatepicker.getValue() != null && redigerSlutdatoDatepicker.getValue() != null && RedigerTitelPåAktivitetFelt.getText() != null){
+        if (RedigerStartdatoDatepicker.getValue() != null && redigerSlutdatoDatepicker.getValue() != null && RedigerTitelPåAktivitetFelt.getText() != null) {
             ProjektAktivitet aktivitet = new ProjektAktivitet(RedigerStartdatoDatepicker.getValue(), redigerSlutdatoDatepicker.getValue(), RedigerTitelPåAktivitetFelt.getText());
             EditProjektAktiviteterListview.getItems().add(aktivitet);
             EditProjektAktiviteterListview.refresh();
@@ -759,10 +746,29 @@ public class CultureConnectController {
 
     public void sletProjektKnapPressed(ActionEvent actionEvent) {
         //alert to make sure, else delete the projekt
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Slet projekt");
+        alert.setHeaderText("Er du sikker på at du vil slette projektet?");
+        alert.setContentText("Projektet kan ikke gendannes, hvis det slettes.");
+        alert.getButtonTypes().clear();
+        ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.getButtonTypes().addAll(buttonType, buttonType1);
+        alert.showAndWait();
+        if (alert.getResult() == buttonType) {
+            logic.deleteProjekt(currentlySelectedProjekt);
+            fillCalendarWithProjects();
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(editProjectTab);
+        }
     }
 
     public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
-        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null){
+        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i redigering af projekt");
             alert.setHeaderText("Projektet kunne ikke redigeres");
@@ -775,24 +781,24 @@ public class CultureConnectController {
             projekt.setNotes(redigerNoterFelt.getText());
             projekt.setArrangementDato(Date.from(Instant.from(redigerArrangementDatoDatepicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())));
 
-            if (!redigerProjektejereListview.getItems().isEmpty()){
+            if (!redigerProjektejereListview.getItems().isEmpty()) {
                 List<Person> creators = new ArrayList<>();
                 for (PersonListCell creator : redigerProjektejereListview.getItems()) {
                     creators.add(creator.getPerson());
                 }
                 projekt.setProjectCreator(creators);
             }
-            if (!redigerProjektdeltagereListview.getItems().isEmpty()){
+            if (!redigerProjektdeltagereListview.getItems().isEmpty()) {
                 List<Person> participants = new ArrayList<>();
                 for (PersonListCell participant : redigerProjektdeltagereListview.getItems()) {
                     participants.add(participant.getPerson());
                 }
                 projekt.setParticipants(participants);
             }
-            if (!redigerLokationerListview.getItems().isEmpty()){
+            if (!redigerLokationerListview.getItems().isEmpty()) {
                 projekt.setLokation(redigerLokationerListview.getItems().getFirst().getLokation());
             }
-            if (!EditProjektAktiviteterListview.getItems().isEmpty()){
+            if (!EditProjektAktiviteterListview.getItems().isEmpty()) {
                 projekt.setProjektAktiviteter(EditProjektAktiviteterListview.getItems());
             }
             logic.updateProjekt(projekt);
@@ -926,7 +932,6 @@ public class CultureConnectController {
     }
 
 
-
     public void userLokationListViewDragDetected(MouseEvent mouseEvent) {
 
     }
@@ -937,7 +942,7 @@ public class CultureConnectController {
 
     public void updateList() {
         UserOrLocationListview.getItems().clear();
-        if (UserToggleButton.isSelected()){
+        if (UserToggleButton.isSelected()) {
             loadUsers();
         } else {
             loadLokations();
@@ -945,15 +950,35 @@ public class CultureConnectController {
     }
 
     public void RedigerProjektSletAktivitetKnapPressed(ActionEvent actionEvent) {
+        if (EditProjektAktiviteterListview.getSelectionModel().getSelectedItem() != null) {
+            EditProjektAktiviteterListview.getItems().remove(EditProjektAktiviteterListview.getSelectionModel().getSelectedItem());
+        }
     }
 
     public void RedigerProjektRedigerAktivitetKnapPressed(ActionEvent actionEvent) {
+        if (EditProjektAktiviteterListview.getSelectionModel().getSelectedItem() != null) {
+            ProjektAktivitet aktivitet = EditProjektAktiviteterListview.getSelectionModel().getSelectedItem();
+            RedigerStartdatoDatepicker.setValue(aktivitet.getStartDato());
+            redigerSlutdatoDatepicker.setValue(aktivitet.getSlutDato());
+            RedigerTitelPåAktivitetFelt.setText(aktivitet.getAktivitet());
+            EditProjektAktiviteterListview.getItems().remove(aktivitet);
+        }
     }
 
     public void NytProjektSletAktivitetKnapPressed(ActionEvent actionEvent) {
+        if (createProjektAktiviteterListview.getSelectionModel().getSelectedItem() != null) {
+            createProjektAktiviteterListview.getItems().remove(createProjektAktiviteterListview.getSelectionModel().getSelectedItem());
+        }
     }
 
     public void NytProjektRedigerAktivitetKnapPressed(ActionEvent actionEvent) {
+        if (createProjektAktiviteterListview.getSelectionModel().getSelectedItem() != null) {
+            ProjektAktivitet aktivitet = createProjektAktiviteterListview.getSelectionModel().getSelectedItem();
+            plannedActivityStartDatePicker.setValue(aktivitet.getStartDato());
+            plannedActivityEndDatePicker.setValue(aktivitet.getSlutDato());
+            plannedActivityTitleTextField.setText(aktivitet.getAktivitet());
+            createProjektAktiviteterListview.getItems().remove(aktivitet);
+        }
     }
 
     public void projektSøgefeltKeyPressed(KeyEvent keyEvent) {
@@ -967,7 +992,7 @@ public class CultureConnectController {
 
     public void KalenderVenstreKnapPressed(ActionEvent actionEvent) {
     }
-    
+
     public void KalenderHøjreKnapPressed(ActionEvent actionEvent) {
     }
 }
