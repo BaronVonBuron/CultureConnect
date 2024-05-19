@@ -1,35 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ColorPicker?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<SplitPane fx:id="MainSplitPane" dividerPositions="0.22429078014184398" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1130.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cultureconnect.controllers.CultureConnectController">
+<SplitPane fx:id="MainSplitPane" dividerPositions="0.22429078014184398" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1130.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cultureconnect.controllers.CultureConnectController">
   <items>
     <AnchorPane fx:id="LeftsideAnchorPane" maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="160.0" prefWidth="250.0" styleClass="MainPane" stylesheets="@../../../CultureConnectCSS.css">
          <children>
@@ -417,7 +396,7 @@
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <ListView fx:id="redigerLokationerListview" prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                <ListView fx:id="redigerLokationerListview" onDragDropped="#redigerLokationListviewDragDropped" onDragOver="#redigerLokationListviewDragOver" prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
                                                    <VBox.margin>
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
@@ -430,7 +409,7 @@
                                                       <Insets left="30.0" top="21.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <ListView fx:id="redigerProjektejereListview" prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                <ListView fx:id="redigerProjektejereListview" onDragDropped="#redigerProjektejereListviewDragDropped" onDragOver="#redigerProjektejereListviewDragOver" prefHeight="160.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
                                                    <VBox.margin>
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
@@ -443,7 +422,7 @@
                                                       <Insets left="30.0" top="21.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <ListView fx:id="redigerProjektdeltagereListview" prefHeight="280.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
+                                                <ListView fx:id="redigerProjektdeltagereListview" onDragDropped="#redigerProjektdeltagereListviewDragDropped" onDragOver="#redigerProjektdeltagereListviewDragOver" prefHeight="280.0" prefWidth="230.0" styleClass="LokationProjektejereProjektdeltagere">
                                                    <VBox.margin>
                                                       <Insets left="30.0" />
                                                    </VBox.margin>
