@@ -24,8 +24,6 @@ public class Projekt {
     private List<ProjektAktivitet> projektAktiviteter;
     private Date arrangementDato;
 
-    //ressourcer - eks. billeder og dokumenter skal muligvis tilføjes
-    //mile dates og event dates - lister til dem
 
     public Projekt(String titel, Date startDate, Date arrangementDato, Date endDate, UUID id) {
         this.id = id;
