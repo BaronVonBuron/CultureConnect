@@ -743,21 +743,38 @@ public class CultureConnectController {
 
         redigerProjektPersonList = FXCollections.observableArrayList();
         redigerProjektLokationList = FXCollections.observableArrayList();
-        //add all users to the observableList and filter out the ones that are already in the projekt
-        users.forEach(personListCell -> {
-            if (!redigerProjektejereListview.getItems().contains(personListCell) && !redigerProjektdeltagereListview.getItems().contains(personListCell)) {
-                redigerProjektPersonList.add(personListCell);
+        //add users to the observableList and filter out the ones that are already in the projekt, by their names, as the personListCell is not the same object.
+        for (int i = 0; i < users.size(); i++) {
+            boolean isCreator = false;
+            boolean isParticipant = false;
+            for (Person creator : projekt.getProjectCreator()) {
+                if (users.get(i).getName().equals(creator.getName())) {
+                    isCreator = true;
+                    break;
+                }
             }
-        });
-        //add all locations to the observableList and filter out the one that is already in the projekt
-        places.forEach(locationListCell -> {
-            if (!redigerLokationerListview.getItems().contains(locationListCell)) {
-                redigerProjektLokationList.add(locationListCell);
+            for (Person participant : projekt.getParticipants()) {
+                if (users.get(i).getName().equals(participant.getName())) {
+                    isParticipant = true;
+                    break;
+                }
             }
-        });
+            if (!isCreator && !isParticipant) {
+                redigerProjektPersonList.add(users.get(i));
+            }
+        }
+        //add locations to the observableList and filter out the ones that are already in the projekt, by their names, as the lokationListCell is not the same object.
+        for (int i = 0; i < places.size(); i++) {
+            if (!places.get(i).getName().equals(projekt.getLokation().getName())) {
+                redigerProjektLokationList.add(places.get(i));
+            }
+        }
+
         if (UserToggleButton.isSelected()) {
+            UserOrLocationListview.setItems(redigerProjektLokationList);
             UserOrLocationListview.setItems(redigerProjektPersonList);
         } else {
+            UserOrLocationListview.setItems(redigerProjektPersonList);
             UserOrLocationListview.setItems(redigerProjektLokationList);
         }
     }
@@ -942,12 +959,50 @@ public class CultureConnectController {
     }
 
 
-    public void userLokationListViewDragDetected(MouseEvent mouseEvent) {
+    public void userLokationListViewDragDropped(DragEvent dragEvent) {
+        /*
+        get the dropped thing
+        if personcell, add it to the listview, according to which tab is selected
+        if lokationcell, add it to the listview, according to which tab is selected
+        set up drag, so if the user starts dragging a person or lokation, the UserOrLocationListview's toggle will switch to the correct one
+         */
 
+        Dragboard dragboard = dragEvent.getDragboard();
+        if (dragboard.hasString()) {
+            String name = dragboard.getString();
+            if (UserToggleButton.isSelected()) {
+                PersonListCell droppedPerson = redigerProjektPersonList.stream()
+                        .filter(person -> person.getName().equals(name))
+                        .findFirst()
+                        .orElse(null);
+                if (droppedPerson != null) {
+                    PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
+                    redigerProjektdeltagereListview.getItems().add(pcell);
+                    redigerProjektdeltagereListview.refresh();
+                    redigerProjektPersonList.remove(droppedPerson);
+                    UserOrLocationListview.setItems(redigerProjektPersonList);
+                }
+            } else {
+                LokationListCell droppedLokation = redigerProjektLokationList.stream()
+                        .filter(lokation -> lokation.getName().equals(name))
+                        .findFirst()
+                        .orElse(null);
+                if (droppedLokation != null) {
+                    LokationListCell lCell = new LokationListCell(droppedLokation.getLokation());
+                    redigerLokationerListview.getItems().add(lCell);
+                    redigerLokationerListview.refresh();
+                    redigerProjektLokationList.remove(droppedLokation);
+                    UserOrLocationListview.setItems(redigerProjektLokationList);
+                }
+            }
+            dragEvent.setDropCompleted(true);
+        } else {
+            dragEvent.setDropCompleted(false);
+        }
     }
 
     public void userLokationListViewDragDone(DragEvent dragEvent) {
-
+        dragEvent.consume();
     }
 
     public void updateList() {
@@ -1101,12 +1156,3 @@ public class CultureConnectController {
         dragEvent.consume();
     }
 }
-
-/*
-       redigerProjektPersonList = FXCollections.observableArrayList();
-        redigerProjektLokationList = FXCollections.observableArrayList();
-
-        redigerProjektejereListview.setItems(FXCollections.observableArrayList(projekt.getProjectCreator().stream().map(PersonListCell::new).collect(Collectors.toList())));
-        redigerProjektdeltagereListview.setItems(FXCollections.observableArrayList(projekt.getParticipants().stream().map(PersonListCell::new).collect(Collectors.toList())));
-        redigerLokationerListview.setItems(FXCollections.observableArrayList(new LokationListCell(projekt.getLokation())));
- */

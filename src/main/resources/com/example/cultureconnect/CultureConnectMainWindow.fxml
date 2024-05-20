@@ -57,7 +57,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </HBox>
-                        <ListView fx:id="UserOrLocationListview" onDragDetected="#userLokationListViewDragDetected" onDragDone="#userLokationListViewDragDone" styleClass="MenuListe">
+                        <ListView fx:id="UserOrLocationListview" onDragDone="#userLokationListViewDragDone" onDragDropped="#userLokationListViewDragDropped" styleClass="MenuListe">
                            <VBox.margin>
                               <Insets bottom="30.0" />
                            </VBox.margin></ListView>
