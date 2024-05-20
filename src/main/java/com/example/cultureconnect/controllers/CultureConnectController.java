@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
@@ -140,6 +141,7 @@ public class CultureConnectController {
         this.logic.setMainWindowController(this);
         startSequence();
         loginSequence();
+        colorValidation();
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt
@@ -1105,6 +1107,17 @@ public class CultureConnectController {
             dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
         }
         dragEvent.consume();
+    }
+
+    public void colorValidation(){
+        ProjektColorpicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.getRed() > 0.9 && newValue.getGreen() > 0.9 && newValue.getBlue() > 0.9){
+                ProjektColorpicker.setValue(oldValue);
+            }
+            if (Math.abs(newValue.getRed() - newValue.getGreen()) < 0.01 && Math.abs(newValue.getGreen() - newValue.getBlue()) < 0.01){
+                ProjektColorpicker.setValue(oldValue);
+            }
+        });
     }
 }
 

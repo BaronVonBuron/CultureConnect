@@ -130,7 +130,7 @@ public class NewLocationDialogController {
             }
 
 
-            nuværendeLokation.setDescription(email + "\n   " + telefonnummer);
+            nuværendeLokation.setDescription(email + " " + telefonnummer);
             nuværendeLokation.setFarveKode(farveKode);
 
             if (ansvarligVælger != null && ansvarlig != null){
