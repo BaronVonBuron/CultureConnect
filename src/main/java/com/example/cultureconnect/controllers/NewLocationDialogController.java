@@ -194,7 +194,7 @@ public class NewLocationDialogController {
     public void editInfo(Lokation lokation){
         nuværendeLokation = lokation;
 
-        if (lokation.getDescription().matches(".*[a-zA-Z].*")){
+        if (lokation.getDescription().matches(".*[a-zA-Z].*") && lokation.getDescription().matches(".*\\d.*")){
             String tlfOgEmail = lokation.getDescription();
 
             String[] parts = tlfOgEmail.split("\\s+");
