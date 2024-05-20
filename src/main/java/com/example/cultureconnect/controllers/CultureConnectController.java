@@ -998,6 +998,9 @@ public class CultureConnectController {
     }
 
     public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
+        int currentDay = getCurrentWeekNumber();
+        double scroll = (double) currentDay / 52;
+        CalendarScrollPane.setHvalue(scroll);
     }
 
     public void KalenderVenstreKnapPressed(ActionEvent actionEvent) {
