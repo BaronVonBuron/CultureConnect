@@ -942,8 +942,15 @@ public class CultureConnectController {
     }
 
 
-    public void userLokationListViewDragDetected(MouseEvent mouseEvent) {
+    public void userLokationListViewDragDropped(DragEvent dragEvent) {
+        /*
+        get the dropped thing
+        if personcell, add it to the listview, according to which tab is selected
+        if lokationcell, add it to the listview, according to which tab is selected
+        set up drag, so if the user starts dragging a person or lokation, the UserOrLocationListview's toggle will switch to the correct one
+         */
 
+        Dragboard dragboard = dragEvent.getDragboard();
     }
 
     public void userLokationListViewDragDone(DragEvent dragEvent) {
@@ -1101,12 +1108,3 @@ public class CultureConnectController {
         dragEvent.consume();
     }
 }
-
-/*
-       redigerProjektPersonList = FXCollections.observableArrayList();
-        redigerProjektLokationList = FXCollections.observableArrayList();
-
-        redigerProjektejereListview.setItems(FXCollections.observableArrayList(projekt.getProjectCreator().stream().map(PersonListCell::new).collect(Collectors.toList())));
-        redigerProjektdeltagereListview.setItems(FXCollections.observableArrayList(projekt.getParticipants().stream().map(PersonListCell::new).collect(Collectors.toList())));
-        redigerLokationerListview.setItems(FXCollections.observableArrayList(new LokationListCell(projekt.getLokation())));
- */

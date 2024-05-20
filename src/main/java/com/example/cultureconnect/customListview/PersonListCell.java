@@ -1,13 +1,8 @@
 package com.example.cultureconnect.customListview;
 
 import com.example.cultureconnect.Logic.Logic;
-import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
-import com.example.cultureconnect.controllers.CultureConnectController;
-import com.example.cultureconnect.controllers.NewLocationDialogController;
 import com.example.cultureconnect.controllers.NewUserDialogController;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,8 +18,6 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PersonListCell extends ListCell {
 
@@ -134,10 +127,8 @@ public class PersonListCell extends ListCell {
         this.setOnDragDone(event -> {
             // Check if the drag operation was successful
             if (event.getTransferMode() == TransferMode.MOVE) {
-
                 System.out.println("drag done person list cell");
             }
-
             event.consume();
         });
     }
