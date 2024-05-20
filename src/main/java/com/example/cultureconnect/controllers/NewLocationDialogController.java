@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 
 import java.util.List;
+import java.util.Objects;
 
 public class NewLocationDialogController {
 
@@ -192,12 +193,17 @@ public class NewLocationDialogController {
 
     public void editInfo(Lokation lokation){
         nuværendeLokation = lokation;
-        String tlfOgEmail = lokation.getDescription();
 
-        String[] parts = tlfOgEmail.split("\\s+");
+        if (lokation.getDescription().matches(".*[a-zA-Z].*")){
+            String tlfOgEmail = lokation.getDescription();
 
-        String phoneNumber = parts[1];
-        String email = parts[0];
+            String[] parts = tlfOgEmail.split("\\s+");
+
+            String phoneNumber = parts[1];
+            String email = parts[0];
+            emailNyLokationFelt.setText(email);
+            telefonnummerNyLokationFelt.setText(phoneNumber);
+        }
 
         opretNyLokationKnap.setText("Gem");
         opretNyLokationLabel.setText("Rediger Lokation");
@@ -205,9 +211,6 @@ public class NewLocationDialogController {
         if (lokation.getAnsvarligPerson() != null){
             ansvarligPerson = lokation.getAnsvarligPerson();
         }
-
-        emailNyLokationFelt.setText(email);
-        telefonnummerNyLokationFelt.setText(phoneNumber);
         lokationColorchooser.setValue(Color.valueOf(lokation.getFarveKode()));
         navnNyLokationFelt.setText(lokation.getName());
         navnNyLokationFelt.setEditable(false);
