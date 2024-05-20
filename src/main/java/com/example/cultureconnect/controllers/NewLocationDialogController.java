@@ -121,10 +121,6 @@ public class NewLocationDialogController {
                     filter(person -> person.getName().equals(selectedAnsvarlig)).
                     findFirst().orElse(null);
 
-            if (ansvarlig == null) {
-                return;
-            }
-
             if (name == null || name.trim().isEmpty()) {
                 locationMustHaveName();
                 return;
