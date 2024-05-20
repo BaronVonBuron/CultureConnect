@@ -5,6 +5,7 @@ import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.controllers.CultureConnectController;
 import com.example.cultureconnect.databaseaccess.DAO;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,5 +207,10 @@ public class Logic {
     public void deleteProjekt(Projekt currentlySelectedProjekt) {
         this.projects.remove(currentlySelectedProjekt);
         dao.deleteProjekt(currentlySelectedProjekt);
+    }
+
+    public Color findLokationColor(String name){
+        String colorCode = dao.readFarveKodeForLokation(name);
+        return Color.valueOf(colorCode);
     }
 }

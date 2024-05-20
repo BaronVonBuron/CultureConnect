@@ -646,4 +646,22 @@ public class DAO {
         }
         return null;
     }
+
+    //Prepared statement to select from lokation table column farvekode where navn is
+    public String readFarveKodeForLokation(String name){
+        String sql = "SELECT Farvekode FROM Lokation WHERE Navn = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Farvekode");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read farvekode for lokation: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
 }
+
