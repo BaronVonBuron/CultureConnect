@@ -1113,11 +1113,24 @@ public class CultureConnectController {
         ProjektColorpicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.getRed() > 0.9 && newValue.getGreen() > 0.9 && newValue.getBlue() > 0.9){
                 ProjektColorpicker.setValue(oldValue);
+                illegalColor();
             }
             if (Math.abs(newValue.getRed() - newValue.getGreen()) < 0.01 && Math.abs(newValue.getGreen() - newValue.getBlue()) < 0.01){
                 ProjektColorpicker.setValue(oldValue);
+                illegalColor();
             }
         });
+    }
+
+    public void illegalColor(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Fejl i valg af farve");
+        alert.setHeaderText("Igangværende projekter må ikke være hvide eller grå");
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.showAndWait();
     }
 }
 
