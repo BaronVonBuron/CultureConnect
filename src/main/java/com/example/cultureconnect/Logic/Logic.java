@@ -208,9 +208,4 @@ public class Logic {
         this.projects.remove(currentlySelectedProjekt);
         dao.deleteProjekt(currentlySelectedProjekt);
     }
-
-    public Color findLokationColor(String name){
-        String colorCode = dao.readFarveKodeForLokation(name);
-        return Color.valueOf(colorCode);
-    }
 }
