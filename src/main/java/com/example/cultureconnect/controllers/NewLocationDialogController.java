@@ -130,7 +130,7 @@ public class NewLocationDialogController {
             }
 
 
-            nuværendeLokation.setDescription(email + "\n   " + telefonnummer);
+            nuværendeLokation.setDescription(email + " " + telefonnummer);
             nuværendeLokation.setFarveKode(farveKode);
 
             if (ansvarligVælger != null && ansvarlig != null){
@@ -226,9 +226,11 @@ public class NewLocationDialogController {
         lokationColorchooser.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.getRed() > 0.9 && newValue.getGreen() > 0.9 && newValue.getBlue() > 0.9){
                 lokationColorchooser.setValue(oldValue);
+                illegalColor();
             }
             if (Math.abs(newValue.getRed() - newValue.getGreen()) < 0.01 && Math.abs(newValue.getGreen() - newValue.getBlue()) < 0.01){
                 lokationColorchooser.setValue(oldValue);
+                illegalColor();
             }
         });
     }
@@ -238,5 +240,16 @@ public class NewLocationDialogController {
         double green = Math.random();
         double blue = Math.random();
         lokationColorchooser.setValue(Color.color(red, green, blue));
+    }
+
+    public void illegalColor(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Fejl i valg af farve");
+        alert.setHeaderText("Lokationer må ikke være hvide eller grå");
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.showAndWait();
     }
 }

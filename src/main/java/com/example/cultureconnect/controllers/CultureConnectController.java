@@ -16,10 +16,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 public class CultureConnectController {
     private final int calendarColumns = 52;
     private final int calendarRows = 35;//skal sættes af antallet af projekter.
-    private final int columnWidth = 35;
+    private final int columnWidth = 60;
     private final int rowHeight = 35;
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
@@ -139,6 +141,7 @@ public class CultureConnectController {
         this.logic.setMainWindowController(this);
         startSequence();
         loginSequence();
+        colorValidation();
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt
@@ -305,8 +308,9 @@ public class CultureConnectController {
         //fills the gridpane with empty cells and weeknumbers.
         for (int row = 0; row < calendarRows; row++) {
             for (int col = 1; col <= calendarColumns; col++) {
+                Label label = new Label();
                 if (row == 0) {
-                    Label label = new Label(String.valueOf(col));
+                    label.setText(" Uge " + col);
                     label.setAlignment(javafx.geometry.Pos.CENTER);
                     CalendarGridPane.setAlignment(javafx.geometry.Pos.CENTER);
                     CalendarGridPane.add(label, col, row);
@@ -314,6 +318,9 @@ public class CultureConnectController {
                 CalendarCell cell = new CalendarCell(); // Create a new Cell instance
                 cell.setWidth(columnWidth); // Set the width of the cell
                 cell.setHeight(rowHeight); // Set the height of the cell
+                if (col == getCurrentWeekNumber()){
+                    label.setStyle("-fx-text-fill: #0000FF; -fx-font-weight: bold; -fx-underline: true");
+                }
                 CalendarGridPane.add(cell, col, row); // Add the cell to the GridPane at the specified column and row
             }
         }
@@ -1053,6 +1060,7 @@ public class CultureConnectController {
     }
 
     public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
+        CalendarScrollPane.setHvalue(getCurrentWeekNumber() / 52.0);
     }
 
     public void KalenderVenstreKnapPressed(ActionEvent actionEvent) {
@@ -1155,4 +1163,29 @@ public class CultureConnectController {
         }
         dragEvent.consume();
     }
+
+    public void colorValidation(){
+        ProjektColorpicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.getRed() > 0.9 && newValue.getGreen() > 0.9 && newValue.getBlue() > 0.9){
+                ProjektColorpicker.setValue(oldValue);
+                illegalColor();
+            }
+            if (Math.abs(newValue.getRed() - newValue.getGreen()) < 0.01 && Math.abs(newValue.getGreen() - newValue.getBlue()) < 0.01){
+                ProjektColorpicker.setValue(oldValue);
+                illegalColor();
+            }
+        });
+    }
+
+    public void illegalColor(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Fejl i valg af farve");
+        alert.setHeaderText("Igangværende projekter må ikke være hvide eller grå");
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.showAndWait();
+    }
 }
+
