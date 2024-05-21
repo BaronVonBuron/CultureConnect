@@ -195,8 +195,9 @@ public class NewLocationDialogController {
 
             String[] parts = tlfOgEmail.split("\\s+");
 
-            String phoneNumber = parts[1];
-            String email = parts[0];
+            String email = parts.length >= 1 ? parts[0] : "";
+            String phoneNumber = parts.length >= 2 ? parts[1] : "";
+
             emailNyLokationFelt.setText(email);
             telefonnummerNyLokationFelt.setText(phoneNumber);
         }
