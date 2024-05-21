@@ -78,17 +78,17 @@ public class PersonListCell extends ListCell {
         deleteButton.getStyleClass().add("Buttons");
         editButton.getStyleClass().add("Buttons");
         setGraphic(hbox);
-        setPrefSize(200, 50);
+        setPrefSize(195, 50);
         setStyle("-fx-background-color: transparent");
         setOnMouseClicked(event -> {
             if (isExpanded) {
                 vbox.getChildren().removeAll(emailLabel, phoneLabel, hboxButtons);
-                setPrefSize(200, 50);
+                setPrefSize(195, 50);
             } else {
                 emailLabel.setText("Email: " + getEmail());
                 phoneLabel.setText("Telefon: " + new String(getTlfNr()));
                 vbox.getChildren().addAll(emailLabel, phoneLabel, hboxButtons);
-                setPrefSize(200, 100);
+                setPrefSize(195, 100);
             }
             isExpanded = !isExpanded;
         });

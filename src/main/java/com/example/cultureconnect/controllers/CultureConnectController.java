@@ -979,50 +979,162 @@ public class CultureConnectController {
 
 
     public void userLokationListViewDragDropped(DragEvent dragEvent) {
-        /*
-        get the dropped thing
-        if personcell, add it to the listview, according to which tab is selected
-        if lokationcell, add it to the listview, according to which tab is selected
-        set up drag, so if the user starts dragging a person or lokation, the UserOrLocationListview's toggle will switch to the correct one
-         */
-
-        Dragboard dragboard = dragEvent.getDragboard();
-        if (dragboard.hasString()) {
-            String name = dragboard.getString();
+        if(editProjectTab.isSelected()){
             if (UserToggleButton.isSelected()) {
-                PersonListCell droppedPerson = redigerProjektPersonList.stream()
-                        .filter(person -> person.getName().equals(name))
-                        .findFirst()
-                        .orElse(null);
-                if (droppedPerson != null) {
-                    PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
-                    redigerProjektdeltagereListview.getItems().add(pcell);
-                    redigerProjektdeltagereListview.refresh();
-                    redigerProjektPersonList.remove(droppedPerson);
-                    UserOrLocationListview.setItems(redigerProjektPersonList);
+                Dragboard db = dragEvent.getDragboard();
+                if (db.hasString()) {
+                    String personName = db.getString();
+                    System.out.println(personName + " 1");
+                    PersonListCell droppedPerson = redigerProjektdeltagereListview.getItems().stream()
+                            .filter(person -> person.getName().equals(personName))
+                            .findFirst()
+                            .orElse(redigerProjektejereListview.getItems().stream()
+                                    .filter(person -> person.getName().equals(personName))
+                                    .findFirst()
+                                    .orElse(null));
+                    System.out.println(droppedPerson.getName() + " 2");
+                    boolean isCreator = false;
+                    for (PersonListCell creator : redigerProjektejereListview.getItems()) {
+                        if (creator.getName().equals(personName)) {
+                            isCreator = true;
+                            break;
+
+                        }
+                    }
+                    if (droppedPerson != null && !isCreator) {
+                        PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
+
+                        for (PersonListCell personcell : redigerProjektdeltagereListview.getItems()) {
+                            if (personcell.getName().equals(droppedPerson.getName())) {
+                                redigerProjektdeltagereListview.getItems().remove(personcell);
+                                redigerProjektdeltagereListview.refresh();
+                                break;
+                            }
+                        }
+                        redigerProjektPersonList.add(pcell);
+                        UserOrLocationListview.setItems(redigerProjektPersonList);
+                    } else if (droppedPerson != null && isCreator) {
+                        PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
+                        for (PersonListCell personCell : redigerProjektejereListview.getItems()) {
+                            if (personCell.getName().equals(droppedPerson.getName())) {
+                                redigerProjektejereListview.getItems().remove(personCell);
+                                redigerProjektejereListview.refresh();
+                                break;
+                            }
+                        }
+                        redigerProjektPersonList.add(pcell);
+                        UserOrLocationListview.setItems(redigerProjektPersonList);
+                    }
+                    dragEvent.setDropCompleted(true);
+                } else {
+                    dragEvent.setDropCompleted(false);
                 }
+                dragEvent.consume();
             } else {
-                LokationListCell droppedLokation = redigerProjektLokationList.stream()
-                        .filter(lokation -> lokation.getName().equals(name))
-                        .findFirst()
-                        .orElse(null);
-                if (droppedLokation != null) {
-                    LokationListCell lCell = new LokationListCell(droppedLokation.getLokation());
-                    redigerLokationerListview.getItems().add(lCell);
-                    redigerLokationerListview.refresh();
-                    redigerProjektLokationList.remove(droppedLokation);
-                    UserOrLocationListview.setItems(redigerProjektLokationList);
+                Dragboard db = dragEvent.getDragboard();
+                if (db.hasString()) {
+                    String lokationName = db.getString();
+                    LokationListCell droppedLokation = redigerLokationerListview.getItems().stream()
+                            .filter(lokation -> lokation.getName().equals(lokationName))
+                            .findFirst()
+                            .orElse(null);
+                    if (droppedLokation != null) {
+                        LokationListCell lCell = new LokationListCell(droppedLokation.getLokation());
+                        for (LokationListCell lokationcell : redigerLokationerListview.getItems()) {
+                            if (lokationcell.getName().equals(droppedLokation.getName())) {
+                                redigerLokationerListview.getItems().remove(lokationcell);
+                                redigerLokationerListview.refresh();
+                                break;
+                            }
+                        }
+                        redigerProjektLokationList.add(lCell);
+                        UserOrLocationListview.setItems(redigerProjektLokationList);
+                    }
+                    dragEvent.setDropCompleted(true);
+                } else {
+                    dragEvent.setDropCompleted(false);
+                }
+                dragEvent.consume();
+            }
+        } else if (CreateNewProjektTab.isSelected()) {
+            if (UserToggleButton.isSelected()) {
+                Dragboard db = dragEvent.getDragboard();
+                if (db.hasString()) {
+                    String personName = db.getString();
+                    System.out.println(personName + " 1");
+                    PersonListCell droppedPerson = createNewProjektPersonList.stream()
+                            .filter(person -> person.getName().equals(personName))
+                            .findFirst()
+                            .orElse(createNewProjektCreatorList.stream()
+                                    .filter(person -> person.getName().equals(personName))
+                                    .findFirst()
+                                    .orElse(null));
+                    System.out.println(droppedPerson.getName() + " 2");
+                    boolean isCreator = false;
+                    for (PersonListCell creator : createNewProjektCreatorList) {
+                        if (creator.getName().equals(personName)) {
+                            isCreator = true;
+                            break;
+
+                        }
+                    }
+                    if (droppedPerson != null && !isCreator) {
+                        PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
+
+                        for (PersonListCell personcell : createNewProjektPersonList) {
+                            if (personcell.getName().equals(droppedPerson.getName())) {
+                                createNewProjektPersonList.remove(personcell);
+                                CreateNewProjektPersonListView.setItems(createNewProjektPersonList);
+                                break;
+                            }
+                        }
+                        usersForNewProjekt.add(pcell);
+                        UserOrLocationListview.setItems(usersForNewProjekt);
+                    } else if (droppedPerson != null && isCreator) {
+                        PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
+                        for (PersonListCell personCell : createNewProjektCreatorList) {
+                            if (personCell.getName().equals(droppedPerson.getName())) {
+                                createNewProjektCreatorList.remove(personCell);
+                                CreateNewProjektCreatorListView.setItems(createNewProjektCreatorList);
+                                break;
+                            }
+                        }
+                        usersForNewProjekt.add(pcell);
+                        UserOrLocationListview.setItems(usersForNewProjekt);
+                    }
+                    dragEvent.setDropCompleted(true);
+                } else {
+                    dragEvent.setDropCompleted(false);
+                }
+                dragEvent.consume();
+            } else {
+                Dragboard db = dragEvent.getDragboard();
+                if (db.hasString()) {
+                    String lokationName = db.getString();
+                    LokationListCell droppedLokation = createNewProjektLokationList.stream()
+                            .filter(lokation -> lokation.getName().equals(lokationName))
+                            .findFirst()
+                            .orElse(null);
+                    if (droppedLokation != null) {
+                        LokationListCell lCell = new LokationListCell(droppedLokation.getLokation());
+                        for (LokationListCell lokationcell : createNewProjektLokationList) {
+                            if (lokationcell.getName().equals(droppedLokation.getName())) {
+                                createNewProjektLokationList.remove(lokationcell);
+                                CreateNewProjectLokationListView.setItems(createNewProjektLokationList);
+                                break;
+                            }
+                        }
+                        placesForNewProjekt.add(lCell);
+                        UserOrLocationListview.setItems(placesForNewProjekt);
+                    }
+                    dragEvent.setDropCompleted(true);
+                } else {
+                    dragEvent.setDropCompleted(false);
                 }
             }
-            dragEvent.setDropCompleted(true);
-        } else {
-            dragEvent.setDropCompleted(false);
         }
     }
 
-    public void userLokationListViewDragDone(DragEvent dragEvent) {
-        dragEvent.consume();
-    }
 
     public void updateList() {
         UserOrLocationListview.getItems().clear();
@@ -1198,6 +1310,13 @@ public class CultureConnectController {
                 getClass().getResource("/CultureConnectCSS.css").toExternalForm());
         dialogPane.getStyleClass().add("Alerts");
         alert.showAndWait();
+    }
+
+    public void userLokationListViewDragOver(DragEvent dragEvent) {
+        if (dragEvent.getDragboard().hasString()) {
+            dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+        }
+        dragEvent.consume();
     }
 }
 
