@@ -13,7 +13,9 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
@@ -32,20 +34,37 @@ public class PersonListCell extends ListCell {
     private Button editButton = new Button("Rediger");
     private Button deleteButton = new Button("Slet");
     private Logic logic;
+    private Color color;
 
 
     public PersonListCell(Person person){
         super(); // Call the constructor of the superclass
         this.person = person;
+        this.logic = Logic.getInstance();
         Circle frame = new Circle(30);
         Image image = person.getPicture();
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(45);
-        imageView.setFitWidth(45);
-        frame.setStroke(javafx.scene.paint.Color.BLACK); //placeholder hvis der ikke er en lokation
-        frame.setStrokeWidth(5);
+        imageView.setFitHeight(60);
+        imageView.setFitWidth(60);
+        Lokation lokation = person.getLokation();
+        if (lokation != null) {
+            String farveKode = lokation.getFarveKode();
+            if (farveKode != null) {
+                frame.setStroke(Color.web(farveKode));
+            } else {
+                frame.setStroke(Color.GREY); // default color if farveKode is null
+            }
+        } else {
+            frame.setStroke(Color.GREY); // default color if lokation is null
+        }        frame.setStrokeWidth(10);
+        frame.setFill(Color.TRANSPARENT);
+
+        imageView.setClip(new Circle(30, 30, 30));
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(frame, imageView);
         nameLabel.setText(person.getName());
-        hbox.getChildren().addAll(imageView, nameLabel);
+        hbox.getChildren().addAll(stackPane, nameLabel);
         hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         hbox.setSpacing(5);
         hboxButtons.getChildren().addAll(editButton, deleteButton);
@@ -131,6 +150,10 @@ public class PersonListCell extends ListCell {
             }
             event.consume();
         });
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public Person getPerson() {

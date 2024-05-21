@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 
 import java.util.List;
+import java.util.Objects;
 
 public class NewLocationDialogController {
 
@@ -120,10 +121,6 @@ public class NewLocationDialogController {
                     filter(person -> person.getName().equals(selectedAnsvarlig)).
                     findFirst().orElse(null);
 
-            if (ansvarlig == null) {
-                return;
-            }
-
             if (name == null || name.trim().isEmpty()) {
                 locationMustHaveName();
                 return;
@@ -192,12 +189,18 @@ public class NewLocationDialogController {
 
     public void editInfo(Lokation lokation){
         nuværendeLokation = lokation;
-        String tlfOgEmail = lokation.getDescription();
 
-        String[] parts = tlfOgEmail.split("\\s+");
+        if (!Objects.equals(lokation.getDescription(), "\n")){
+            String tlfOgEmail = lokation.getDescription();
 
-        String phoneNumber = parts[1];
-        String email = parts[0];
+            String[] parts = tlfOgEmail.split("\\s+");
+
+            String email = parts.length >= 1 ? parts[0] : "";
+            String phoneNumber = parts.length >= 2 ? parts[1] : "";
+
+            emailNyLokationFelt.setText(email);
+            telefonnummerNyLokationFelt.setText(phoneNumber);
+        }
 
         opretNyLokationKnap.setText("Gem");
         opretNyLokationLabel.setText("Rediger Lokation");
@@ -205,9 +208,6 @@ public class NewLocationDialogController {
         if (lokation.getAnsvarligPerson() != null){
             ansvarligPerson = lokation.getAnsvarligPerson();
         }
-
-        emailNyLokationFelt.setText(email);
-        telefonnummerNyLokationFelt.setText(phoneNumber);
         lokationColorchooser.setValue(Color.valueOf(lokation.getFarveKode()));
         navnNyLokationFelt.setText(lokation.getName());
         navnNyLokationFelt.setEditable(false);

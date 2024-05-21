@@ -5,6 +5,7 @@ import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.controllers.CultureConnectController;
 import com.example.cultureconnect.databaseaccess.DAO;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
