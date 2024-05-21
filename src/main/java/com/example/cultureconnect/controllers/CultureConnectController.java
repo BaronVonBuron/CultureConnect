@@ -596,6 +596,10 @@ public class CultureConnectController {
             alert.setTitle("Fejl i oprettelse af projekt");
             alert.setHeaderText("Projektet kunne ikke oprettes");
             alert.setContentText("Projektet skal have en projektejer, titel og en slutdato.");
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(
+                    getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+            dialogPane.getStyleClass().add("Alerts");
             alert.showAndWait();
         } else {
             Date startDate;
@@ -674,6 +678,10 @@ public class CultureConnectController {
             alert.setTitle("Fejl i oprettelse af aktivitet");
             alert.setHeaderText("Aktiviteten kunne ikke oprettes");
             alert.setContentText("Aktiviteten skal have en titel og en start- og slutdato.");
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(
+                    getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+            dialogPane.getStyleClass().add("Alerts");
             alert.showAndWait();
         } else {
             ProjektAktivitet aktivitet = new ProjektAktivitet(plannedActivityStartDatePicker.getValue(), plannedActivityEndDatePicker.getValue(), plannedActivityTitleTextField.getText());
@@ -806,6 +814,10 @@ public class CultureConnectController {
             alert.setTitle("Fejl i redigering af projekt");
             alert.setHeaderText("Projektet kunne ikke redigeres");
             alert.setContentText("Projektet skal have en titel og en slutdato.");
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(
+                    getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+            dialogPane.getStyleClass().add("Alerts");
             alert.showAndWait();
         } else {
             Projekt projekt = currentlySelectedProjekt;
