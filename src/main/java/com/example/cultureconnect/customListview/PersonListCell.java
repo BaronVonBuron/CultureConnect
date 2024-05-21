@@ -1,6 +1,7 @@
 package com.example.cultureconnect.customListview;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.controllers.NewUserDialogController;
 import javafx.fxml.FXMLLoader;
