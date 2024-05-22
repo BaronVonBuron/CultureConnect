@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -143,6 +144,7 @@ public class CultureConnectController {
         startSequence();
         loginSequence();
         colorValidation();
+        populateFilterChooser();
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt
@@ -1243,9 +1245,14 @@ public class CultureConnectController {
     }
 
     public void projektSøgefeltKeyPressed(KeyEvent keyEvent) {
+        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) ->
+                fieldFilterProjects(newValue));
     }
 
     public void projektSøgKnapPressed(ActionEvent actionEvent) {
+        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) -> {
+            fieldFilterProjects(newValue);
+        });
     }
 
     public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
@@ -1377,11 +1384,133 @@ public class CultureConnectController {
         alert.showAndWait();
     }
 
+
+    public void populateFilterChooser(){
+        ObservableList<String> filteringsMuligheder = FXCollections.observableArrayList();
+        filteringsMuligheder.add("Alle");
+        filteringsMuligheder.add("Mine projekter");
+        filteringsMuligheder.add("Deltager i");
+        filteringsMuligheder.add("Min virksomhed");
+
+        filterChooser.setItems(filteringsMuligheder);
+        filterChooser.setValue("Alle");
+        projectFilterChoices();
+    }
+
+    public void projectFilterChoices(){
+        filterChooser.valueProperty().addListener((observable, oldValue, newValue) -> {
+            String filterValue = (String) newValue;
+            String currentUserName = logic.getCurrentUser().getName();
+            Lokation currentUserLokation = logic.getCurrentUser().getLokation();
+
+            for (Node node : CalendarGridPane.getChildren()) {
+                if (node instanceof StackPane) {
+                    StackPane stackPane = (StackPane) node;
+                    if (!stackPane.getChildren().isEmpty() && stackPane.getChildren().get(0) instanceof
+                            ProjektCell) {
+                        ProjektCell cell = (ProjektCell) stackPane.getChildren().get(0);
+                        Projekt projekt = cell.getProjekt();
+                        boolean matchFilter = false;
+
+                        switch (filterValue) {
+                            case "Alle":
+                                matchFilter = true;
+                                break;
+                            case "Mine projekter":
+                                for (Person person : projekt.getProjectCreator()) {
+                                    if (person.getName().equals(currentUserName)) {
+                                        matchFilter = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case "Deltager i":
+                                for (Person person : projekt.getParticipants()) {
+                                    if (person.getName().equals(currentUserName)) {
+                                        matchFilter = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case "Min virksomhed":
+                                Lokation projektLokation = projekt.getLokation();
+                                if (projektLokation != null && currentUserLokation != null &&
+                                        projektLokation.getName().equals(currentUserLokation.getName())) {
+                                    matchFilter = true;
+                                }
+                                break;
+                        }
+
+                        if (matchFilter) {
+                            node.setOpacity(1);
+                        } else {
+                            node.setOpacity(0.1);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public void fieldFilterProjects(String query) {
+        String lowerCaseQuery = query.toLowerCase();
+
+        for (Node node : CalendarGridPane.getChildren()) {
+            if (node instanceof StackPane) {
+                StackPane stackPane = (StackPane) node;
+                if (!stackPane.getChildren().isEmpty() && stackPane.getChildren().get(0) instanceof
+                        ProjektCell) {
+                    ProjektCell cell = (ProjektCell) stackPane.getChildren().get(0);
+                    Projekt projekt = cell.getProjekt();
+                    boolean matchFilter = false;
+
+                    //title match
+                    if (projekt.getTitel().toLowerCase().contains(lowerCaseQuery)) {
+                        matchFilter = true;
+                    }
+
+                    // creator match
+                    if (!matchFilter) {
+                        for (Person person : projekt.getProjectCreator()) {
+                            if (person.getName().toLowerCase().contains(lowerCaseQuery)) {
+                                matchFilter = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // deltager match
+                    if (!matchFilter) {
+                        for (Person person : projekt.getParticipants()) {
+                            if (person.getName().toLowerCase().contains(lowerCaseQuery)) {
+                                matchFilter = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // lokation match
+                    if (!matchFilter && projekt.getLokation() != null) {
+                        if (projekt.getLokation().getName().toLowerCase().contains(lowerCaseQuery)) {
+                            matchFilter = true;
+                        }
+                    }
+
+                    if (matchFilter) {
+                        node.setOpacity(1);
+                    } else {
+                        node.setOpacity(0.1);
+                    }
+                }
+            }
+        }
+
     public void userLokationListViewDragOver(DragEvent dragEvent) {
         if (dragEvent.getDragboard().hasString()) {
             dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
         }
         dragEvent.consume();
+
     }
 }
 
