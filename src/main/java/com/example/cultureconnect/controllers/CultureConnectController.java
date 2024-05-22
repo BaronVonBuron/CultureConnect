@@ -243,8 +243,8 @@ public class CultureConnectController {
 
 
     public void fillCalendarWithProjects() {
-        //clear the gridpane of projects
-        CalendarGridPane.getChildren().removeIf(node -> node instanceof ProjektCell);
+        //clear the gridpane of projektCells
+        CalendarGridPane.getChildren().removeIf(node -> node instanceof StackPane);
         this.projects = logic.getProjects();
 
         if (projects.isEmpty()) {
