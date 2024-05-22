@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,6 +24,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -37,7 +39,7 @@ public class CultureConnectController {
     private final int calendarColumns = 52;
     private final int calendarRows = 35;//skal sættes af antallet af projekter.
     private final int columnWidth = 60;
-    private final int rowHeight = 35;
+    private final int rowHeight = 45;
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
@@ -270,7 +272,7 @@ public class CultureConnectController {
                 int endWeek = getWeekNumber(projekt.getEndDate()) + 1;
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
                 ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
-                pcell.setHeight(rowHeight);
+                pcell.setHeight(rowHeight-10);
                 pcell.setWidth(columnWidth * length); // Adjust the width of the cell
                 //make the cell red
                 pcell.setFill(Paint.valueOf(projekt.getColor()));
@@ -310,7 +312,11 @@ public class CultureConnectController {
             for (int col = 1; col <= calendarColumns; col++) {
                 Label label = new Label();
                 if (row == 0) {
-                    label.setText(" Uge " + col);
+                    label.setText("  Uge " + col+ "  ");
+                    label.setStyle("-fx-underline: true");
+                    label.setStyle("-fx-border-color: grey; -fx-border-width: 1;");
+                    label.setMinWidth(columnWidth);
+                    label.setMinHeight(rowHeight);
                     label.setAlignment(javafx.geometry.Pos.CENTER);
                     CalendarGridPane.setAlignment(javafx.geometry.Pos.CENTER);
                     CalendarGridPane.add(label, col, row);
@@ -319,14 +325,60 @@ public class CultureConnectController {
                 cell.setWidth(columnWidth); // Set the width of the cell
                 cell.setHeight(rowHeight); // Set the height of the cell
                 if (col == getCurrentWeekNumber()){
-                    label.setStyle("-fx-text-fill: #0000FF; -fx-font-weight: bold; -fx-underline: true");
+                    int currentWeek = getCurrentWeekNumber();
+
+                    Rectangle highlight = new Rectangle();
+                    highlight.setWidth(columnWidth);
+                    highlight.setHeight(rowHeight * (calendarRows - 1)); // Adjust the height to leave space for the label
+                    highlight.setFill(Color.LIGHTGREY); // Set the color you want for the current week
+                    highlight.setOpacity(0.2);
+
+                    Label label2 = new Label(" Uge " + currentWeek);
+                    label2.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-underline: true");
+                    label2.setStyle("-fx-border-color: grey; -fx-border-width: 1;");
+                    label2.setMinWidth(columnWidth);
+                    label2.setMinHeight(rowHeight);
+
+                    // Create a VBox and add the label and highlight to it
+                    VBox vbox = new VBox();
+                    vbox.setStyle("-fx-background-color: lightgrey");
+                    vbox.setPrefHeight(rowHeight);
+                    vbox.setAlignment(Pos.CENTER);
+                    vbox.getChildren().addAll(label2, highlight);
+
+                    // Create a StackPane and add the VBox to it
+                    StackPane stackPane = new StackPane();
+                    stackPane.getChildren().add(vbox);
+
+                    // Add the StackPane to the GridPane at the current week column and span it across all rows
+                    CalendarGridPane.add(stackPane, currentWeek, 0, 1, calendarRows);
+
+                    // Bring the label to the front
+                    label.toFront();
+
                 }
                 CalendarGridPane.add(cell, col, row); // Add the cell to the GridPane at the specified column and row
             }
         }
-        CalendarGridPane.setGridLinesVisible(true);
+        CalendarGridPane.setGridLinesVisible(false);
+        customizeGridLines();
     }
 
+    public void customizeGridLines() {
+        for (int row = 0; row < calendarRows; row++) {
+            for (int col = 0; col <= calendarColumns; col++) {
+                // Add vertical lines for all rows
+                Rectangle verticalLine = createLine(2, rowHeight, Color.GREY);
+                CalendarGridPane.add(verticalLine, col, row);
+            }
+        }
+    }
+
+    private Rectangle createLine(double width, double height, Color color) {
+        Rectangle line = new Rectangle(width, height);
+        line.setFill(color);
+        return line;
+    }
 
     private int getWeekNumber(Date date) {
         Calendar calendar = Calendar.getInstance();
