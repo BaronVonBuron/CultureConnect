@@ -155,11 +155,23 @@ public class DAO {
 
     }
 
-    //PreparedStatement for deleting a person in the person table based on the CPR
+    //PreparedStatement for deleting a person in the person table based on the CPR - should delete in the MedarbejderInfo, LoginInfo, ProjektDeltager, BrugerRettigheder first
     public void deletePerson(Person person){
-        String sql = "DELETE FROM Person WHERE CPR = ?";
+        String sql1 = "DELETE FROM MedarbejderInfo WHERE Person_CPR = ?";
+        String sql2 = "DELETE FROM LoginInfo WHERE Person_CPR = ?";
+        String sql3 = "DELETE FROM ProjektDeltager WHERE Person_CPR = ?";
+        String sql4 = "DELETE FROM BrugerRettigheder WHERE Person_CPR = ?";
         try {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement(sql1);
+            preparedStatement.setString(1, person.getCPR());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql2);
+            preparedStatement.setString(1, person.getCPR());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql3);
+            preparedStatement.setString(1, person.getCPR());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql4);
             preparedStatement.setString(1, person.getCPR());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -221,18 +233,25 @@ public class DAO {
     }
 
 
-    //PreparedStatement for deleting a location in the Lokation table based on the name
+    //PreparedStatement for deleting a location in the Lokation table based on the name - should delete from ProjektLokation, MedarbejderInfo, Lokation, Projekt tables first
     public void deleteLokation(Lokation lokation){
-        String sql = "DELETE FROM Lokation WHERE Navn = ?";
+        String sql1 = "DELETE FROM ProjektLokation WHERE Lokation_Navn = ?";
+        String sql2 = "DELETE FROM MedarbejderInfo WHERE Lokation_Navn = ?";
+        String sql3 = "DELETE FROM Lokation WHERE Navn = ?";
         try {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement(sql1);
+            preparedStatement.setString(1, lokation.getName());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql2);
+            preparedStatement.setString(1, lokation.getName());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql3);
             preparedStatement.setString(1, lokation.getName());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Can't delete location: " + e.getErrorCode() + e.getMessage());
         }
     }
-
 
     //TODO CRUD for Projekt
     //PreparedStatement for creating a project in the Projekt table, ProjektID is autoincremented, columns: Navn - String, StartDato - Date, SlutDato - Date
