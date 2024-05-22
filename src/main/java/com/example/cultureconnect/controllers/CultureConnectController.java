@@ -275,10 +275,12 @@ public class CultureConnectController {
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
                 ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
                 pcell.setHeight(rowHeight-10);
-                pcell.setWidth(columnWidth * length); // Adjust the width of the cell
-                //make the cell red
-                pcell.setFill(Paint.valueOf(projekt.getColor()));
-
+                pcell.setWidth(columnWidth * length);
+                if (projekt.getEndDate().before(new Date())) {
+                    pcell.setFill(Paint.valueOf("#b6b2b2"));
+                } else {
+                    pcell.setFill(Paint.valueOf(projekt.getColor()));
+                }
                 //set title on the project cells
                 Label title = new Label(projekt.getTitel());
                 title.setStyle("-fx-text-fill: white; -fx-font-weight: bold");
