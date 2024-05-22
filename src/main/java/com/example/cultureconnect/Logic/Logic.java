@@ -90,6 +90,7 @@ public class Logic {
   
     public void createLocation(Lokation lokation){
         dao.createLokation(lokation);
+        this.locations.add(lokation);
         updateListsInController();
     }
 
@@ -112,10 +113,24 @@ public class Logic {
 
     public void deletePerson(Person person){
         dao.deletePerson(person);
+        for (Person person1 : this.persons) {
+            if (person1.getCPR().equals(person.getCPR())) {
+                this.persons.remove(person1);
+                break;
+            }
+        }
+        updateListsInController();
     }
 
     public void deleteLokation(Lokation lokation){
         dao.deleteLokation(lokation);
+        for (Lokation location : this.locations) {
+            if (location.getName().equals(lokation.getName())) {
+                this.locations.remove(location);
+                break;
+            }
+        }
+        updateListsInController();
     }
     public void createUser(Person person){
         this.persons.add(person);
