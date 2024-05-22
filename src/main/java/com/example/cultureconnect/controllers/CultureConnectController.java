@@ -1056,13 +1056,9 @@ public class CultureConnectController {
     }
 
     public void projektSøgefeltKeyPressed(KeyEvent keyEvent) {
-        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) ->
-                fieldFilterProjects(newValue));
     }
 
     public void projektSøgKnapPressed(ActionEvent actionEvent) {
-        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) ->
-                fieldFilterProjects(newValue));
     }
 
     public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
