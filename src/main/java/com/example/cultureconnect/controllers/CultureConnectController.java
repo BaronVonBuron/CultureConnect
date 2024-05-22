@@ -39,7 +39,7 @@ public class CultureConnectController {
     private final int calendarColumns = 52;
     private final int calendarRows = 35;//skal sættes af antallet af projekter.
     private final int columnWidth = 60;
-    private final int rowHeight = 35;
+    private final int rowHeight = 45;
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
@@ -272,7 +272,7 @@ public class CultureConnectController {
                 int endWeek = getWeekNumber(projekt.getEndDate()) + 1;
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
                 ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
-                pcell.setHeight(rowHeight);
+                pcell.setHeight(rowHeight-10);
                 pcell.setWidth(columnWidth * length); // Adjust the width of the cell
                 //make the cell red
                 pcell.setFill(Paint.valueOf(projekt.getColor()));
