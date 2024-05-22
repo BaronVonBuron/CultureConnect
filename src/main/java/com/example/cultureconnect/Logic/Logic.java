@@ -204,7 +204,12 @@ public class Logic {
     }
 
     public void deleteProjekt(Projekt currentlySelectedProjekt) {
-        this.projects.remove(currentlySelectedProjekt);
+        for (Projekt project : this.projects) {
+            if (project.getId().equals(currentlySelectedProjekt.getId())) {
+                this.projects.remove(project);
+                break;
+            }
+        }
         dao.deleteProjekt(currentlySelectedProjekt);
     }
 }
