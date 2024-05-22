@@ -17,7 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
@@ -403,6 +402,14 @@ public class CultureConnectController {
             createNewProjektLokationList = FXCollections.observableArrayList();
             usersForNewProjekt = FXCollections.observableArrayList();
             placesForNewProjekt = FXCollections.observableArrayList();
+            CreateNewProjektEndDatePicker.setValue(null);
+            CreateNewProjectTitleTextField.clear();
+            CreateNewProjektDescriptionTextArea.clear();
+            CreateNewProjectNotesTextArea.clear();
+            createProjektAktiviteterListview.getItems().clear();
+            plannedActivityStartDatePicker.setValue(null);
+            plannedActivityEndDatePicker.setValue(null);
+            plannedActivityTitleTextField.clear();
             usersForNewProjekt.addAll(users);
             placesForNewProjekt.addAll(places);
             for (PersonListCell user : usersForNewProjekt) {
