@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -134,10 +135,9 @@ public class CultureConnectController {
     private TextArea redigerBeskrivelseFelt;
     @FXML
     private TextArea redigerNoterFelt;
-    @FXML
-    private TextArea redigerPlanlagteMøderFelt;
     private Projekt currentlySelectedProjekt;
     private Logic logic;
+    private int year = 2024;
 
     public void initialize() {
         this.logic = Logic.getInstance();
@@ -146,6 +146,7 @@ public class CultureConnectController {
         loginSequence();
         colorValidation();
         populateFilterChooser();
+        setYearLabel();
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt
@@ -176,7 +177,10 @@ public class CultureConnectController {
                 }
             }
         });
-        //TODO highlight the current week
+        editProjectTab.setOnCloseRequest(event -> {
+            cancelEditProjekt();
+            event.consume();
+        });
     }
 
     public void autoExpandingTextareas(TextArea... textAreas) {
@@ -257,6 +261,9 @@ public class CultureConnectController {
             AtomicInteger reuseableRow = new AtomicInteger();
             HashMap<Integer, Projekt> projektGrid = new HashMap<>();
             for (Projekt projekt : projects) {
+                if (projekt.getEndDate().getYear() < (year-1900) || projekt.getStartDate().getYear() > (year-1900)){
+                    continue;
+                }
                 if (noOfProjects > 15) {
                     //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
                     projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
@@ -272,13 +279,21 @@ public class CultureConnectController {
                 }
                 int startWeek = getWeekNumber(projekt.getStartDate()) + 1;
                 int endWeek = getWeekNumber(projekt.getEndDate()) + 1;
+                if (projekt.getStartDate().getYear() < (year-1900)) {
+                    startWeek = 1;
+                } else if (projekt.getEndDate().getYear() > (year-1900)) {
+                    endWeek = 52;
+                }
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
+
                 ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
                 pcell.setHeight(rowHeight-10);
-                pcell.setWidth(columnWidth * length); // Adjust the width of the cell
-                //make the cell red
-                pcell.setFill(Paint.valueOf(projekt.getColor()));
-
+                pcell.setWidth(columnWidth * length);
+                if (projekt.getEndDate().before(new Date())) {
+                    pcell.setFill(Paint.valueOf("#b6b2b2"));
+                } else {
+                    pcell.setFill(Paint.valueOf(projekt.getColor()));
+                }
                 //set title on the project cells
                 Label title = new Label(projekt.getTitel());
                 title.setStyle("-fx-text-fill: white; -fx-font-weight: bold");
@@ -901,11 +916,11 @@ public class CultureConnectController {
     }
 
     public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
-        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null) {
+        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null || redigerProjektejereListview.getItems().isEmpty() || redigerLokationerListview.getItems().isEmpty()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i redigering af projekt");
             alert.setHeaderText("Projektet kunne ikke redigeres");
-            alert.setContentText("Projektet skal have en titel og en slutdato.");
+            alert.setContentText("Projektet skal have en titel, arrangementsdato, projektejer og en lokation.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(
                     getClass().getResource("/CultureConnectCSS.css").toExternalForm());
@@ -944,6 +959,28 @@ public class CultureConnectController {
             CalendarTabPane.getTabs().remove(editProjectTab);
         }
         //TODO save the changes to the projekt
+    }
+
+    public void cancelEditProjekt(){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Annuller redigering af projekt");
+        alert.setHeaderText("Er du sikker på at du vil annullere redigeringen af projektet?");
+        alert.setContentText("Alle opdaterede oplysninger vil ikke blive gemt.");
+        alert.getButtonTypes().clear();
+        ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.getButtonTypes().addAll(buttonType, buttonType1);
+        alert.showAndWait();
+        if (alert.getResult() == buttonType) {
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(editProjectTab);
+        } else {
+            alert.close();
+        }
     }
 
     public void createProjektLokationDragDropped(DragEvent dragEvent) {
@@ -1261,9 +1298,19 @@ public class CultureConnectController {
     }
 
     public void KalenderVenstreKnapPressed(ActionEvent actionEvent) {
+        this.year = this.year - 1;
+        setYearLabel();
+        fillCalendarWithProjects();
     }
 
     public void KalenderHøjreKnapPressed(ActionEvent actionEvent) {
+        this.year = this.year + 1;
+        setYearLabel();
+        fillCalendarWithProjects();
+    }
+
+    public void setYearLabel(){
+        KalenderLabel.setText(String.valueOf(year));
     }
 
 
