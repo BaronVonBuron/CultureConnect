@@ -649,6 +649,9 @@ public class CultureConnectController {
 
 
         if (alert.getResult() == buttonType) {
+            CreateNewProjectLokationListView.getItems().clear();
+            CreateNewProjektCreatorListView.getItems().clear();
+            CreateNewProjektPersonListView.getItems().clear();
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         }
@@ -657,11 +660,11 @@ public class CultureConnectController {
     public void createProjektButtonPressed(ActionEvent actionEvent) {
         if (CreateNewProjectTitleTextField.getText().isEmpty() ||
                 CreateNewProjektEndDatePicker.getValue() == null ||
-                CreateNewProjektCreatorListView.getItems().isEmpty()) {
+                CreateNewProjektCreatorListView.getItems().isEmpty() || CreateNewProjectLokationListView.getItems().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i oprettelse af projekt");
             alert.setHeaderText("Projektet kunne ikke oprettes");
-            alert.setContentText("Projektet skal have en projektejer, titel og en slutdato.");
+            alert.setContentText("Projektet skal have en projektejer, lokation, titel og en slutdato.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(
                     getClass().getResource("/CultureConnectCSS.css").toExternalForm());
@@ -732,6 +735,9 @@ public class CultureConnectController {
             }
             logic.createProject(nytProjekt);
             fillCalendarWithProjects();
+            CreateNewProjectLokationListView.getItems().clear();
+            CreateNewProjektCreatorListView.getItems().clear();
+            CreateNewProjektPersonListView.getItems().clear();
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         }
