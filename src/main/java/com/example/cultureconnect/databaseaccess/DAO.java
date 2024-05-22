@@ -647,5 +647,63 @@ public class DAO {
         return null;
     }
 
+    //Prepared statement to select from person culumn Admin where email is
+    public String readAdminForPerson(String email){
+        String sql = "SELECT Admin FROM Person WHERE Email = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("Admin");
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read admin for person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to find person where email is
+    public Person readPerson(String email){
+        String sql = "SELECT * FROM Person WHERE Email = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String CPR = resultSet.getString("CPR");
+                String name = resultSet.getString("Navn");
+                int tlf = resultSet.getInt("Telefon");
+                byte[] picture = resultSet.getBytes("Billede");
+                Image image = new Image("file:src/main/resources/images/avatar.png");
+                if (picture != null) {
+                    //convert bytearray to image again
+                    image = new Image(new ByteArrayInputStream(picture));
+                }
+                return new Person(name, email, tlf, image, CPR);
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read person: " + e.getErrorCode() + e.getMessage());
+        }
+        return null;
+    }
+
+    //Prepared statement to select from ProjektDeltager column Person_CPR where Projekt_ID is
+    public List<String> readParticipantsForProject(String projektID){
+        List<String> participants = new ArrayList<>();
+        String sql = "SELECT Person_CPR FROM ProjektDeltager WHERE Projekt_ID = ?";
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, projektID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                participants.add(resultSet.getString("Person_CPR"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Can't read participants for project: " + e.getErrorCode() + e.getMessage());
+        }
+        return participants;
+    }
+
 }
 

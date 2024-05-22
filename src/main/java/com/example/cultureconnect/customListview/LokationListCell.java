@@ -19,6 +19,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class LokationListCell extends ListCell {
 
@@ -32,6 +33,7 @@ public class LokationListCell extends ListCell {
     private Button editButton = new Button("Rediger");
     private Button deleteButton = new Button("Slet");
     private Logic logic;
+    private Boolean admin;
 
     public LokationListCell(Lokation lokation){
         super(); // Call the constructor of the superclass
@@ -55,13 +57,25 @@ public class LokationListCell extends ListCell {
         setPrefSize(195, 50);
         setStyle("-fx-background-color: transparent");
         setOnMouseClicked(event -> {
+            findAdmin();
             if (isExpanded) {
-                vbox.getChildren().removeAll(descriptionLabel,hboxButtons);
-                setPrefSize(195, 50);
+                if (admin) {
+                    vbox.getChildren().removeAll(descriptionLabel,hboxButtons);
+                    setPrefSize(195, 50);
+                } else {
+                    vbox.getChildren().removeAll(descriptionLabel);
+                    setPrefSize(195, 50);
+                }
             } else {
-                descriptionLabel.setText(getDescription());
-                vbox.getChildren().addAll(descriptionLabel,hboxButtons);
-                setPrefSize(195, 100);
+                if (admin) {
+                    descriptionLabel.setText(getDescription());
+                    vbox.getChildren().addAll(descriptionLabel,hboxButtons);
+                    setPrefSize(195, 100);
+                } else {
+                    descriptionLabel.setText(getDescription());
+                    vbox.getChildren().addAll(descriptionLabel);
+                    setPrefSize(195, 100);
+                }
             }
             isExpanded = !isExpanded;
         });
@@ -127,6 +141,18 @@ public class LokationListCell extends ListCell {
 
             event.consume();
         });
+    }
+
+    public void findAdmin() {
+        this.logic = Logic.getInstance();
+        String userOrAdminNumber = logic.isAdmin(CultureConnectController.currentUser.getEmail());
+        System.out.println("User or Admin Number: " + userOrAdminNumber);
+        if (Objects.equals(userOrAdminNumber, "1")) {
+            admin = true;
+        } else {
+            admin = false;
+        }
+        System.out.println("Admin: " + admin);
     }
 
     public Lokation getLokation() {

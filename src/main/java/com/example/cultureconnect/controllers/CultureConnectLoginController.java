@@ -1,10 +1,13 @@
 package com.example.cultureconnect.controllers;
 
 import com.example.cultureconnect.Logic.Logic;
+import com.example.cultureconnect.Person.Person;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.util.Objects;
 
 public class CultureConnectLoginController {
 
@@ -17,6 +20,8 @@ public class CultureConnectLoginController {
     @FXML
     private Button loginKnap;
     private Logic logic;
+    private String brugernavnet;
+
 
 
     public void initialize() {
@@ -43,11 +48,13 @@ public class CultureConnectLoginController {
     }
 
     public void login(){
+
         if (brugernavnFelt.getText().isEmpty() || kodeordFelt.getText().isEmpty()){
             System.out.println("Brugernavn eller kodeord er tomt");
         } else {
             String brugernavn = brugernavnFelt.getText();
             String kodeord = kodeordFelt.getText();
+            brugernavnet = brugernavn;
             if (logic.login(brugernavn, kodeord)) {
                 System.out.println("Login success");
                 System.out.println("Current user: " + logic.getCurrentUser().getEmail());
@@ -60,6 +67,21 @@ public class CultureConnectLoginController {
             }
         }
 
+    }
+
+    public int getUserOrAdminNumber() {
+        this.logic = Logic.getInstance();
+        if(Objects.equals(logic.isAdmin(brugernavnet), "1")){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public Person getCurrentUser() {
+        this.logic = Logic.getInstance();
+        String email = logic.getCurrentUser().getEmail();
+        return logic.findPerson(email);
     }
 
     public void setLogic(Logic logic) {

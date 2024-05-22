@@ -136,13 +136,21 @@ public class CultureConnectController {
     private TextArea redigerPlanlagteMøderFelt;
     private Projekt currentlySelectedProjekt;
     private Logic logic;
+    private CultureConnectLoginController cclc = new CultureConnectLoginController();
+    public static Person currentUser;
 
     public void initialize() {
         this.logic = Logic.getInstance();
         this.logic.setMainWindowController(this);
         startSequence();
         loginSequence();
+
+        PersonListCell pcell = new PersonListCell(currentUser);
+        //pcell.updateAdminStatus();
+        System.out.println(currentUser.getName());
+
         colorValidation();
+
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt
@@ -174,6 +182,16 @@ public class CultureConnectController {
             }
         });
         //TODO highlight the current week
+    }
+
+    public void adminOrUser( int userOrAdmin){
+        if (userOrAdmin == 1) {
+            AdminMenuNewUserOrLocationButton.setVisible(true);
+            AdminMenuNewUserOrLocationButton.setDisable(false);
+        } else {
+            AdminMenuNewUserOrLocationButton.setVisible(false);
+            AdminMenuNewUserOrLocationButton.setDisable(true);
+        }
     }
 
     public void autoExpandingTextareas(TextArea... textAreas) {
@@ -236,6 +254,9 @@ public class CultureConnectController {
                 System.exit(0);
             });
             loginStage.showAndWait();
+            adminOrUser(loginController.getUserOrAdminNumber());
+            currentUser = cclc.getCurrentUser();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -801,6 +822,18 @@ public class CultureConnectController {
             CalendarTabPane.getTabs().remove(ProjektTab);
         }
         setProjektForEditing(currentlySelectedProjekt);
+
+        String projektID = currentlySelectedProjekt.getId();
+        String cprLogin = currentUser.getCPR();
+        List<String> projektEjerCpr = logic.findProjectOwner(projektID);
+
+        if (projektEjerCpr.contains(cprLogin)) {
+            sletProjektKnap.setDisable(false);
+            sletProjektKnap.setVisible(true);
+        } else {
+            sletProjektKnap.setDisable(true);
+            sletProjektKnap.setVisible(false);
+        }
     }
 
     public void setProjektForEditing(Projekt projekt) {

@@ -3,6 +3,8 @@ package com.example.cultureconnect.customListview;
 import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
+import com.example.cultureconnect.controllers.CultureConnectController;
+import com.example.cultureconnect.controllers.CultureConnectLoginController;
 import com.example.cultureconnect.controllers.NewUserDialogController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,6 +23,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class PersonListCell extends ListCell {
 
@@ -36,12 +39,16 @@ public class PersonListCell extends ListCell {
     private Button deleteButton = new Button("Slet");
     private Logic logic;
     private Color color;
+    private Boolean admin;
+
+
 
 
     public PersonListCell(Person person){
         super(); // Call the constructor of the superclass
         this.person = person;
         this.logic = Logic.getInstance();
+
         Circle frame = new Circle(30);
         Image image = person.getPicture();
         ImageView imageView = new ImageView(image);
@@ -81,14 +88,28 @@ public class PersonListCell extends ListCell {
         setPrefSize(195, 50);
         setStyle("-fx-background-color: transparent");
         setOnMouseClicked(event -> {
+            findAdmin();
             if (isExpanded) {
-                vbox.getChildren().removeAll(emailLabel, phoneLabel, hboxButtons);
-                setPrefSize(195, 50);
+                if (admin) {
+                    vbox.getChildren().removeAll(emailLabel, phoneLabel, hboxButtons);
+                    setPrefSize(195, 50);
+                } else {
+                    vbox.getChildren().removeAll(emailLabel, phoneLabel);
+                    setPrefSize(195, 50);
+                }
             } else {
-                emailLabel.setText("Email: " + getEmail());
-                phoneLabel.setText("Telefon: " + new String(getTlfNr()));
-                vbox.getChildren().addAll(emailLabel, phoneLabel, hboxButtons);
-                setPrefSize(195, 100);
+                if (admin) {
+                    emailLabel.setText("Email: " + getEmail());
+                    phoneLabel.setText("Telefon: " + new String(getTlfNr()));
+                    vbox.getChildren().addAll(emailLabel, phoneLabel, hboxButtons);
+                    setPrefSize(195, 100);
+                } else {
+                    emailLabel.setText("Email: " + getEmail());
+                    phoneLabel.setText("Telefon: " + new String(getTlfNr()));
+                    vbox.getChildren().addAll(emailLabel, phoneLabel);
+                    setPrefSize(195, 100);
+
+                }
             }
             isExpanded = !isExpanded;
         });
@@ -151,6 +172,17 @@ public class PersonListCell extends ListCell {
             }
             event.consume();
         });
+    }
+
+    public void findAdmin() {
+        String userOrAdminNumber = logic.isAdmin(CultureConnectController.currentUser.getEmail());
+        System.out.println("User or Admin Number: " + userOrAdminNumber);
+        if (Objects.equals(userOrAdminNumber, "1")) {
+            admin = true;
+        } else {
+            admin = false;
+        }
+        System.out.println("Admin: " + admin);
     }
 
     public void setColor(Color color) {
