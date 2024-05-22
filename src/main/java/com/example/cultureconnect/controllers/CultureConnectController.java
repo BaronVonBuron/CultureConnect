@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -142,6 +143,7 @@ public class CultureConnectController {
         startSequence();
         loginSequence();
         colorValidation();
+        populateFilterChooser();
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt
@@ -1054,9 +1056,13 @@ public class CultureConnectController {
     }
 
     public void projektSøgefeltKeyPressed(KeyEvent keyEvent) {
+        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) ->
+                fieldFilterProjects(newValue));
     }
 
     public void projektSøgKnapPressed(ActionEvent actionEvent) {
+        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) ->
+                fieldFilterProjects(newValue));
     }
 
     public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
@@ -1187,5 +1193,18 @@ public class CultureConnectController {
         dialogPane.getStyleClass().add("Alerts");
         alert.showAndWait();
     }
+
+    public void populateFilterChooser(){
+        ObservableList<String> filteringsMuligheder = FXCollections.observableArrayList();
+        filteringsMuligheder.add("Alle");
+        filteringsMuligheder.add("Mine projekter");
+        filteringsMuligheder.add("Deltager i");
+        filteringsMuligheder.add("Min virksomhed");
+
+        filterChooser.setItems(filteringsMuligheder);
+        filterChooser.setValue("Alle");
+    }
+
+
 }
 

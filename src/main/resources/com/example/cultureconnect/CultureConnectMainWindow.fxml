@@ -102,7 +102,7 @@
                                              <children>
                                                 <HBox alignment="CENTER_LEFT" minWidth="500.0" prefHeight="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <ChoiceBox fx:id="filterChooser" maxWidth="200.0" prefHeight="35.0" prefWidth="150.0">
+                                                      <ChoiceBox fx:id="filterChooser" maxWidth="150.0" minWidth="150.0" prefHeight="35.0" prefWidth="150.0">
                                                          <HBox.margin>
                                                             <Insets right="20.0" />
                                                          </HBox.margin>
