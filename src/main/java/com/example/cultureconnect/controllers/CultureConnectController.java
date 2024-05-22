@@ -177,6 +177,10 @@ public class CultureConnectController {
                 }
             }
         });
+        editProjectTab.setOnCloseRequest(event -> {
+            cancelEditProjekt();
+            event.consume();
+        });
     }
 
     public void autoExpandingTextareas(TextArea... textAreas) {
@@ -912,11 +916,11 @@ public class CultureConnectController {
     }
 
     public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
-        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null) {
+        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null || redigerProjektejereListview.getItems().isEmpty() || redigerLokationerListview.getItems().isEmpty()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i redigering af projekt");
             alert.setHeaderText("Projektet kunne ikke redigeres");
-            alert.setContentText("Projektet skal have en titel og en slutdato.");
+            alert.setContentText("Projektet skal have en titel, arrangementsdato, projektejer og en lokation.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(
                     getClass().getResource("/CultureConnectCSS.css").toExternalForm());
@@ -955,6 +959,28 @@ public class CultureConnectController {
             CalendarTabPane.getTabs().remove(editProjectTab);
         }
         //TODO save the changes to the projekt
+    }
+
+    public void cancelEditProjekt(){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Annuller redigering af projekt");
+        alert.setHeaderText("Er du sikker på at du vil annullere redigeringen af projektet?");
+        alert.setContentText("Alle opdaterede oplysninger vil ikke blive gemt.");
+        alert.getButtonTypes().clear();
+        ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.getButtonTypes().addAll(buttonType, buttonType1);
+        alert.showAndWait();
+        if (alert.getResult() == buttonType) {
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(editProjectTab);
+        } else {
+            alert.close();
+        }
     }
 
     public void createProjektLokationDragDropped(DragEvent dragEvent) {
