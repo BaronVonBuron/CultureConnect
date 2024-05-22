@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -134,10 +135,9 @@ public class CultureConnectController {
     private TextArea redigerBeskrivelseFelt;
     @FXML
     private TextArea redigerNoterFelt;
-    @FXML
-    private TextArea redigerPlanlagteMøderFelt;
     private Projekt currentlySelectedProjekt;
     private Logic logic;
+    private int year = 2024;
 
     public void initialize() {
         this.logic = Logic.getInstance();
@@ -146,6 +146,7 @@ public class CultureConnectController {
         loginSequence();
         colorValidation();
         populateFilterChooser();
+        setYearLabel();
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
                 redigerBeskrivelseFelt, redigerNoterFelt
@@ -176,7 +177,6 @@ public class CultureConnectController {
                 }
             }
         });
-        //TODO highlight the current week
     }
 
     public void autoExpandingTextareas(TextArea... textAreas) {
@@ -257,6 +257,9 @@ public class CultureConnectController {
             AtomicInteger reuseableRow = new AtomicInteger();
             HashMap<Integer, Projekt> projektGrid = new HashMap<>();
             for (Projekt projekt : projects) {
+                if (projekt.getEndDate().getYear() < (year-1900) || projekt.getStartDate().getYear() > (year-1900)){
+                    continue;
+                }
                 if (noOfProjects > 15) {
                     //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
                     projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
@@ -272,7 +275,13 @@ public class CultureConnectController {
                 }
                 int startWeek = getWeekNumber(projekt.getStartDate()) + 1;
                 int endWeek = getWeekNumber(projekt.getEndDate()) + 1;
+                if (projekt.getStartDate().getYear() < (year-1900)) {
+                    startWeek = 1;
+                } else if (projekt.getEndDate().getYear() > (year-1900)) {
+                    endWeek = 52;
+                }
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
+
                 ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
                 pcell.setHeight(rowHeight-10);
                 pcell.setWidth(columnWidth * length);
@@ -1263,9 +1272,19 @@ public class CultureConnectController {
     }
 
     public void KalenderVenstreKnapPressed(ActionEvent actionEvent) {
+        this.year = this.year - 1;
+        setYearLabel();
+        fillCalendarWithProjects();
     }
 
     public void KalenderHøjreKnapPressed(ActionEvent actionEvent) {
+        this.year = this.year + 1;
+        setYearLabel();
+        fillCalendarWithProjects();
+    }
+
+    public void setYearLabel(){
+        KalenderLabel.setText(String.valueOf(year));
     }
 
 
