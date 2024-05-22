@@ -89,6 +89,19 @@ public class NewUserDialogController {
                 image = new Image(new File(picture).toURI().toString());
             }
             String CPR = cprNyBrugerFelt.getText();
+            for (Person person : this.logic.getPersons()) {
+                if (person.getCPR().equals(CPR)) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Fejl");
+                    alert.setHeaderText("Der findes allerede en bruger med dette CPR nummer");
+                    DialogPane dialogPane = alert.getDialogPane();
+                    dialogPane.getStylesheets().add(
+                            getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+                    dialogPane.getStyleClass().add("Alerts");
+                    alert.showAndWait();
+                    return;
+                }
+            }
             String position = stillingNyBrugerFelt.getText();
             String kode = kodeordNyBrugerFelt.getText();
             String location = arbejdspladsVælger.getValue();
