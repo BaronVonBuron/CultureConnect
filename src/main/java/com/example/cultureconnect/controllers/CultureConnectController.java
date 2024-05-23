@@ -1348,6 +1348,9 @@ public class CultureConnectController {
     }
 
     public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
+        this.year = LocalDate.now().getYear();
+        setYearLabel();
+        fillCalendarWithProjects();
         CalendarScrollPane.setHvalue(getCurrentWeekNumber() / 52.0);
     }
 
