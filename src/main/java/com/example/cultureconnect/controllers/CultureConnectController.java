@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 public class CultureConnectController {
     private final int calendarColumns = 52;
     private final int calendarRows = 35;//skal sættes af antallet af projekter.
-    private final int columnWidth = 60;
-    private final int rowHeight = 45;
+    private int columnWidth = 60;
+    private int rowHeight = 45;
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
@@ -136,6 +136,8 @@ public class CultureConnectController {
     private Projekt currentlySelectedProjekt;
     private Logic logic;
     private CultureConnectLoginController cclc = new CultureConnectLoginController();
+    private List<StackPane> projektCells = new ArrayList<>();
+    private List<StackPane> highlightedCells = new ArrayList<>();
     public static Person currentUser;
     private int year = 2024;
 
@@ -271,7 +273,19 @@ public class CultureConnectController {
 
     public void fillCalendarWithProjects() {
         //clear the gridpane of projektCells
-        CalendarGridPane.getChildren().removeIf(node -> node instanceof StackPane);
+        for (StackPane projektCell : this.projektCells) {
+            CalendarGridPane.getChildren().remove(projektCell);
+        }
+        if (year != new Date().getYear() + 1900){
+            for (StackPane highlightedCell : highlightedCells) {
+                highlightedCell.setVisible(false);
+            }
+        } else {
+            for (StackPane highlightedCell : highlightedCells) {
+                highlightedCell.setVisible(true);
+            }
+        }
+        this.projektCells.clear();
         this.projects = logic.getProjects();
 
         if (projects.isEmpty()) {
@@ -285,7 +299,6 @@ public class CultureConnectController {
                     continue;
                 }
                 if (noOfProjects > 15) {
-                    //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
                     projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
                         Date endDate = value.getEndDate();
                         Calendar calendar = Calendar.getInstance();
@@ -331,6 +344,7 @@ public class CultureConnectController {
                     GridPane.setColumnSpan(sp, length); // Make the cell span multiple weeks
                     projektGrid.put(noOfProjects, projekt);
                 }
+                this.projektCells.add(sp);
                 noOfProjects++;
             }
         }
@@ -389,7 +403,7 @@ public class CultureConnectController {
 
                     // Add the StackPane to the GridPane at the current week column and span it across all rows
                     CalendarGridPane.add(stackPane, currentWeek, 0, 1, calendarRows);
-
+                    highlightedCells.add(stackPane);
                     // Bring the label to the front
                     label.toFront();
 
@@ -424,11 +438,19 @@ public class CultureConnectController {
     }
 
     public void zoomInCalendarButtonPressed(ActionEvent event) {
-        //TODO make the calender zoom in when the button is pressed
+        this.columnWidth += 5;
+        CalendarGridPane.getChildren().clear();
+        populateGridPane();
+        fillCalendarWithProjects();
     }
 
     public void zoomOutCalendarButtonPressed(ActionEvent event) {
-        //TODO make the calender zoom out when the button is pressed
+        if (this.columnWidth >= 59) {
+            this.columnWidth -= 5;
+            CalendarGridPane.getChildren().clear();
+            populateGridPane();
+            fillCalendarWithProjects();
+        }
     }
 
     public void newProjectCalendarButtonPressed(ActionEvent event) {
