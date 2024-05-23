@@ -5,7 +5,6 @@ import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.Projekt.Projekt;
 import com.example.cultureconnect.controllers.CultureConnectController;
 import com.example.cultureconnect.databaseaccess.DAO;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +90,7 @@ public class Logic {
   
     public void createLocation(Lokation lokation){
         dao.createLokation(lokation);
+        this.locations.add(lokation);
         updateListsInController();
     }
 
@@ -113,10 +113,24 @@ public class Logic {
 
     public void deletePerson(Person person){
         dao.deletePerson(person);
+        for (Person person1 : this.persons) {
+            if (person1.getCPR().equals(person.getCPR())) {
+                this.persons.remove(person1);
+                break;
+            }
+        }
+        updateListsInController();
     }
 
     public void deleteLokation(Lokation lokation){
         dao.deleteLokation(lokation);
+        for (Lokation location : this.locations) {
+            if (location.getName().equals(lokation.getName())) {
+                this.locations.remove(location);
+                break;
+            }
+        }
+        updateListsInController();
     }
     public void createUser(Person person){
         this.persons.add(person);
@@ -205,7 +219,12 @@ public class Logic {
     }
 
     public void deleteProjekt(Projekt currentlySelectedProjekt) {
-        this.projects.remove(currentlySelectedProjekt);
+        for (Projekt project : this.projects) {
+            if (project.getId().equals(currentlySelectedProjekt.getId())) {
+                this.projects.remove(project);
+                break;
+            }
+        }
         dao.deleteProjekt(currentlySelectedProjekt);
     }
 

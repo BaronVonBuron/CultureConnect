@@ -13,10 +13,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
@@ -29,6 +31,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -132,12 +135,12 @@ public class CultureConnectController {
     private TextArea redigerBeskrivelseFelt;
     @FXML
     private TextArea redigerNoterFelt;
-    @FXML
-    private TextArea redigerPlanlagteMøderFelt;
     private Projekt currentlySelectedProjekt;
     private Logic logic;
     private CultureConnectLoginController cclc = new CultureConnectLoginController();
     public static Person currentUser;
+    private int year = 2024;
+
 
     public void initialize() {
         this.logic = Logic.getInstance();
@@ -150,6 +153,8 @@ public class CultureConnectController {
         System.out.println(currentUser.getName());
 
         colorValidation();
+        populateFilterChooser();
+        setYearLabel();
 
 
         autoExpandingTextareas(CreateNewProjektDescriptionTextArea, CreateNewProjectNotesTextArea,
@@ -181,7 +186,10 @@ public class CultureConnectController {
                 }
             }
         });
-        //TODO highlight the current week
+        editProjectTab.setOnCloseRequest(event -> {
+            cancelEditProjekt();
+            event.consume();
+        });
     }
 
     public void adminOrUser( int userOrAdmin){
@@ -264,8 +272,8 @@ public class CultureConnectController {
 
 
     public void fillCalendarWithProjects() {
-        //clear the gridpane of projects
-        CalendarGridPane.getChildren().removeIf(node -> node instanceof ProjektCell);
+        //clear the gridpane of projektCells
+        CalendarGridPane.getChildren().removeIf(node -> node instanceof StackPane);
         this.projects = logic.getProjects();
 
         if (projects.isEmpty()) {
@@ -275,6 +283,9 @@ public class CultureConnectController {
             AtomicInteger reuseableRow = new AtomicInteger();
             HashMap<Integer, Projekt> projektGrid = new HashMap<>();
             for (Projekt projekt : projects) {
+                if (projekt.getEndDate().getYear() < (year-1900) || projekt.getStartDate().getYear() > (year-1900)){
+                    continue;
+                }
                 if (noOfProjects > 15) {
                     //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
                     projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
@@ -290,13 +301,21 @@ public class CultureConnectController {
                 }
                 int startWeek = getWeekNumber(projekt.getStartDate()) + 1;
                 int endWeek = getWeekNumber(projekt.getEndDate()) + 1;
+                if (projekt.getStartDate().getYear() < (year-1900)) {
+                    startWeek = 1;
+                } else if (projekt.getEndDate().getYear() > (year-1900)) {
+                    endWeek = 52;
+                }
                 int length = endWeek - startWeek + 1; //eksempel 17 - 19 = 2, så plus en for at få det til at passe.
+
                 ProjektCell pcell = new ProjektCell(length, projekt.getColor(), projekt);
                 pcell.setHeight(rowHeight-10);
-                pcell.setWidth(columnWidth * length); // Adjust the width of the cell
-                //make the cell red
-                pcell.setFill(Paint.valueOf(projekt.getColor()));
-
+                pcell.setWidth(columnWidth * length);
+                if (projekt.getEndDate().before(new Date())) {
+                    pcell.setFill(Paint.valueOf("#b6b2b2"));
+                } else {
+                    pcell.setFill(Paint.valueOf(projekt.getColor()));
+                }
                 //set title on the project cells
                 Label title = new Label(projekt.getTitel());
                 title.setStyle("-fx-text-fill: white; -fx-font-weight: bold");
@@ -670,6 +689,9 @@ public class CultureConnectController {
 
 
         if (alert.getResult() == buttonType) {
+            CreateNewProjectLokationListView.getItems().clear();
+            CreateNewProjektCreatorListView.getItems().clear();
+            CreateNewProjektPersonListView.getItems().clear();
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         }
@@ -678,11 +700,11 @@ public class CultureConnectController {
     public void createProjektButtonPressed(ActionEvent actionEvent) {
         if (CreateNewProjectTitleTextField.getText().isEmpty() ||
                 CreateNewProjektEndDatePicker.getValue() == null ||
-                CreateNewProjektCreatorListView.getItems().isEmpty()) {
+                CreateNewProjektCreatorListView.getItems().isEmpty() || CreateNewProjectLokationListView.getItems().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i oprettelse af projekt");
             alert.setHeaderText("Projektet kunne ikke oprettes");
-            alert.setContentText("Projektet skal have en projektejer, titel og en slutdato.");
+            alert.setContentText("Projektet skal have en projektejer, lokation, titel og en slutdato.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(
                     getClass().getResource("/CultureConnectCSS.css").toExternalForm());
@@ -753,6 +775,9 @@ public class CultureConnectController {
             }
             logic.createProject(nytProjekt);
             fillCalendarWithProjects();
+            CreateNewProjectLokationListView.getItems().clear();
+            CreateNewProjektCreatorListView.getItems().clear();
+            CreateNewProjektPersonListView.getItems().clear();
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(CreateNewProjektTab);
         }
@@ -925,11 +950,11 @@ public class CultureConnectController {
     }
 
     public void gemÆndringerKnapPressed(ActionEvent actionEvent) {
-        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null) {
+        if (redigerTitelFelt.getText().isEmpty() || redigerArrangementDatoDatepicker.getValue() == null || redigerProjektejereListview.getItems().isEmpty() || redigerLokationerListview.getItems().isEmpty()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Fejl i redigering af projekt");
             alert.setHeaderText("Projektet kunne ikke redigeres");
-            alert.setContentText("Projektet skal have en titel og en slutdato.");
+            alert.setContentText("Projektet skal have en titel, arrangementsdato, projektejer og en lokation.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(
                     getClass().getResource("/CultureConnectCSS.css").toExternalForm());
@@ -968,6 +993,28 @@ public class CultureConnectController {
             CalendarTabPane.getTabs().remove(editProjectTab);
         }
         //TODO save the changes to the projekt
+    }
+
+    public void cancelEditProjekt(){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Annuller redigering af projekt");
+        alert.setHeaderText("Er du sikker på at du vil annullere redigeringen af projektet?");
+        alert.setContentText("Alle opdaterede oplysninger vil ikke blive gemt.");
+        alert.getButtonTypes().clear();
+        ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/CultureConnectCSS.css").toExternalForm());
+        dialogPane.getStyleClass().add("Alerts");
+        alert.getButtonTypes().addAll(buttonType, buttonType1);
+        alert.showAndWait();
+        if (alert.getResult() == buttonType) {
+            CalendarTabPane.getSelectionModel().select(CalendarTab);
+            CalendarTabPane.getTabs().remove(editProjectTab);
+        } else {
+            alert.close();
+        }
     }
 
     public void createProjektLokationDragDropped(DragEvent dragEvent) {
@@ -1270,9 +1317,14 @@ public class CultureConnectController {
     }
 
     public void projektSøgefeltKeyPressed(KeyEvent keyEvent) {
+        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) ->
+                fieldFilterProjects(newValue));
     }
 
     public void projektSøgKnapPressed(ActionEvent actionEvent) {
+        projektSøgefelt.textProperty().addListener((observable, oldValue, newValue) -> {
+            fieldFilterProjects(newValue);
+        });
     }
 
     public void tilbageTilIDageKnapPressed(ActionEvent actionEvent) {
@@ -1280,9 +1332,19 @@ public class CultureConnectController {
     }
 
     public void KalenderVenstreKnapPressed(ActionEvent actionEvent) {
+        this.year = this.year - 1;
+        setYearLabel();
+        fillCalendarWithProjects();
     }
 
     public void KalenderHøjreKnapPressed(ActionEvent actionEvent) {
+        this.year = this.year + 1;
+        setYearLabel();
+        fillCalendarWithProjects();
+    }
+
+    public void setYearLabel(){
+        KalenderLabel.setText(String.valueOf(year));
     }
 
 
@@ -1404,11 +1466,134 @@ public class CultureConnectController {
         alert.showAndWait();
     }
 
+
+    public void populateFilterChooser(){
+        ObservableList<String> filteringsMuligheder = FXCollections.observableArrayList();
+        filteringsMuligheder.add("Alle");
+        filteringsMuligheder.add("Mine projekter");
+        filteringsMuligheder.add("Deltager i");
+        filteringsMuligheder.add("Min virksomhed");
+
+        filterChooser.setItems(filteringsMuligheder);
+        filterChooser.setValue("Alle");
+        projectFilterChoices();
+    }
+
+    public void projectFilterChoices(){
+        filterChooser.valueProperty().addListener((observable, oldValue, newValue) -> {
+            String filterValue = (String) newValue;
+            String currentUserName = logic.getCurrentUser().getName();
+            Lokation currentUserLokation = logic.getCurrentUser().getLokation();
+
+            for (Node node : CalendarGridPane.getChildren()) {
+                if (node instanceof StackPane) {
+                    StackPane stackPane = (StackPane) node;
+                    if (!stackPane.getChildren().isEmpty() && stackPane.getChildren().get(0) instanceof
+                            ProjektCell) {
+                        ProjektCell cell = (ProjektCell) stackPane.getChildren().get(0);
+                        Projekt projekt = cell.getProjekt();
+                        boolean matchFilter = false;
+
+                        switch (filterValue) {
+                            case "Alle":
+                                matchFilter = true;
+                                break;
+                            case "Mine projekter":
+                                for (Person person : projekt.getProjectCreator()) {
+                                    if (person.getName().equals(currentUserName)) {
+                                        matchFilter = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case "Deltager i":
+                                for (Person person : projekt.getParticipants()) {
+                                    if (person.getName().equals(currentUserName)) {
+                                        matchFilter = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case "Min virksomhed":
+                                Lokation projektLokation = projekt.getLokation();
+                                if (projektLokation != null && currentUserLokation != null &&
+                                        projektLokation.getName().equals(currentUserLokation.getName())) {
+                                    matchFilter = true;
+                                }
+                                break;
+                        }
+
+                        if (matchFilter) {
+                            node.setOpacity(1);
+                        } else {
+                            node.setOpacity(0.1);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public void fieldFilterProjects(String query) {
+        String lowerCaseQuery = query.toLowerCase();
+
+        for (Node node : CalendarGridPane.getChildren()) {
+            if (node instanceof StackPane) {
+                StackPane stackPane = (StackPane) node;
+                if (!stackPane.getChildren().isEmpty() && stackPane.getChildren().get(0) instanceof
+                        ProjektCell) {
+                    ProjektCell cell = (ProjektCell) stackPane.getChildren().get(0);
+                    Projekt projekt = cell.getProjekt();
+                    boolean matchFilter = false;
+
+                    //title match
+                    if (projekt.getTitel().toLowerCase().contains(lowerCaseQuery)) {
+                        matchFilter = true;
+                    }
+
+                    // creator match
+                    if (!matchFilter) {
+                        for (Person person : projekt.getProjectCreator()) {
+                            if (person.getName().toLowerCase().contains(lowerCaseQuery)) {
+                                matchFilter = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // deltager match
+                    if (!matchFilter) {
+                        for (Person person : projekt.getParticipants()) {
+                            if (person.getName().toLowerCase().contains(lowerCaseQuery)) {
+                                matchFilter = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // lokation match
+                    if (!matchFilter && projekt.getLokation() != null) {
+                        if (projekt.getLokation().getName().toLowerCase().contains(lowerCaseQuery)) {
+                            matchFilter = true;
+                        }
+                    }
+
+                    if (matchFilter) {
+                        node.setOpacity(1);
+                    } else {
+                        node.setOpacity(0.1);
+                    }
+                }
+            }
+        }
+    }
+
     public void userLokationListViewDragOver(DragEvent dragEvent) {
         if (dragEvent.getDragboard().hasString()) {
             dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
         }
         dragEvent.consume();
+
     }
 }
 
