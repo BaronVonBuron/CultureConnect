@@ -136,6 +136,8 @@ public class CultureConnectController {
     private Projekt currentlySelectedProjekt;
     private Logic logic;
     private CultureConnectLoginController cclc = new CultureConnectLoginController();
+    private List<StackPane> projektCells = new ArrayList<>();
+    private List<StackPane> highlightedCells = new ArrayList<>();
     public static Person currentUser;
     private int year = 2024;
 
@@ -271,7 +273,19 @@ public class CultureConnectController {
 
     public void fillCalendarWithProjects() {
         //clear the gridpane of projektCells
-        CalendarGridPane.getChildren().removeIf(node -> node instanceof StackPane);
+        for (StackPane projektCell : this.projektCells) {
+            CalendarGridPane.getChildren().remove(projektCell);
+        }
+        if (year != new Date().getYear() + 1900){
+            for (StackPane highlightedCell : highlightedCells) {
+                highlightedCell.setVisible(false);
+            }
+        } else {
+            for (StackPane highlightedCell : highlightedCells) {
+                highlightedCell.setVisible(true);
+            }
+        }
+        this.projektCells.clear();
         this.projects = logic.getProjects();
 
         if (projects.isEmpty()) {
@@ -331,6 +345,7 @@ public class CultureConnectController {
                     GridPane.setColumnSpan(sp, length); // Make the cell span multiple weeks
                     projektGrid.put(noOfProjects, projekt);
                 }
+                this.projektCells.add(sp);
                 noOfProjects++;
             }
         }
@@ -389,7 +404,7 @@ public class CultureConnectController {
 
                     // Add the StackPane to the GridPane at the current week column and span it across all rows
                     CalendarGridPane.add(stackPane, currentWeek, 0, 1, calendarRows);
-
+                    highlightedCells.add(stackPane);
                     // Bring the label to the front
                     label.toFront();
 
