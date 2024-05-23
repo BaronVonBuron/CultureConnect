@@ -227,4 +227,16 @@ public class Logic {
         }
         dao.deleteProjekt(currentlySelectedProjekt);
     }
+
+    public String isAdmin(String email) {
+        return dao.readAdminForPerson(email);
+    }
+
+    public Person findPerson(String email) {
+        return dao.readPerson(email);
+    }
+
+    public List<String> findProjectOwner(String projectID){
+        return dao.readParticipantsForProject(projectID);
+    }
 }
