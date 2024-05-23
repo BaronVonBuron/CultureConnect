@@ -214,6 +214,10 @@ public class DAO {
         } catch (SQLException e) {
             System.err.println("Can't read all locations: " + e.getErrorCode() + e.getMessage());
         }
+        if (lokations.stream().filter(l -> l.getName().equals("Ingen Lokation")).findFirst().orElse(null) == null){
+            lokations.add(new Lokation("Ingen Lokation", "Ingen Lokation", "#b6b2b2"));
+            createLokation(new Lokation("Ingen Lokation", "Ingen Lokation", "#b6b2b2"));
+        }
         return lokations;
     }
 
@@ -235,8 +239,8 @@ public class DAO {
 
     //PreparedStatement for deleting a location in the Lokation table based on the name - should delete from ProjektLokation, MedarbejderInfo, Lokation, Projekt tables first
     public void deleteLokation(Lokation lokation){
-        String sql1 = "DELETE FROM ProjektLokation WHERE Lokation_Navn = ?";
-        String sql2 = "DELETE FROM MedarbejderInfo WHERE Lokation_Navn = ?";
+        String sql1 = "UPDATE MedarbejderInfo SET Lokation_Navn = 'Ingen Lokation', Stilling = 'Ingen Stilling', Ansvarlig = 'false' WHERE Lokation_Navn = ?";
+        String sql2 = "UPDATE ProjektLokation SET Lokation_Navn = 'Ingen Lokation' WHERE Lokation_Navn = ?";
         String sql3 = "DELETE FROM Lokation WHERE Navn = ?";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql1);
