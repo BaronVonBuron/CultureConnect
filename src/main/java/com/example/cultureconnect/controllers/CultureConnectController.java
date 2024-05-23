@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 public class CultureConnectController {
     private final int calendarColumns = 52;
     private final int calendarRows = 35;//skal sættes af antallet af projekter.
-    private final int columnWidth = 60;
-    private final int rowHeight = 45;
+    private int columnWidth = 60;
+    private int rowHeight = 45;
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
     public ToggleButton LocationToggleButton;
@@ -299,7 +299,6 @@ public class CultureConnectController {
                     continue;
                 }
                 if (noOfProjects > 15) {
-                    //TODO check if the projects are finished and a couple of weeks old - if yes, reuse the row. if not, carry on.
                     projektGrid.forEach((key, value) -> {//check if the projekt's start date is 4 weeks after the last projekt's end date.
                         Date endDate = value.getEndDate();
                         Calendar calendar = Calendar.getInstance();
@@ -439,11 +438,19 @@ public class CultureConnectController {
     }
 
     public void zoomInCalendarButtonPressed(ActionEvent event) {
-        //TODO make the calender zoom in when the button is pressed
+        this.columnWidth += 5;
+        CalendarGridPane.getChildren().clear();
+        populateGridPane();
+        fillCalendarWithProjects();
     }
 
     public void zoomOutCalendarButtonPressed(ActionEvent event) {
-        //TODO make the calender zoom out when the button is pressed
+        if (this.columnWidth >= 59) {
+            this.columnWidth -= 5;
+            CalendarGridPane.getChildren().clear();
+            populateGridPane();
+            fillCalendarWithProjects();
+        }
     }
 
     public void newProjectCalendarButtonPressed(ActionEvent event) {
