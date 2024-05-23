@@ -121,13 +121,17 @@ public class PersonListCell extends ListCell {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"", ButtonType.YES, ButtonType.NO);
             alert.setHeaderText("Er du sikker på at du vil slette " + personClicked.getName() + "?");
+            alert.getButtonTypes().clear();
+            ButtonType buttonType = new ButtonType("Ja", ButtonBar.ButtonData.OK_DONE);
+            ButtonType buttonType1 = new ButtonType("Nej", ButtonBar.ButtonData.CANCEL_CLOSE);
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(
                     getClass().getResource("/CultureConnectCSS.css").toExternalForm());
             dialogPane.getStyleClass().add("Alerts");
+            alert.getButtonTypes().addAll(buttonType, buttonType1);
             alert.showAndWait();
 
-            if (alert.getResult() == ButtonType.YES) {
+            if (alert.getResult() == buttonType) {
                 this.logic = Logic.getInstance();
                 logic.deletePerson(personClicked);
             }
