@@ -84,7 +84,9 @@ public class LokationListCell extends ListCell {
 
         deleteButton.setOnMouseClicked(event -> {
             Lokation lokationClicked = this.getLokation();
-
+            if (Objects.equals(lokationClicked.getName(), "Ingen Lokation")) {
+                return;
+            }
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"", ButtonType.YES, ButtonType.NO);
             alert.setHeaderText("Er du sikker på at du vil slette " + lokationClicked.getName() + "?");
             alert.getButtonTypes().clear();
@@ -105,7 +107,9 @@ public class LokationListCell extends ListCell {
 
         editButton.setOnMouseClicked(event -> {
             Lokation lokationClicked = this.getLokation();
-
+            if (Objects.equals(lokationClicked.getName(), "Ingen Lokation")) {
+                return;
+            }
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/NewLocationDialog.fxml"));
                 Stage editLokation = new Stage();
