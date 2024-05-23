@@ -827,7 +827,7 @@ public class CultureConnectController {
         String cprLogin = currentUser.getCPR();
         List<String> projektEjerCpr = logic.findProjectOwner(projektID);
 
-        if (projektEjerCpr.contains(cprLogin)) {
+        if (projektEjerCpr.contains(cprLogin) || Objects.equals(logic.isAdmin(currentUser.getEmail()), "1")) {
             sletProjektKnap.setDisable(false);
             sletProjektKnap.setVisible(true);
         } else {
