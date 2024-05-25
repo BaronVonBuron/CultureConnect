@@ -738,6 +738,9 @@ public class CultureConnectController {
                 startDate = new Date();
             } else {
                 startDate = findEarliestDate(createProjektAktiviteterListview.getItems());
+                if (startDate.after(arrangementDate)) {
+                    startDate = arrangementDate;
+                }
             }
             if (!createProjektAktiviteterListview.getItems().isEmpty()) {
                 Date latestDate = findLatestDate(createProjektAktiviteterListview.getItems());
