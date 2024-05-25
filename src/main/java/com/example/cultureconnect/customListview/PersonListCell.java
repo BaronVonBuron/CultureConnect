@@ -132,7 +132,6 @@ public class PersonListCell extends ListCell {
             alert.showAndWait();
 
             if (alert.getResult() == buttonType) {
-                this.logic = Logic.getInstance();
                 logic.deletePerson(personClicked);
             }
         });
