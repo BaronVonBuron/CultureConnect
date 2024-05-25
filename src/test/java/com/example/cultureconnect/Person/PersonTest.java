@@ -2,101 +2,148 @@ package com.example.cultureconnect.Person;
 
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Projekt.Projekt;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-class PersonTest {
-    private String name = "Gitte";
-    List<Projekt> mineProjekt = null;
-    private String position = "bibliotekar";
-    private Lokation lokation = null;
-    private String område = null;
-    private String mail = "gittebib@gamil.dk";
-    private int tlf = 44444444;
-    private Image image = null;
-    private UUID id;
-    private List<Person> persList = null;
-    Date start = null;
-    Date end = null;
-    private Person gitte = new Person(name,mail,tlf,image,"cpr");
+public class PersonTest {
 
-    @Test
-    @DisplayName("Alm. input, name get/set")
-    void getSetName() {
-        gitte.setName("Gerald");
-        assertEquals("Gerald",gitte.getName());
+    private Person person;
+    private String name;
+    private String email;
+    private int tlfNr;
+    private Image picture;
+    private String CPR;
+
+    @BeforeEach
+    public void setUp() {
+        // Required to initialize JavaFX toolkit
+        new JFXPanel();
+
+        name = "Test Person";
+        email = "test@example.com";
+        tlfNr = 12345678;
+        CPR = "123456-7890";
+
+        // Load the picture from the resources
+        InputStream imageStream = getClass().getResourceAsStream("/images/avatar.png");
+        picture = new Image(imageStream);
+        person = new Person(name, email, tlfNr, picture, CPR);
     }
 
     @Test
-    @DisplayName("Invalid input til navn")
-    void invalidName(){
-        try {
-            gitte.setName(null);
-            fail("Personer skal have et navn");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Personer skal have et navn", e.getMessage());
-        }
+    public void testConstructor() {
+        assertEquals(name, person.getName());
+        assertEquals(email, person.getEmail());
+        assertEquals(tlfNr, person.getTlfNr());
+        assertEquals(picture, person.getPicture());
+        assertEquals(CPR, person.getCPR());
+        assertFalse(person.isErAnsvarlig());
     }
 
     @Test
-    @DisplayName("Alm. input, projects get/set")
-    void getSetMyProjects() {
-        List<Projekt> myProj = new ArrayList<>();
-        myProj.add(new Projekt("Proj",start,end,id));
-        myProj.add(new Projekt("Proj2",start,end,id));
-
-        gitte.setMyProjects(myProj);
-        assertEquals(myProj,gitte.getMyProjects());
+    public void testSetAndIsErAnsvarlig() {
+        person.setErAnsvarlig(true);
+        assertTrue(person.isErAnsvarlig());
     }
 
     @Test
-    @DisplayName("Alm. input, position get/set")
-    void getSetPosition() {
-        gitte.setPosition("Admin");
-        assertEquals("Admin", gitte.getPosition());
+    public void testSetName_Null() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            person.setName(null);
+        });
     }
 
     @Test
-    @DisplayName("Alm. input, lokation get/set")
-    void getSetLokation() {
-        Lokation arbejdsplads = new Lokation("Kulturskolen","et sted for alle",
-                "green");
-
-        gitte.setLokation(arbejdsplads);
-        assertEquals(arbejdsplads,gitte.getLokation());
+    public void testSetAndGetName() {
+        String newName = "New Name";
+        person.setName(newName);
+        assertEquals(newName, person.getName());
     }
 
     @Test
-    @DisplayName("Alm. input, arbejdsområde get/set")
-    void getSetArbejdsområde() {
-        gitte.setArbejdsområde("undervisning");
-        assertEquals("undervisning",gitte.getArbejdsområde());
+    public void testSetAndGetCPR() {
+        String newCPR = "098765-4321";
+        person.setCPR(newCPR);
+        assertEquals(newCPR, person.getCPR());
     }
 
     @Test
-    @DisplayName("Alm. input, email get/set")
-    void getSetEmail() {
-        gitte.setEmail("mymail@gmail.dk");
-        assertEquals("mymail@gmail.dk",gitte.getEmail());
+    public void testSetAndGetMyProjects() {
+        List<Projekt> projects = new ArrayList<>();
+        Projekt project = mock(Projekt.class);
+        projects.add(project);
+        person.setMyProjects(projects);
+        assertEquals(projects, person.getMyProjects());
     }
 
     @Test
-    @DisplayName("Alm. input, tlfNr get/set")
-    void getSetTlfNr() {
-        gitte.setTlfNr(55555555);
-        assertEquals(55555555,gitte.getTlfNr());
+    public void testSetAndGetPosition() {
+        String position = "Manager";
+        person.setPosition(position);
+        assertEquals(position, person.getPosition());
     }
 
     @Test
-    void getSetPicture() {
+    public void testSetAndGetLokation() {
+        Lokation lokation = mock(Lokation.class);
+        person.setLokation(lokation);
+        assertEquals(lokation, person.getLokation());
+    }
+
+    @Test
+    public void testSetAndGetArbejdsområde() {
+        String arbejdsområde = "IT";
+        person.setArbejdsområde(arbejdsområde);
+        assertEquals(arbejdsområde, person.getArbejdsområde());
+    }
+
+    @Test
+    public void testSetAndGetEmail() {
+        String newEmail = "new@example.com";
+        person.setEmail(newEmail);
+        assertEquals(newEmail, person.getEmail());
+    }
+
+    @Test
+    public void testSetAndGetTlfNr() {
+        int newTlfNr = 87654321;
+        person.setTlfNr(newTlfNr);
+        assertEquals(newTlfNr, person.getTlfNr());
+    }
+
+    @Test
+    public void testSetAndGetKode() {
+        String kode = "password";
+        person.setKode(kode);
+        assertEquals(kode, person.getKode());
+    }
+
+    @Test
+    public void testSetAndGetPicture() {
+        InputStream imageStream = getClass().getResourceAsStream("/images/avatar.png");
+        Image newPicture = new Image(imageStream);
+        person.setPicture(newPicture);
+        assertEquals(newPicture, person.getPicture());
+    }
+
+    @Test
+    public void testGetPictureAsByteArray() {
+        byte[] byteArray = person.getPictureAsByteArray();
+        assertNotNull(byteArray);
+        assertTrue(byteArray.length > 0);
+    }
+
+    @Test
+    public void testToString() {
+        assertEquals(name, person.toString());
     }
 }

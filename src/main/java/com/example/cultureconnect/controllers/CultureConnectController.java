@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class CultureConnectController {
     private final int calendarColumns = 52;
     private final int calendarRows = 35;//skal sættes af antallet af projekter.
-    private int columnWidth = 60;
+    public int columnWidth = 60;
     private int rowHeight = 45;
     public HBox UserOrLocationToggleHBox;
     public ToggleButton UserToggleButton;
@@ -130,12 +130,12 @@ public class CultureConnectController {
     private ObservableList<PersonListCell> redigerProjektCreatorList;
     private ObservableList<LokationListCell> redigerProjektLokationList;
     @FXML
-    private TextArea redigerBeskrivelseFelt;
+    public TextArea redigerBeskrivelseFelt;
     @FXML
-    private TextArea redigerNoterFelt;
+    public TextArea redigerNoterFelt;
     private Projekt currentlySelectedProjekt;
-    private Logic logic;
-    private CultureConnectLoginController cclc = new CultureConnectLoginController();
+    public Logic logic;
+    public CultureConnectLoginController cclc = new CultureConnectLoginController();
     private List<StackPane> projektCells = new ArrayList<>();
     private List<StackPane> highlightedCells = new ArrayList<>();
     public static Person currentUser;

@@ -161,6 +161,7 @@ public class DAO {
         String sql2 = "DELETE FROM LoginInfo WHERE Person_CPR = ?";
         String sql3 = "DELETE FROM ProjektDeltager WHERE Person_CPR = ?";
         String sql4 = "DELETE FROM BrugerRettigheder WHERE Person_CPR = ?";
+        String sql5 = "DELETE FROM Person WHERE CPR = ?";
         try {
             PreparedStatement preparedStatement = con.prepareStatement(sql1);
             preparedStatement.setString(1, person.getCPR());
@@ -172,6 +173,9 @@ public class DAO {
             preparedStatement.setString(1, person.getCPR());
             preparedStatement.executeUpdate();
             preparedStatement = con.prepareStatement(sql4);
+            preparedStatement.setString(1, person.getCPR());
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(sql5);
             preparedStatement.setString(1, person.getCPR());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

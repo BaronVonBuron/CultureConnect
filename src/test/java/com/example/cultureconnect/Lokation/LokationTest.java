@@ -1,89 +1,100 @@
 package com.example.cultureconnect.Lokation;
 
 import com.example.cultureconnect.Person.Person;
-import com.example.cultureconnect.Projekt.Projekt;
-import javafx.scene.paint.Color;
-import org.junit.jupiter.api.DisplayName;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.image.Image;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
-class LokationTest {
-    private String name = "Tønder bib";
-    private String description = "Lån bøger";
-    private Color blue = null;
-    private List<Person> medArb = null;
-    private List<Projekt> stuff = null;
-    private Person per = null;
-    private Lokation bib = new Lokation(name,description,"blue");
+public class LokationTest {
 
-    @Test
-    @DisplayName("Alm.input, name get/set")
-    void getSetName() {
-        bib.setName("Tønders biblioteker");
-        assertEquals("Tønders biblioteker", bib.getName());
+    private Lokation lokation;
+    private String name;
+    private String description;
+    private String farveKode;
+
+    @BeforeEach
+    public void setUp() {
+        name = "Test Lokation";
+        description = "This is a test lokation";
+        farveKode = "ff0000";
+        lokation = new Lokation(name, description, farveKode);
     }
 
     @Test
-    @DisplayName("Invalid input til navn")
-    void invalidName(){
-        try {
-            bib.setName(null);
-            fail("Lokationer skal have navn");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Lokationer skal have navn", e.getMessage());
-        }
+    public void testConstructor() {
+        assertEquals(name, lokation.getName());
+        assertEquals(description, lokation.getDescription());
+        assertEquals(farveKode, lokation.getFarveKode());
     }
 
     @Test
-    @DisplayName("Alm. input, description get/set")
-    void getSetDescription() {
-        bib.setDescription("bog");
-        assertEquals("bog",bib.getDescription());
+    public void testSetName_Null() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            lokation.setName(null);
+        });
     }
 
     @Test
-    @DisplayName("Alm. input, farveKode get/set")
-    void getSetFarveKode() {
-        bib.setFarveKode("red");
-        assertEquals("red",bib.getFarveKode());
+    public void testSetAndGetName() {
+        String newName = "New Lokation Name";
+        lokation.setName(newName);
+        assertEquals(newName, lokation.getName());
     }
 
     @Test
-    @DisplayName("Invalid farvekode")
-    void invalidColor(){
-        try {
-            bib.setFarveKode(null);
-            fail("Lokationer skal have en farve");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Lokationer skal have en farve", e.getMessage());
-        }
+    public void testSetDescription() {
+        String newDescription = "New description";
+        lokation.setDescription(newDescription);
+        assertEquals(newDescription, lokation.getDescription());
     }
 
     @Test
-    @DisplayName("Alm. input, employees get/set")
-    void getSetEmployees() {
-        List<Person> folk = new ArrayList<>();
-        folk.add(per);
-        folk.add(per);
-
-        bib.setEmployees(folk);
-        assertEquals(folk, bib.getEmployees());
+    public void testSetFarveKode_Null() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            lokation.setFarveKode(null);
+        });
     }
 
     @Test
-    @DisplayName("Tom liste")
-    void invalidEmployees(){
-        List<Person> noEmployees = new ArrayList<>();
+    public void testSetAndGetFarveKode() {
+        String newFarveKode = "00ff00";
+        lokation.setFarveKode(newFarveKode);
+        assertEquals(newFarveKode, lokation.getFarveKode());
+    }
 
-        try {
-            bib.setEmployees(noEmployees);
-            fail("Der skal være medarbejdere på en lokation");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Der skal være medarbejdere på en lokation", e.getMessage());
-        }
+    @Test
+    public void testSetAndGetAnsvarligPerson() {
+        Person ansvarligPerson = mock(Person.class);
+        lokation.setAnsvarligPerson(ansvarligPerson);
+        assertEquals(ansvarligPerson, lokation.getAnsvarligPerson());
+    }
+
+    @Test
+    public void testSetEmployees_Empty() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            lokation.setEmployees(new ArrayList<>());
+        });
+    }
+
+    @Test
+    public void testSetAndGetEmployees() {
+        List<Person> employees = new ArrayList<>();
+        Person employee = mock(Person.class);
+        employees.add(employee);
+        lokation.setEmployees(employees);
+        assertEquals(employees, lokation.getEmployees());
+    }
+
+    @Test
+    public void testToString() {
+        assertEquals(name, lokation.toString());
     }
 }

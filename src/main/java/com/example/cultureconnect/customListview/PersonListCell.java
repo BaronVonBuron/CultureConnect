@@ -35,11 +35,11 @@ public class PersonListCell extends ListCell {
     private VBox vbox = new VBox();
     private HBox hbox = new HBox();
     private HBox hboxButtons = new HBox();
-    private Button editButton = new Button("Rediger");
-    private Button deleteButton = new Button("Slet");
-    private Logic logic;
-    private Color color;
-    private Boolean admin;
+    public Button editButton = new Button("Rediger");
+    Button deleteButton = new Button("Slet");
+    Logic logic;
+    Color color;
+    Boolean admin;
 
 
 
@@ -132,7 +132,6 @@ public class PersonListCell extends ListCell {
             alert.showAndWait();
 
             if (alert.getResult() == buttonType) {
-                this.logic = Logic.getInstance();
                 logic.deletePerson(personClicked);
             }
         });
