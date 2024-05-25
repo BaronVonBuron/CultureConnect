@@ -34,11 +34,11 @@ public class Logic {
 
 
     public List<Projekt> getProjects() {
-        return projects;
+        return this.projects;
     }
 
     public List<Person> getPersons() {
-        return persons;
+        return this.persons;
     }
 
     //make method to get all locations
@@ -238,5 +238,9 @@ public class Logic {
 
     public List<String> findProjectOwner(String projectID){
         return dao.readParticipantsForProject(projectID);
+    }
+
+    public void setDao(DAO daoMock) {
+        this.dao = daoMock;//for testing
     }
 }
