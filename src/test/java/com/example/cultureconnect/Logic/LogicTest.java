@@ -96,7 +96,7 @@ public class LogicTest {
 
         logic.setAnsvarligForLocation(lokation, ansvarlig);
 
-        verify(daoMock).createMedarbejderInfo("Test Lokation", "1234", "Manager", true);
+        verify(daoMock).createOrUpdateMedarbejderInfo("Test Lokation", "1234", "Manager", true);
         verify(controllerMock).updateList();
     }
 

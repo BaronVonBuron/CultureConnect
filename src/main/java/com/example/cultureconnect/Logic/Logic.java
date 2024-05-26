@@ -99,7 +99,7 @@ public class Logic {
         String cpr = ansvarlig.getCPR();
         String stilling = ansvarlig.getPosition();
 
-        dao.createMedarbejderInfo(lokation, cpr, stilling, true);
+        dao.createOrUpdateMedarbejderInfo(lokation, cpr, stilling, true);
         updateListsInController();
     }
 

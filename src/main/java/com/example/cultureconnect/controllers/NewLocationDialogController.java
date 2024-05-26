@@ -133,6 +133,7 @@ public class NewLocationDialogController {
                 nuværendeLokation.setFarveKode(farveKode);
 
                 if (ansvarligVælger != null && ansvarlig != null) {
+                    ansvarlig.setLokation(nuværendeLokation);
                     ansvarlig.setErAnsvarlig(true);
                     logic.updateUser(ansvarlig);
                 }
@@ -141,6 +142,10 @@ public class NewLocationDialogController {
 
                 if (ansvarlig != ansvarligPerson && ansvarligPerson != null) {
                     logic.deleteAnsvarlig(nuværendeLokation, ansvarligPerson.getCPR());
+                }
+
+                if (ansvarlig != null) {
+                    logic.setAnsvarligForLocation(nuværendeLokation, ansvarlig);
                 }
             }
         } catch (Exception e) {
