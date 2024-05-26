@@ -8,16 +8,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
 
 import java.util.List;
 import java.util.Objects;
 
 public class NewLocationDialogController {
 
+    public AnchorPane lokationAnchorPane;
     @FXML
     private TextField ansvarligEmailNyLokationFelt;
 
@@ -41,6 +41,7 @@ public class NewLocationDialogController {
 
     @FXML
     private ColorPicker lokationColorchooser;
+
     @FXML
     private Label opretNyLokationLabel;
 
@@ -50,7 +51,7 @@ public class NewLocationDialogController {
     private Lokation nuværendeLokation;
     private Person ansvarligPerson;
 
-    public void initialize(){
+    public void initialize() {
         this.logic = Logic.getInstance();
         choiceBoxOptions();
         autoFillInfo();
@@ -58,7 +59,7 @@ public class NewLocationDialogController {
         illegalColorChosen();
     }
 
-    public void choiceBoxOptions(){
+    public void choiceBoxOptions() {
         List<Person> persons = logic.getPersons();
         ObservableList<String> ansvarligeMuligheder = FXCollections.observableArrayList();
         for (Person person : persons) {
@@ -70,83 +71,87 @@ public class NewLocationDialogController {
 
     @FXML
     void opretNyLokationKnapPressed(ActionEvent event) {
-        if(opretNyLokationKnap.getText().equals("Opret")){
-            String name = navnNyLokationFelt.getText();
-            String email = emailNyLokationFelt.getText();
-            String telefonnummer = telefonnummerNyLokationFelt.getText();
-            Color color = lokationColorchooser.getValue();
-            String farveKode = String.format("#%02X%02X%02X",
-                    (int) (color.getRed() * 255),
-                    (int) (color.getGreen() * 255),
-                    (int) (color.getBlue() * 255) );
-            String selectedAnsvarlig = ansvarligVælger.getValue();
-            Person ansvarlig = logic.getPersons().stream().
-                    filter(person -> person.getName().equals(selectedAnsvarlig)).
-                    findFirst().orElse(null);
+        Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
 
-            if (name == null || name.trim().isEmpty()) {
-                locationMustHaveName();
-                return;
-            }
+        try {
+            if (opretNyLokationKnap.getText().equals("Opret")) {
+                System.out.println("Creating new location");
+                String name = navnNyLokationFelt.getText();
+                String email = emailNyLokationFelt.getText();
+                String telefonnummer = telefonnummerNyLokationFelt.getText();
+                Color color = lokationColorchooser.getValue();
+                String farveKode = String.format("#%02X%02X%02X",
+                        (int) (color.getRed() * 255),
+                        (int) (color.getGreen() * 255),
+                        (int) (color.getBlue() * 255));
+                String selectedAnsvarlig = ansvarligVælger.getValue();
+                Person ansvarlig = logic.getPersons().stream()
+                        .filter(person -> person.getName().equals(selectedAnsvarlig))
+                        .findFirst().orElse(null);
 
-            List<Lokation> alreadyThere = logic.getLocations();
-            for (Lokation lok : alreadyThere){
-                if (lok.getName().equals(name)){
-                    locationExistsAlready();
+                if (name == null || name.trim().isEmpty()) {
+                    locationMustHaveName();
                     return;
                 }
+
+                List<Lokation> alreadyThere = logic.getLocations();
+                for (Lokation lok : alreadyThere) {
+                    if (lok.getName().equals(name)) {
+                        locationExistsAlready();
+                        return;
+                    }
+                }
+
+                Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
+                logic.createLocation(lok);
+
+                if (ansvarlig != null) {
+                    logic.setAnsvarligForLocation(lok, ansvarlig);
+                }
+
+            } else {
+                System.out.println("Saving existing location");
+                String name = navnNyLokationFelt.getText();
+                String email = emailNyLokationFelt.getText();
+                String telefonnummer = telefonnummerNyLokationFelt.getText();
+                Color color = lokationColorchooser.getValue();
+                String farveKode = String.format("#%02X%02X%02X",
+                        (int) (color.getRed() * 255),
+                        (int) (color.getGreen() * 255),
+                        (int) (color.getBlue() * 255));
+                String selectedAnsvarlig = ansvarligVælger.getValue();
+                Person ansvarlig = logic.getPersons().stream()
+                        .filter(person -> person.getName().equals(selectedAnsvarlig))
+                        .findFirst().orElse(null);
+
+                if (name == null || name.trim().isEmpty()) {
+                    locationMustHaveName();
+                    return;
+                }
+
+                nuværendeLokation.setDescription(email + " " + telefonnummer);
+                nuværendeLokation.setFarveKode(farveKode);
+
+                if (ansvarligVælger != null && ansvarlig != null) {
+                    ansvarlig.setErAnsvarlig(true);
+                    logic.updateUser(ansvarlig);
+                }
+
+                logic.updateLokation(nuværendeLokation, name);
+
+                if (ansvarlig != ansvarligPerson && ansvarligPerson != null) {
+                    logic.deleteAnsvarlig(nuværendeLokation, ansvarligPerson.getCPR());
+                }
             }
-
-            Lokation lok = new Lokation(name, email + "\n   " + telefonnummer, farveKode);
-            logic.createLocation(lok);
-
-            if (ansvarlig != null) {
-                logic.setAnsvarligForLocation(lok, ansvarlig);
-            }
-
-            Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
-            stage.close();
-        } else{
-            System.out.println("Gemmer");
-            String name = navnNyLokationFelt.getText();
-            String email = emailNyLokationFelt.getText();
-            String telefonnummer = telefonnummerNyLokationFelt.getText();
-            Color color = lokationColorchooser.getValue();
-            String farveKode = String.format("#%02X%02X%02X",
-                    (int) (color.getRed() * 255),
-                    (int) (color.getGreen() * 255),
-                    (int) (color.getBlue() * 255) );
-            String selectedAnsvarlig = ansvarligVælger.getValue();
-            Person ansvarlig = logic.getPersons().stream().
-                    filter(person -> person.getName().equals(selectedAnsvarlig)).
-                    findFirst().orElse(null);
-
-            if (name == null || name.trim().isEmpty()) {
-                locationMustHaveName();
-                return;
-            }
-
-
-            nuværendeLokation.setDescription(email + " " + telefonnummer);
-            nuværendeLokation.setFarveKode(farveKode);
-
-            if (ansvarligVælger != null && ansvarlig != null){
-                ansvarlig.setErAnsvarlig(true);
-                logic.updateUser(ansvarlig);
-            }
-
-            logic.updateLokation(nuværendeLokation, name);
-
-            if (ansvarlig != ansvarligPerson && ansvarligPerson != null){
-                logic.deleteAnsvarlig(nuværendeLokation, ansvarligPerson.getCPR());
-            }
-
-            Stage stage = (Stage) opretNyLokationKnap.getScene().getWindow();
+        } catch (Exception e) {
+            System.err.println("Error during save: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
             stage.close();
         }
     }
 
-    public void locationMustHaveName(){
+    public void locationMustHaveName() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Fejl");
         alert.setHeaderText("Lokationen skal have et navn");
@@ -155,7 +160,6 @@ public class NewLocationDialogController {
                 getClass().getResource("/CultureConnectCSS.css").toExternalForm());
         dialogPane.getStyleClass().add("Alerts");
         alert.showAndWait();
-
     }
 
     public void locationExistsAlready() {
@@ -174,11 +178,11 @@ public class NewLocationDialogController {
         this.cultureConnectController = cultureConnectController;
     }
 
-    public void autoFillInfo(){
+    public void autoFillInfo() {
         ansvarligVælger.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            Person ansvarlig = logic.getPersons().stream().
-                    filter(person -> person.getName().equals(newValue)).
-                    findFirst().orElse(null);
+            Person ansvarlig = logic.getPersons().stream()
+                    .filter(person -> person.getName().equals(newValue))
+                    .findFirst().orElse(null);
 
             if (ansvarlig != null) {
                 ansvarligEmailNyLokationFelt.setText(ansvarlig.getEmail());
@@ -187,10 +191,10 @@ public class NewLocationDialogController {
         });
     }
 
-    public void editInfo(Lokation lokation){
+    public void editInfo(Lokation lokation) {
         nuværendeLokation = lokation;
 
-        if (!Objects.equals(lokation.getDescription(), "\n")){
+        if (!Objects.equals(lokation.getDescription(), "\n")) {
             String tlfOgEmail = lokation.getDescription();
 
             String[] parts = tlfOgEmail.split("\\s+");
@@ -205,7 +209,7 @@ public class NewLocationDialogController {
         opretNyLokationKnap.setText("Gem");
         opretNyLokationLabel.setText("Rediger Lokation");
 
-        if (lokation.getAnsvarligPerson() != null){
+        if (lokation.getAnsvarligPerson() != null) {
             ansvarligPerson = lokation.getAnsvarligPerson();
         }
         lokationColorchooser.setValue(Color.valueOf(lokation.getFarveKode()));
@@ -214,35 +218,34 @@ public class NewLocationDialogController {
 
         if (ansvarligPerson == null) {
             ansvarligVælger.setValue("Vælg ansvarlig");
-        }else{
+        } else {
             ansvarligVælger.setValue(ansvarligPerson.getName());
             ansvarligEmailNyLokationFelt.setText(ansvarligPerson.getEmail());
             teansvarligTefonnummerNyLokationFelt.setText(String.valueOf(ansvarligPerson.getTlfNr()));
         }
-
     }
 
-    public void illegalColorChosen(){
+    public void illegalColorChosen() {
         lokationColorchooser.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.getRed() > 0.9 && newValue.getGreen() > 0.9 && newValue.getBlue() > 0.9){
+            if (newValue.getRed() > 0.9 && newValue.getGreen() > 0.9 && newValue.getBlue() > 0.9) {
                 lokationColorchooser.setValue(oldValue);
                 illegalColor();
             }
-            if (Math.abs(newValue.getRed() - newValue.getGreen()) < 0.01 && Math.abs(newValue.getGreen() - newValue.getBlue()) < 0.01){
+            if (Math.abs(newValue.getRed() - newValue.getGreen()) < 0.01 && Math.abs(newValue.getGreen() - newValue.getBlue()) < 0.01) {
                 lokationColorchooser.setValue(oldValue);
                 illegalColor();
             }
         });
     }
 
-    public void colorRandomizer(){
+    public void colorRandomizer() {
         double red = Math.random();
         double green = Math.random();
         double blue = Math.random();
         lokationColorchooser.setValue(Color.color(red, green, blue));
     }
 
-    public void illegalColor(){
+    public void illegalColor() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Fejl i valg af farve");
         alert.setHeaderText("Lokationer må ikke være hvide eller grå");
@@ -252,4 +255,5 @@ public class NewLocationDialogController {
         dialogPane.getStyleClass().add("Alerts");
         alert.showAndWait();
     }
+
 }
