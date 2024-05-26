@@ -565,19 +565,29 @@ public class DAO {
     }
 
     //prepared statement to insert into MedarbejderInfo table
-    public void createMedarbejderInfo(String lokation, String cpr, String stilling, boolean ansvarlig) {
-        String sql = "INSERT INTO MedarbejderInfo (Lokation_Navn, Person_CPR, Stilling, Ansvarlig) VALUES (?, ?, ?, ?)";
-        try {
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+    public void createOrUpdateMedarbejderInfo(String lokation, String cpr, String stilling, boolean ansvarlig) {
+        String sql = "MERGE MedarbejderInfo AS target " +
+                "USING (SELECT ? AS Lokation_Navn, ? AS Person_CPR, ? AS Stilling) AS source " +
+                "ON (target.Lokation_Navn = source.Lokation_Navn AND target.Person_CPR = source.Person_CPR AND target.Stilling = source.Stilling) " +
+                "WHEN MATCHED THEN " +
+                "    UPDATE SET Ansvarlig = ? " +
+                "WHEN NOT MATCHED THEN " +
+                "    INSERT (Lokation_Navn, Person_CPR, Stilling, Ansvarlig) " +
+                "    VALUES (source.Lokation_Navn, source.Person_CPR, source.Stilling, ?);";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             preparedStatement.setString(1, lokation);
             preparedStatement.setString(2, cpr);
             preparedStatement.setString(3, stilling);
             preparedStatement.setBoolean(4, ansvarlig);
+            preparedStatement.setBoolean(5, ansvarlig);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Can't create medarbejder info: " + e.getErrorCode() + e.getMessage());
+            System.err.println("Can't create or update medarbejder info: " + e.getErrorCode() + " " + e.getMessage());
         }
     }
+
+
 
     //prepared statement to update ansvarlig in medarbejderInfo table
     public void updateAnsvarlig(String lokation, String cpr, boolean ansvarlig){
