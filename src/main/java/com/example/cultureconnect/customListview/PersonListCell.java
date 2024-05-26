@@ -4,7 +4,6 @@ import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
 import com.example.cultureconnect.controllers.CultureConnectController;
-import com.example.cultureconnect.controllers.CultureConnectLoginController;
 import com.example.cultureconnect.controllers.NewUserDialogController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -32,6 +31,7 @@ public class PersonListCell extends ListCell {
     private Label emailLabel = new Label();
     private Label phoneLabel = new Label();
     private Label nameLabel = new Label();
+    private Label lokationLabel = new Label();
     private VBox vbox = new VBox();
     private HBox hbox = new HBox();
     private HBox hboxButtons = new HBox();
@@ -91,22 +91,24 @@ public class PersonListCell extends ListCell {
             findAdmin();
             if (isExpanded) {
                 if (admin) {
-                    vbox.getChildren().removeAll(emailLabel, phoneLabel, hboxButtons);
+                    vbox.getChildren().removeAll(lokationLabel, emailLabel, phoneLabel, hboxButtons);
                     setPrefSize(195, 50);
                 } else {
-                    vbox.getChildren().removeAll(emailLabel, phoneLabel);
+                    vbox.getChildren().removeAll(lokationLabel, emailLabel, phoneLabel);
                     setPrefSize(195, 50);
                 }
             } else {
                 if (admin) {
                     emailLabel.setText("Email: " + getEmail());
                     phoneLabel.setText("Telefon: " + new String(getTlfNr()));
-                    vbox.getChildren().addAll(emailLabel, phoneLabel, hboxButtons);
+                    lokationLabel.setText("Arbejdsplads: " + lokation.getName());
+                    vbox.getChildren().addAll(lokationLabel, emailLabel, phoneLabel, hboxButtons);
                     setPrefSize(195, 100);
                 } else {
                     emailLabel.setText("Email: " + getEmail());
                     phoneLabel.setText("Telefon: " + new String(getTlfNr()));
-                    vbox.getChildren().addAll(emailLabel, phoneLabel);
+                    lokationLabel.setText("Arbejdsplads: " + lokation.getName());
+                    vbox.getChildren().addAll(lokationLabel, emailLabel, phoneLabel);
                     setPrefSize(195, 100);
 
                 }
