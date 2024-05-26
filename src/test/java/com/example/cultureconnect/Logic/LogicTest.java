@@ -46,9 +46,7 @@ public class LogicTest {
     public void testGetLocations() {
         List<Lokation> locations = new ArrayList<>();
         when(daoMock.readAllLokations()).thenReturn(locations);
-
         logic.updateLists();
-
         assertEquals(locations, logic.getLocations());
     }
 

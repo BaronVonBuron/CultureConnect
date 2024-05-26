@@ -1015,7 +1015,6 @@ public class CultureConnectController {
             CalendarTabPane.getSelectionModel().select(CalendarTab);
             CalendarTabPane.getTabs().remove(editProjectTab);
         }
-        //TODO save the changes to the projekt
     }
 
     public void cancelEditProjekt(){
