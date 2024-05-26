@@ -109,6 +109,9 @@ public class DAO {
             } catch (SQLException e) {
                 System.err.println("Can't read medarbejder info: " + e.getErrorCode() + e.getMessage());
             }
+            if (person.getLokation() == null){
+                person.setLokation(locations.stream().filter(l -> l.getName().equals("Ingen Lokation")).findFirst().orElse(null));
+            }
         }
         for (Person person : persons) {
             if (person.isErAnsvarlig()){
