@@ -35,7 +35,7 @@ public class Projekt {
         this.participants = new ArrayList<>();
         this.projectCreator = new ArrayList<>();
         this.projektAktiviteter = new ArrayList<>();
-    }//konstruktør for projekt
+    }
 
     public Date getArrangementDato() {
         return arrangementDato;
@@ -153,6 +153,4 @@ public class Projekt {
     public String getNotes() {
         return notes;
     }
-
-    //getters og setters
 }

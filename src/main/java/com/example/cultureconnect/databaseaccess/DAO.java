@@ -25,7 +25,7 @@ public class DAO {
     }
 
 
-    //TODO CRUD for Person
+
     //PS for inserting person into person table, columns: CPR - String, Navn - String, Telefon - int, Email - String, Billede - Byte[]
     //make the method take in a Person object and get the values from the persons getters
     public void createPerson(Person person) {
@@ -186,11 +186,6 @@ public class DAO {
         }
     }
 
-
-
-
-
-    //TODO CRUD for Lokation
     //PreparedStatement for creating a location in the Lokation table, columns: Navn - String, Beskrivelse - String, Farvekode - String
     public void createLokation(Lokation lokation){
         String sql = "INSERT INTO Lokation (Navn, Beskrivelse, Farvekode) VALUES (?, ?, ?)";
@@ -264,7 +259,6 @@ public class DAO {
         }
     }
 
-    //TODO CRUD for Projekt
     //PreparedStatement for creating a project in the Projekt table, ProjektID is autoincremented, columns: Navn - String, StartDato - Date, SlutDato - Date
     //another prepared statement to insert the details of the project into the ProjektInfo table. Columns: Projekt_ID - String, Beskrivelse - String, Møder - String, Noter - String, where the Projekt_ID is a foreign key to the Projekt table.
 
@@ -294,7 +288,6 @@ public class DAO {
         } catch (SQLException e) {
             System.err.println("Can't create project info: " + e.getErrorCode() + e.getMessage());
         }
-        //TODO: insert the participants into the ProjektDeltagere table where Projekt_ID is a foreign key to the Projekt table and Person_CPR is a foreign key to the Person table
         //Insert into these columns: Projekt_ID - String, Person_CPR - String, Ejer - bit. if person is on the creator list, Ejer is true
 
 
@@ -589,8 +582,6 @@ public class DAO {
             System.err.println("Can't create or update medarbejder info: " + e.getErrorCode() + " " + e.getMessage());
         }
     }
-
-
 
     //prepared statement to update ansvarlig in medarbejderInfo table
     public void updateAnsvarlig(String lokation, String cpr, boolean ansvarlig){

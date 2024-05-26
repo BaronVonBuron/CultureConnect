@@ -3,7 +3,6 @@ package com.example.cultureconnect.controllers;
 import com.example.cultureconnect.Logic.Logic;
 import com.example.cultureconnect.Lokation.Lokation;
 import com.example.cultureconnect.Person.Person;
-import com.example.cultureconnect.customListview.PersonListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

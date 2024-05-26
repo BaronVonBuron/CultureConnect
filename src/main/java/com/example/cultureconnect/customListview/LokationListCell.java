@@ -133,7 +133,6 @@ public class LokationListCell extends ListCell {
 
 
         this.setOnDragDetected(event -> {
-            System.out.println("drag detected lokation listcell");
             Dragboard db = this.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
             content.putString(lokation.getName());

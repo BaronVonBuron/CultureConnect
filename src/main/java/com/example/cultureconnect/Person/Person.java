@@ -32,7 +32,7 @@ public class Person {
         this.tlfNr = tlfNr;
         this.picture = picture;
         this.erAnsvarlig = false;
-    } //konstruktør for person
+    }
 
     public boolean isErAnsvarlig() {
         return erAnsvarlig;

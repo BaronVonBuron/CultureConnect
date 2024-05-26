@@ -11,12 +11,12 @@ public class Lokation {
     private List<Person> employees;
     private Person ansvarligPerson;
 
-    //kontakt oplysninger som email og tlfnr skal muligvis tilføjes
+
     public Lokation(String name, String description, String farveKode) {
         this.name = name;
         this.description = description;
         this.farveKode = farveKode;
-    }//konstruktør for lokation
+    }
 
     public String getName() {
         return name;
@@ -67,7 +67,7 @@ public class Lokation {
         this.employees = employees;
     }
 
-    //make a to string showing name
+
     @Override
     public String toString() {
         return name;

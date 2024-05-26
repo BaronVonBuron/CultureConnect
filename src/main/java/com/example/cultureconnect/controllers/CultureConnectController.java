@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class CultureConnectController {
     private final int calendarColumns = 52;
-    private final int calendarRows = 35;//skal sættes af antallet af projekter.
+    private final int calendarRows = 35;
     public int columnWidth = 60;
     private int rowHeight = 45;
     public HBox UserOrLocationToggleHBox;
@@ -52,7 +52,6 @@ public class CultureConnectController {
     public Button AdminMenuNewUserOrLocationButton;
     public TabPane CalendarTabPane;
     public Tab CalendarTab;
-    public ButtonBar ButtonBarForZoomAndNewProject;
     public Button ZoomInCalendarButton, ZoomOutCalendarButton;
     public Button NewProjectCalendarButton;
     public AnchorPane AnchorPaneForCalendarTableView;
@@ -78,8 +77,7 @@ public class CultureConnectController {
     public ListView<PersonListCell> projektProjektdeltagereListview;
     public Label projektBeskrivelse;
     public Label projektDato;
-    public Label projektMøder;
-    public Label projektNoter;////////
+    public Label projektNoter;
     public ListView<ProjektAktivitet> createProjektAktiviteterListview;
     public Button RedigerProjektRedigerAktivitetKnap;
     public Button RedigerProjektSletAktivitetKnap;
@@ -127,7 +125,6 @@ public class CultureConnectController {
     private ObservableList<PersonListCell> createNewProjektCreatorList;
     private ObservableList<LokationListCell> createNewProjektLokationList;
     private ObservableList<PersonListCell> redigerProjektPersonList;
-    private ObservableList<PersonListCell> redigerProjektCreatorList;
     private ObservableList<LokationListCell> redigerProjektLokationList;
     @FXML
     public TextArea redigerBeskrivelseFelt;
@@ -161,7 +158,7 @@ public class CultureConnectController {
                 redigerBeskrivelseFelt, redigerNoterFelt
         );
 
-        //eventlistener, to see which tab is selected
+        //eventlistener, der ser hvilke tabs er åbne, og opdaterer listviewet i forhold til hvilken tab der er åben.
         CalendarTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(CreateNewProjektTab)) {
                 if (UserToggleButton.isSelected()) {
@@ -205,14 +202,10 @@ public class CultureConnectController {
     public void autoExpandingTextareas(TextArea... textAreas) {
         for (TextArea textArea : textAreas) {
             textArea.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
-
-            // Initialize count with the initial height of the text area
             SimpleIntegerProperty count = new SimpleIntegerProperty((int) textArea.getPrefHeight());
-
             // Bind height properties
             textArea.prefHeightProperty().bindBidirectional(count);
             textArea.minHeightProperty().bindBidirectional(count);
-
             // Listen for scroll events
             textArea.scrollTopProperty().addListener((ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
                 if (newVal.intValue() > rowHeightTextareas) {
@@ -232,7 +225,7 @@ public class CultureConnectController {
         logic.updateLists();
         populateGridPane();
         while (logic.getIsUpdating()) {
-            //wait 100 ms
+            //wait 100 ms for ikke at lave unødvendigt mange kald til updateLists
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -244,7 +237,6 @@ public class CultureConnectController {
         fillCalendarWithProjects();
         loadLokations();
         loadUsers();
-        //TODO scroll til denne uge.
         CalendarScrollPane.setHvalue(getCurrentWeekNumber() / 52.0);
     }
 
@@ -497,7 +489,6 @@ public class CultureConnectController {
 
 
     public void adminMenuNewUserOrLocationButtonPressed(ActionEvent event) {
-        //TODO only when admin is logged in, should the button be visible, and when pressed, open a dialogwindow next to the listview, where the admin can create a new user.
         if (UserToggleButton.isSelected()) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/cultureconnect/NewUserDialog.fxml"));
@@ -935,7 +926,6 @@ public class CultureConnectController {
     }
 
     public void createNewProjektEndDatePickerPressed(ActionEvent actionEvent) {
-
     }
 
     public void redigerNyAktivitetKnapPressed(ActionEvent actionEvent) {
@@ -1064,24 +1054,18 @@ public class CultureConnectController {
     public void createProjektLokationDraggedOver(DragEvent dragEvent) {
         if (dragEvent.getDragboard().hasString()) {
             dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            System.out.println("Dragged over to participant listview");
         }
         dragEvent.consume();
     }
 
     public void createProjektCreatorPersonDragDropped(DragEvent dragEvent) {
-        // Get the Dragboard
         Dragboard db = dragEvent.getDragboard();
-        // Check if the Dragboard has a String. This should be the name of the Person
         if (db.hasString()) {
-            // Get the name of the Person from the Dragboard
             String personName = db.getString();
-            // Find the Person with this name in your list of Persons
             PersonListCell droppedPerson = usersForNewProjekt.stream()
                     .filter(person -> person.getName().equals(personName))
                     .findFirst()
                     .orElse(null);
-            // If the Person was found, add it to the ListView
             if (droppedPerson != null) {
                 PersonListCell pcell = new PersonListCell(droppedPerson.getPerson());
                 createNewProjektCreatorList.add(pcell);
@@ -1089,13 +1073,10 @@ public class CultureConnectController {
                 usersForNewProjekt.remove(droppedPerson);
                 UserOrLocationListview.setItems(usersForNewProjekt);
             }
-            // Indicate that the drag data was successfully transferred and used
             dragEvent.setDropCompleted(true);
         } else {
-            // Indicate that no valid data was in the Dragboard
             dragEvent.setDropCompleted(false);
         }
-        // Consume the event to indicate it has been handled
         dragEvent.consume();
     }
 
@@ -1145,7 +1126,6 @@ public class CultureConnectController {
                 Dragboard db = dragEvent.getDragboard();
                 if (db.hasString()) {
                     String personName = db.getString();
-                    System.out.println(personName + " 1");
                     PersonListCell droppedPerson = redigerProjektdeltagereListview.getItems().stream()
                             .filter(person -> person.getName().equals(personName))
                             .findFirst()
@@ -1153,7 +1133,6 @@ public class CultureConnectController {
                                     .filter(person -> person.getName().equals(personName))
                                     .findFirst()
                                     .orElse(null));
-                    System.out.println(droppedPerson.getName() + " 2");
                     boolean isCreator = false;
                     for (PersonListCell creator : redigerProjektejereListview.getItems()) {
                         if (creator.getName().equals(personName)) {
@@ -1222,7 +1201,6 @@ public class CultureConnectController {
                 Dragboard db = dragEvent.getDragboard();
                 if (db.hasString()) {
                     String personName = db.getString();
-                    System.out.println(personName + " 1");
                     PersonListCell droppedPerson = createNewProjektPersonList.stream()
                             .filter(person -> person.getName().equals(personName))
                             .findFirst()
@@ -1230,7 +1208,6 @@ public class CultureConnectController {
                                     .filter(person -> person.getName().equals(personName))
                                     .findFirst()
                                     .orElse(null));
-                    System.out.println(droppedPerson.getName() + " 2");
                     boolean isCreator = false;
                     for (PersonListCell creator : createNewProjektCreatorList) {
                         if (creator.getName().equals(personName)) {

@@ -41,7 +41,6 @@ public class Logic {
         return this.persons;
     }
 
-    //make method to get all locations
     public List<Lokation> getLocations() {
         return locations;
     }
@@ -62,8 +61,7 @@ public class Logic {
     }
 
     public boolean login(String brugernavn, String kodeord) {
-
-        //make dao call to check if user exists and password is correct
+        //kald til dao for at tjekke login
         if (dao.checkLoginReturnUser(brugernavn, kodeord)){
             for (Person person : persons) {
                 if (person.getEmail().equals(brugernavn)) {
@@ -149,10 +147,6 @@ public class Logic {
             }
         }
         updateListsInController();
-    }
-
-    public Person findAnsvarlig(String lokationNavn){
-        return this.persons.stream().filter(person -> person.getLokation().getName().equals(lokationNavn)).findFirst().orElse(null);
     }
 
     public void deleteAnsvarlig(Lokation lokation, String cpr){

@@ -150,10 +150,8 @@ public class PersonListCell extends ListCell {
                 editLokation.setScene(scene);
                 editLokation.setResizable(false);
 
-                // Get the controller instance from the FXMLLoader
                 NewUserDialogController userController = loader.getController();
 
-                // Call a method to initialize the controller with the clicked location
                 userController.editInfo(personClicked);
 
                 editLokation.show();
@@ -163,7 +161,6 @@ public class PersonListCell extends ListCell {
         });
 
         this.setOnDragDetected(event -> {
-            System.out.println("drag detected person list cell");
             Dragboard db = this.startDragAndDrop(javafx.scene.input.TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
             content.putString(person.getName());
